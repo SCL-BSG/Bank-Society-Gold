@@ -1,0 +1,4 @@
+
+Linux 
+cat blk0001.dat > bootstrap.dat
+

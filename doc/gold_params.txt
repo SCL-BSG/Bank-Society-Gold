@@ -1,0 +1,52 @@
+============================================
+== Bank Society Gold - Coin Parameters    ==
+============================================
+Algorithm              : Scrypt  
+Max Supply             : 75,000,000 
+Premine                : 2,000,000 Team starting Collateral, presale of MN, start costs for team
+ICO                    : no
+Air Drop               : 200K max
+Block Spacing          : 240 Seconds (4 minutes)
+Staking Min            : 7500 SOCG
+Master-node 
+Collateral             : 150,000 SOCG 
+
+=======================================================
+== Bank Society Coin -> Bank Society Gold Swap Rates ==
+=======================================================
+0..100K         SOCI   rate  0.025     (eg 100k  -> 2.5k  SOCG)
+100K..500K      SOCI   rate  0.015     (eg 500k  -> 7.5K  SOCG)
+500K.1M         SOCI   rate  0.010     (eg 1M    -> 10.0k SOCG)
+1M..5M          SOCI   rate  0.0025    (eg 5M    ->  12.5K SOCG)
+5M..10M         SOCI   rate  0.0015    (eg 10M   ->  15.0K SOCG)
+10M+            SOCI   rate  0.0010    (eg 20M   ->  20.0K SOCG)
+(Example if you have 750K SOCI you would get  10.0K SOCG  )
+Contact me for a rate calculation
+
+Reward Distribution   : 
+PoS Stake or MINTING reward could be constant at 15%.
+Masternode gets 60% for providing the service.
+
+Note : END Block Number will vary, as PoS staking takes several blocks for PoS and MN Rewards
+
+Coin PhasesPremine               : Block 1..100              [PREMINE]
+Proof of Work :                            
+Block                            : 101 - 500 000             2.0  coin
+Block                            : 500 001 - 1 000 000       1.5  coin
+Block                            : 1 000 001 - 5 000 000     1.0  coin
+Block                            : 5 000 01 - 20 000 000     0.75 coin
+Block                            : 20 000 001 - 50 000 000   1.0  coin
+Block                            : 50 000 001 - 75 000 000   1.5  coin
+
+Proof Of Stake       
+Block                            : 101 - 500 000             35% Stake reward
+Block                            : 500 001 - 1 000 000       30% Stake reward
+Block                            : 1 000 001 - 5 000 000     15% Stake reward
+Block                            : 5 000 01 - 20 000 000     10% Stake reward
+Block                            : 20 000 001 - 50 000 000    5% Stake reward
+Block                            : 50 000 001 - 75 000 000    2% Stake reward
+
+MN              :  40% of the PoS reward
+                   Based on FIXED port, only one MN per IPaddress
+
+Expected 75 Million blocks will be used up within 9.9 years, based on these PoW and PoS Rewards

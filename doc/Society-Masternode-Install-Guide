@@ -1,0 +1,253 @@
+
+Bank Society Coin Masternode Install Guide - Setup Guide (Single VPS/IP)
+========================================================================
+
+Important : Never try to setup a Masternode on the same domain as your wallet, as this will
+            never work. THe Masternode concept requires a UNIQUE node IP. THerefore, a VPS
+            (Virtual Private Server) is the cheapest way to implement a Masternode. 
+
+Masternode Rewards Information
+------------------------------
+
+
+To setup a masternode you will first need 20,000 SOCI, a Virtual Private Server and a Society-qt (GUI Wallet). A small amount of technical knowledge is required to follow the setup guide below.
+
+A masternode is a combination of two seperate wallets. A Controller and slave wallet setup ensures secure storage of your collateral. A VPS (slave) wallet will be configured to allow your GUI controller wallet to communicate and exchange information. The controller wallet must remain unlocked and connected through the Society network to your slave (VPS) at all times for active status. It's recommended to setup your controller wallet on a computer that only you have physical access to, behind a firewall, running linux or Windows with a good anti-virus.
+
+A VPS wallet will be configured to allow your GUI controller wallet to communicate and exchange information. The controller wallet must remain connected through the Society network to your VPS at all times for active status.
+
+This means that the master wallet must be open and connected to receive Masternode rewards.
+
+
+============
+== STEP 1 ==
+============
+
+Setup your controller wallet - this will keep your coins safe.
+Install Society-qt on Windows or Linux from the official releases. 
+
+Load your Society-qt wallet and sync.
+Shut-down Society-qt
+Find your society.conf file Help - Debug - Information - Click society.conf button under Troubleshooting or browse c:\Users\username\AppData\LocalRoaming\Society  (windows) or home/username/.Society/ (Linux)
+Edit society.conf with notepad or gedit/nano
+
+
+Add the following line:
+
+addnode=your_VPS_server_IP
+
+Save and exit
+
+Load Society-qt wallet and sync.
+
+Backup your private keys and wallet file!
+
+============
+== STEP 2 ==
+============
+
+Create your Masternode Collateral.
+
+Click "Receive" and generate a new address with the label "Masternode 1"
+Send exactly 20000 Society to this address and wait for confirmations.
+
+============
+== STEP 3 ==
+============
+
+Open the Debug Console.
+
+Click Help on the top file menu
+Click Console on the top Tab Bar
+
+============
+== STEP 4 ==
+============
+
+Generate your Private Key & and Outputs
+
+In the debug console command box (bottom of screen) enter the following:
+
+masternode genkey {ENTER}
+masternode outputs {ENTER}
+
+You should see something very similar to this (save into a text file in Notepad or Gedit/Nano/etc):
+
+masternode genkey
+05040h0f9fdju3n9g9dsnwpx9g3nasz9dgnas
+
+masternode outputs￼
+{
+"29a839eca6be6f1f0656cb23ed04f824ddb72f19bf9168a0c5b5243eae34d765" : "0",
+}
+
+Close your debug window
+
+============
+== STEP 5 ==
+============
+
+Configure your controller wallet (masternode.conf - recommended):
+
+Open masternode.conf in Notepad or Gedit/Nano
+
+Add the following information:
+alias your_VPS_server_IP:23960 PRIVATEKEY TXT_HASH TXT_INDEX
+
+An example:
+mn1 your_VPS_server_IP:23960 05040h0f9fdju3n9g9dsnwpx9g3nasz9dgnas 29a839eca6be6f1f0656cb23ed04f824ddb72f19bf9168a0c5b5243eae34d765 0
+
+Configure your controller wallet (GUI):
+
+On the Menu bar click "Masternodes"
+Click the Tab "My Masternodes"
+Click the "Create" button
+Alias: MN1
+Address: your_VPS_server_IP:23960
+PrivKey: 05040h0f9fdju3n9g9dsnwpx9g3nasz9dgnas
+TxHash: 29a839eca6be6f1f0656cb23ed04f824ddb72f19bf9168a0c5b5243eae34d765
+Output: 0
+
+Click "OK" now open up an SSH client Putty
+
+Step #6:
+
+Register & Log in to your Linux VPS as root. Ubuntu or Debian is recommended.
+
+Step #7: [VPS/Putty]
+
+Install the required wallet dependencies:
+
+su
+apt-get update
+apt-get upgrade
+apt-get install build-essential
+apt-get install libssl-dev
+apt-get install libboost-all-dev
+apt-get install libqrencode-dev
+apt-get install libgmp3-dev
+apt-get install libgmp-dev
+apt-get install miniupnpc
+apt-get install libminiupnpc-dev
+apt-get install libcurl4-openssl-dev
+apt-get install dh-autoreconf
+apt-get install autoconf
+apt-get install automake
+apt-get install git nano
+apt-get install pkg-config
+apt-get install libtool
+apt-get install software-properties-common
+
+Install Berkley DB 4.8 (Automatically)
+
+su
+add-apt-repository ppa:bitcoin/bitcoin
+apt-get update
+apt-get install libdb4.8-dev libdb4.8++-dev
+
+Download and manually compile Berkley DB 4.8 (If above fails)
+
+cd ~
+mkdir bitcoin
+mkdir bitcoin/db4
+wget 'http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz'
+tar -xzvf db-4.8.30.NC.tar.gz
+cd db-4.8.30.NC/build_unix/
+../dist/configure --enable-cxx --disable-shared --with-pic --prefix=~/bitcoin/db4
+make install
+
+Download and manually compile Berkley DB 5+ (If DB 4.8 won't install or compile)
+
+apt-get install libdb-dev libdb++-dev
+
+Step #8: [VPS/Putty]
+
+Create Swap Space:
+
+su
+fallocate -l 3G /swapfile
+dd if=/dev/zero of=swapfile bs=1M count=3072
+mkswap /swapfile
+chmod 600 /swapfile
+swapon /swapfile
+echo -e "/swapfile none swap sw 0 0 \n" >> /etc/fstab
+cat /proc/meminfo
+
+If you get an error: "operation not permitted" please see here for a possible fix.
+
+Step #9: [VPS/Putty]
+
+Build & compile the slave wallet binary:
+
+git clone https://github.com/profithunterscoin/phc
+cd phc/src
+make -f makefile.unix
+cp phcd /usr/bin
+cd ..
+
+Step #10: [VPS/Putty]
+
+Create your configuration File:
+
+mkdir /root/.Society
+nano /root/.Siciety/society.conf
+
+Copy and paste the following (Slave wallet only):
+
+rpcuser=society_edit_me
+rpcpassword=pass_edit_me
+listen=1
+server=1
+daemon=1
+logtimestamps=1
+shrinkdebugfile=1
+masternode=1
+maxconnections=256
+externalip=server_ip:23960
+masternodeaddr=server_ip:23960
+masternodeprivkey=replace_me
+
+Modify the above information:
+
+Change society_edit_me to a username or leave default
+Change pass_edit_me to a secure password (random is recommended)
+Replace server_ip with your VPS address
+Replace_me with your private key from Step #4:
+
+Save and exit (CTRL + X):
+
+Press: Y then ENTER to overwrite.
+
+Step #12: [VPS/Putty]
+
+Start your slave wallet:
+
+societyd
+
+If it looks like it's just sitting there idle on the last step try using:
+
+societyd getinfo
+
+Wait until full sync - try the above commands periodically to view the progress:
+
+If you close Putty and societyd exits too: Install screen (apt-get install screen) and run it using: screen societyd
+
+Step #13: [VPS/Putty]
+
+Remote Start your masternode:
+
+In your controller wallet (GUI) click "Masternodes"
+Click the "My Masternodes" tab
+Click "Update"
+If you see your masternode slave-wallet VPS IP - excellent!
+Then click "Start All"
+Once again "Update"
+You should see "Masternode is running..."
+Over a short-period of time it will show up in the Society network tab
+
+Step #14:
+
+You might want to install MNChecker but this is optional.
+
+Close Putty:
+

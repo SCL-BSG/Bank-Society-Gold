@@ -1,0 +1,11 @@
+Society Upgrade notes - Compiling
+
+cd society
+make clean
+git pull
+cd src
+make -f makefile.unix
+sudo cp societyd /usr/bin
+cd ..
+qmake && make
+sudo cp society-qt /usr/bin
