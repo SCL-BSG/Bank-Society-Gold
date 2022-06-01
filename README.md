@@ -1,5 +1,5 @@
-# BSGold
-Bank Society Gold, BSGold coin is a next generation coin with Proof of Work and Proof of Stake with 
+# Bank Society Gold
+Bank Society Gold or Gold coin is a next generation coin with Proof of Work and Proof of Stake with 
 Smart Contracts planned for a future roadmap.
 
 Proof of Stake with Masternode reward system, all coins are staked in the users wallet, where Masternodes
