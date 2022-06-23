@@ -2124,8 +2124,17 @@ bool CTransaction::ConnectInputs(CTxDB& txdb, MapPrevTx inputs, map<uint256, CTx
             // This doesn't trigger the DoS code on purpose; if it did, it would make it easier
             // for an attacker to attempt to split the network.
             if (!txindex.vSpent[prevout.n].IsNull())
+            {
+                /* ------------------------------------------------------------------------------------
+                   -- RGP, found that invalid stakes may also be causing this issue, where the synch --
+                   --      algorithm has caused by invalid coin mint                                 -- 
+                   --      The use of error() needs to be stopped, as it is closing the wallet       --
+                   --      without any explanation.                                                  -- 
+                   --      To do, add logic to determine if a PoS stake is occuring or not and       --
+                   --      decide logic as required.                                                 --
+                   ------------------------------------------------------------------------------------ */
                 return fMiner ? false : error("ConnectInputs() : %s prev tx already used at %s", GetHash().ToString(), txindex.vSpent[prevout.n].ToString());
-
+            }
             if(fValidateSig)
             {
                 // Skip ECDSA signature verification when connecting blocks (fBlock=true)
