@@ -26,6 +26,8 @@ Download and Install 7zip for your system architecture (32/64) : http://www.7-zi
 =====================
 Msys                                            : http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe
 
+Install once downloaded to c:/MSYS
+
 ==========================================================
 == Installing MINGW go here and download latest versio  ==
 ==========================================================
@@ -33,12 +35,16 @@ Msys                                            : http://downloads.sourceforge.n
 ==========================================================
 https://sourceforge.net/project/showfiles.php?group_id=2435&package_id=240780
 
+Install once downloed to C:/MINGW
+
 ==================
 == Active Pearl ==
 ==============================================================
 == Use login with email, password and use the basic package ==
 ==============================================================
 Active Pearl (latest version)                   : http://www.perl.org/get.html   [https://www.activestate.com/products/perl/] choose v5.34
+
+Install once downloaded
 
 ===========================
 == OpenSSL 1.0.1g.tar.gz ==
@@ -53,37 +59,43 @@ Libpng1.6.9                                     : http://prdownloads.sourceforge
 zlib-1.2.11.tar.gz                              : https://sourceforge.net/projects/libpng/files/zlib/1.2.11/zlib-1.2.11.tar.gz/download?use_mirror=netcologne&download=
 qrencode-4.0.0.tar.gz				: https://fukuchi.org/works/qrencode/qrencode-4.0.0.tar.gz
 Secp256k1_Win                                   : http://cfhcable.dl.sourceforge.net/project/gocoin/secp256k1_win.zip
-
 QT 5.7.0                                        : https://download.qt.io/new_archive/qt/5.7/5.7.0/single/
 
+UnxUtils (make, ect)				: https://sourceforge.net/projects/unxutils/
 
-Notes
--------------------------------------
+=====================================
+== Notes                           ==
+============================================================
+== Setup Paths to ensure that everything builds correctly ==
+============================================================
 
-paths for simplicity:
-mingw32: c:\mingw .. downloads and dependencies: c:/dependsBSG
--Setting paths when running new instances of CMD prompt or Msys:
-DOS  :  set path=%path%;C:\mingw\bin;C:\deps\qt570\qtbase\bin
-MSYS :  export PATH=${PATH}:/c/mingw/bin 
-- you can safely and more easily unzip most linux tars with 7zip.. http://www.7-zip.org/download.html
+mingw32: c:\mingw 
+downloads and dependencies: c:/dependsBSG
 
-Guide
------
-1: Msys - Easy way : Install Mingw from mingw.org and install msys-base from basic setup.
-   You can keep the msys folder and delete (or move) the base c:\Mingw32 stuff somewhere else.
-   You'll need the msys directory to run the linux console (\msys\1.0\msys.bat)
+========================
+== MSYS Path settings ==
+=====================================================================
+== Setting paths when running new instances of CMD prompt or Msys  ==
+== start a MSYS shell c:\msys64\mingw32.exe                        ==
+== start a DOS shell cmd.exe                                       ==
+=====================================================================
+DOS  :  set path=%path%;C:\mingw\bin;C:\dependsBSG\qt570\qtbase\bin;C:/dependsBSG/usr/local/wbin
 
-2: Mingw32 - prebuilt i686-4.8.2-release-posix-dwarf-rt_v3-rev2 (sourceforge)
-   Easy way: unzip and move to c:/mingw
+MSYS :  export PATH=${PATH}:/c/mingw/bin:/c/dependsBSG/usr/local/wbin
 
-3: create a deps folder: c:/deps : easy to place msys, all dependencies, and downloads in this folder.
+=========================================
+Bulding Bank Society Gold Dependencies ==
+=========================================
 
-4: Install Active Pearl for Windows : www.perl.org/get.html
+1: Msys - is basically a linux console to build C++ files using MINGW.
 
-5: Openssl 1.0.1b - download from https://www.openssl.org/source/old/1.0.1/openssl-1.0.1b.tar.gz
- ~ 7zip extract to C:\deps
- ~ Open MSYS..
-	cd /c/deps/openssl-1.0.1b
+2: Mingw32 - Installed into C:/MINGW is the cross compiler used to build C++ source code.
+
+3: Openssl 1.0.1 
+   Use 7zip to extract c:/openssl-1.0.1g.tar
+
+ ~ Open MSYS.. [ C:/MSYS64/msys2.exe ]
+	cd /c/dependsBSG/openssl-1.0.1
 	./config
 	make
 

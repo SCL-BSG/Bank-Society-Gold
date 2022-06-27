@@ -17,6 +17,6 @@ Download source from github
 https://github.com/SCL-BSG/Bank-Society-Gold
 
 Open doc/build-unix.txt
-Follow instructions to get the SocietyG daemon build
+Follow instructions to get the SocietyG daemon built
 
 Next document GUI wallet procedure...
