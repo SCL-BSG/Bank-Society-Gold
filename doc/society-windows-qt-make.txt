@@ -1,5 +1,6 @@
-#
+
 Society Coin Windows-Qt Build Guide - by Revnec, Revised RGP
+Date : 25th June 2022
 ------------------------------------------------------------
 
 Note : If you want to really build the wallet, contact our Discord channel, 
@@ -10,34 +11,57 @@ Note : If you want to really build the wallet, contact our Discord channel,
 == What you Need ==
 ===================
 
-Msys                                            : http://www.mingw.org/
-MINGW i686-4.8.2-release-posix-dwarf-rt_v3-rev2 : http://superb-dca2.dl.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/4.8.2/threads-posix/dwarf/i686-4.8.2-release-posix-dwarf-rt_v3-rev2.7z
-Active Pearl (latest version)                   : http://www.perl.org/get.html
-openssl-1.0.1b.tar.gz                           : https://www.openssl.org/source/old/1.0.1/openssl-1.0.1b.tar.gz
+=======================================================================================
+== Create a new folder to store all dependencies required to build Bank Society Gold ==
+=======================================================================================
+mkdir c:/dependsBSG
+
+========================================================
+== Install 7zip to extract downloads to c:\dependsBSG ==
+========================================================
+Download and Install 7zip for your system architecture (32/64) : http://www.7-zip.org/download.html
+
+=====================
+== Installing Msys ==
+=====================
+Msys                                            : http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe
+
+==========================================================
+== Installing MINGW go here and download latest versio  ==
+==========================================================
+== Latest vserion in Jun 2022 was msys2-x86_64-20220603 ==
+==========================================================
+https://sourceforge.net/project/showfiles.php?group_id=2435&package_id=240780
+
+==================
+== Active Pearl ==
+==============================================================
+== Use login with email, password and use the basic package ==
+==============================================================
+Active Pearl (latest version)                   : http://www.perl.org/get.html   [https://www.activestate.com/products/perl/] choose v5.34
+
+===========================
+== OpenSSL 1.0.1g.tar.gz ==
+=============================================================
+== NOTE: Extract or install the following to c:\dependsBSG ==
+=============================================================
+openssl-1.0.1g.tar.gz                           : https://www.openssl.org/source/old/1.0.1/openssl-1.0.1g.tar.gz
 berkeleey-db 4.8.30.NC                          : http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
-Boost 1_57_0                                    : https://ayera.dl.sourceforge.net/project/boost/boost/1.57.0/boost_1_57_0.zip
+Boost 1_57_0                                    : https://sourceforge.net/projects/boost/files/boost/1.57.0/boost_1_57_0.7z/download
 Miniupnpc 1.6x                                  : http://miniupnp.free.fr/files/miniupnpc-1.6.20120509.tar.gz
 Libpng1.6.9                                     : http://prdownloads.sourceforge.net/libpng/libpng-1.6.9.tar.gz
-
-NEW Bank Society Coin
 zlib-1.2.11.tar.gz                              : https://sourceforge.net/projects/libpng/files/zlib/1.2.11/zlib-1.2.11.tar.gz/download?use_mirror=netcologne&download=
-
-NO BUILDEE >>>Qrencode3.4.4                                   : https://fukuchi.org/works/qrencode/qrencode-3.4.4.tar.bz2
-NEW USED
 qrencode-4.0.0.tar.gz				: https://fukuchi.org/works/qrencode/qrencode-4.0.0.tar.gz
-
-
-
 Secp256k1_Win                                   : http://cfhcable.dl.sourceforge.net/project/gocoin/secp256k1_win.zip
-QT 5.7.0                                        : http://qt.mirror.constant.com/archive/qt/5.7/5.7.0/single/qt-everywhere-opensource-src-5.7.0.zip
 
-optional: 7zip                                  : http://www.7-zip.org/download.html
+QT 5.7.0                                        : https://download.qt.io/new_archive/qt/5.7/5.7.0/single/
+
 
 Notes
 -------------------------------------
 
 paths for simplicity:
-mingw32: c:\mingw .. downloads and dependencies: c:\deps
+mingw32: c:\mingw .. downloads and dependencies: c:/dependsBSG
 -Setting paths when running new instances of CMD prompt or Msys:
 DOS  :  set path=%path%;C:\mingw\bin;C:\deps\qt570\qtbase\bin
 MSYS :  export PATH=${PATH}:/c/mingw/bin 
