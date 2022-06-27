@@ -1,0 +1,22 @@
+How to Install Ubuntu 22.04 on a Raspberry PI
+
+Install Raspberry Pi Imager 
+https://www.raspberrypi.com/software/
+
+Download ubuntu or other OS
+https://ubuntu.com/download/raspberry-pi?utm_source=syndication
+
+Flash onto a 16GB microsd card ( I used 32GB )
+using Pi Imager Software
+Chose OS -> ubuntu-22.04-preinstalled-desktop-arm64+raspi.img.xz
+Chose Drive -> MicroSD
+
+Write OS to MicroSD
+
+Download source from github
+https://github.com/SCL-BSG/Bank-Society-Gold
+
+Open doc/build-unix.txt
+Follow instructions to get the SocietyG daemon build
+
+Next document GUI wallet procedure...
