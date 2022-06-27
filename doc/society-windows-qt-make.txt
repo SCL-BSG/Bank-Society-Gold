@@ -113,41 +113,34 @@ Bulding Bank Society Gold Dependencies ==
 	TARGET_OS=OS_WINDOWS_CROSSCOMPILE make libleveldb.a libmemenv.a
 
 7. Boost 1_57_0 - download from https://ayera.dl.sourceforge.net/project/boost/boost/1.57.0/boost_1_57_0.zip
- ~ 7zip extract to C:\deps
+ ~ 7zip extract to C:\dependsBSG
  ~ in CMD PROMPT...
 	
-	cd c:\deps\boost_1_57_0
+	cd c:\dependsBSG\boost_1_57_0
 	bootstrap.bat
 	b2.exe --toolset=gcc --build-type=complete stage --link=static --with-chrono --with-filesystem --with-program_options --with-system --with-thread
 
 8. Miniupnpc 1.6 - download from http://miniupnp.free.fr/files/miniupnpc-1.6.20120509.tar.gz
- ~ 7zip extract to C:\deps .. can rename to miniupnpc-1.6 for simplicity
+ ~ 7zip extract to C:\dependsBSG .. can rename to miniupnpc-1.6 for simplicity
  ~ CMD PROMPT...
 	
-	cd C:\deps\miniupnpc-1.6
+	cd C:\dependsBSG\miniupnpc-1.6
 	mingw32-make -f Makefile.mingw init upnpc-static
 
 9. NEW --- ZLIB
 
-OPTION : Load Zlib Development library
-https://sourceforge.net/projects/gnuwin32/files/zlib/1.2.3/zlib-1.2.3.exe/download?use_mirror=netix&download=
-if ZLIB is not found
-
-wget http://zlib.net/zlib-1.2.11.tar.gz
-tar xvfz zlib-1.2.11.tar.gz
+~ 7zip extract to c:\dependsBSG
 cd zlib-1.2.11
 make -f win32/Makefile.gcc BINARY_PATH=/bin INCLUDE_PATH=/usr/local/include LIBRARY_PATH=/usr/local/lib install
 cd ..
 
 
-10. Libpng 1.6.9 (required for qrencode) - download from Download http://prdownloads.sourceforge.net/libpng/libpng-1.6.9.tar.gz
-INVALID DOWNLOAD : found http://www.libpng.org/pub/png/libpng.html
-https://sourceforge.net/projects/libpng/files/libpng16/1.6.35/libpng-1.6.35.tar.gz/download?use_mirror=netcologne&download=
- ~ 7zip extract to c:\deps
+10. Libpng 1.6.9 (required for qrencode) - 
+ ~ 7zip extract to c:\dependsBSG
  ~ MSYS...
  
 	cd /c/deps/libpng-1.6.9
-	configure
+	bash configure
 	make check
 	make install
 
