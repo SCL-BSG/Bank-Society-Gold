@@ -67,38 +67,48 @@ If using Boost 1.37, append -mt to the boost libraries in the makefile.
 
 
 =======================================================
-== OpenSLL Ubuntu 18.04
+== OpenSLL Ubuntu 18.04 and Ubuntu 20.04
 =======================================================
 
 sudo mkdir /opt/openssl
- 1971  cd /opt/openssl
- 1972  sudo tar xfzv ~/Downloads/openssl-1.1.1g.tar.gz --directory /opt/openssl
- 1973  wget https://www.openssl.org/source/openssl-1.1.1g.tar.gz
- 1974  sudo tar xfzv ~/Downloads/openssl-1.1.1g.tar.gz --directory /opt/openssl
- 1975  la
- 1976  ls
- 1977  sudo wget https://www.openssl.org/source/openssl-1.1.1g.tar.gz
- 1978  ls
- 1979  sudo tar xfzv ~/Downloads/openssl-1.1.1g.tar.gz --directory /opt/openssl
- 1980  sudo tar xfzv openssl-1.1.1g.tar.gz --directory /opt/openssl
- 1981  sudo ./config --prefix=/opt/openssl --openssldir=/opt/openssl/ssl
- 1982  ls
- 1983  cd openssl-1.1.1g
- 1984  sudo ./config --prefix=/opt/openssl --openssldir=/opt/openssl/ssl
- 1985  sudo make
- 1986  sudo make install
- 1987  sudo ln -s /opt/openssl/bin/openssl /usr/bin/openssl
+ 
  1988  ls -lisah openssl
  1989  cd /usr/bin
  1990  ls -lisah openssl
- 1991  cd /etc/ld.so.conf.d
- 1992  nano openssl.conf
- 1993  sudo nano openssl.conf
+
  1994  sudo ldconfig
  1995  which openssl
  1996  openssl version
  1997  openssl
- 
+
+OpenSSL instructions
+====================
+
+# remove existing openssl (1.1.0)
+apt-get autoremove openssl
+cd /opt
+rm -r /opt/openssl
+# Download openssl 1.0.1g
+wget http://www.openssl.org/source/openssl-1.0.1g.tar.gz --no-check-certificate
+
+# folder must be defined somewhere, it should be reference in makefile.unix
+cd depend 
+# untar openssl 1.0.1g
+tar -xvzf openssl-1.0.1g.tar.gz
+cd openssl-1.0.1g/
+sudo ./config --prefix=/opt/openssl --openssldir=/opt/openssl/ssl
+sudo make
+# sudo make install may fail use install_sw software only
+make install_sw 
+# Define a symbolic link for access to 1.0.1g
+sudo ln -s /opt/openssl/bin/openssl /usr/bin/openssl
+# update Bank-Society-Gold/src/makefile.unix as followd with your directory settings
+OPENSSL_INCLUDE_PATH = ../../depend/openssl-1.0.1g/include
+OPENSSL_INCLUDE_PATH += ../../depend/openssl-1.0.1g/crypto/bn
+OPENSSL_INCLUDE_PATH += ../../depend/openssl-1.0.1g/crypto/ec
+OPENSSL_INCLUDE_PATH += ../../depend/openssl-1.0.1g/crypto/evp
+OPENSSL_INCLUDE_PATH += ../../depend/openssl-1.0.1g/crypto/hma
+OPENSSL_LIB_PATH= ../../depend/openssl-1.0.1g/
 
 
 
@@ -132,11 +142,13 @@ Berkeley DB
 -----------
 It is recommended to use Berkeley DB 4.8. If you have to build it yourself:
 
-```bash
-BITCOIN_ROOT=$(pwd)
+This information is important for the Leveldb folder to be build in BSGOLD
+==========================================================================
+cd to src folder
+BSGOLD_ROOT=$(pwd)
 
 # Pick some path to install BDB to, here we create a directory within the bitcoin directory
-BDB_PREFIX="${BITCOIN_ROOT}/db4"
+BDB_PREFIX="${BSGOLD_ROOT}/leveldb"
 mkdir -p $BDB_PREFIX
 
 # Fetch the source and verify that it is not tampered with
@@ -152,7 +164,7 @@ cd db-4.8.30.NC/build_unix/
 make install
 
 # Configure Bitcoin Core to use our own-built instance of BDB
-cd $BITCOIN_ROOT
+cd $BSGOLD_ROOT
 ./autogen.sh
 ./configure LDFLAGS="-L${BDB_PREFIX}/lib/" CPPFLAGS="-I${BDB_PREFIX}/include/" # (other args...)
 ```
