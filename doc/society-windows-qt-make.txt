@@ -56,6 +56,8 @@ berkeleey-db 4.8.30.NC                          : http://download.oracle.com/ber
 Boost 1_57_0                                    : https://sourceforge.net/projects/boost/files/boost/1.57.0/boost_1_57_0.7z/download
 Miniupnpc 1.6x                                  : http://miniupnp.free.fr/files/miniupnpc-1.6.20120509.tar.gz
 Libpng1.6.9                                     : http://prdownloads.sourceforge.net/libpng/libpng-1.6.9.tar.gz
+https://sourceforge.net/projects/libpng/
+
 zlib-1.2.11.tar.gz                              : https://sourceforge.net/projects/libpng/files/zlib/1.2.11/zlib-1.2.11.tar.gz/download?use_mirror=netcologne&download=
 qrencode-4.0.0.tar.gz				: https://fukuchi.org/works/qrencode/qrencode-4.0.0.tar.gz
 Secp256k1_Win                                   : http://cfhcable.dl.sourceforge.net/project/gocoin/secp256k1_win.zip
@@ -130,7 +132,15 @@ Bulding Bank Society Gold Dependencies ==
 9. NEW --- ZLIB
 
 ~ 7zip extract to c:\dependsBSG
+ ~ MSYS...
 cd zlib-1.2.11
+==========
+== Note ==
+===================================================
+== Modified file zlib.h as follows               ==
+== #define ZLIB_VERNUM 0x1280   ( was 0x12b0 )   ==
+== A value of 0x12b0 fails to make libpng--1.6.9 ==
+===================================================
 make -f win32/Makefile.gcc BINARY_PATH=/bin INCLUDE_PATH=/usr/local/include LIBRARY_PATH=/usr/local/lib install
 cd ..
 
@@ -138,17 +148,13 @@ cd ..
 10. Libpng 1.6.9 (required for qrencode) - 
  ~ 7zip extract to c:\dependsBSG
  ~ MSYS...
+export PATH=${PATH}:/c/mingw/bin:/c/dependsBSG/usr/local/wbin:c/dependsBSG/zlib-1.2.11
  
 	cd /c/deps/libpng-1.6.9
-	bash configure
+ 	
+	LDFLAGS="-L/usr/local/lib/" CPPFLAGS="-I/c/dependsBSG/zlib-1.2.11/" ./configure --prefix=/c/mingw
 	make check
 	make install
-
-NOTE : The above did not work with a new ZLIB installation, use the following RGPickles:
-
-LDFLAGS="-L/usr/local/lib/" ./configure --prefix=/c/mingw
-make check
-make install		NOTE installed into /c/mingw/
 
 
 11. Qrencode3.4.4 - download from https://fukuchi.org/works/qrencode/qrencode-3.4.4.tar.bz2
@@ -156,6 +162,12 @@ make install		NOTE installed into /c/mingw/
  ~ MSYS...
 	
 	cd /c/deps/qrencode-3.4.4
+./configure
+make
+make install
+
+
+
 	LIBS="../libpng-1.6.9/.libs/libpng16.a ../libpng-1.6.9/.libs/libz.a" \
 	png_CFLAGS="-I../libpng-1.6.9" \
 	png_LIBS="-L../libpng-1.6.9/.libs" \
@@ -163,9 +175,10 @@ make install		NOTE installed into /c/mingw/
 
 NO WORKEE:this does work
 
-png_CFLAGS="-I/c/mingw/include/" png_LIBS="-L/c/mingw/lib/" LDFLAGS="-L/c/mingw/lib/" ./configure  
+png_CFLAGS="-I/c/mingw/include/ -I/c/dependsBSG/libpng-1.6.9" png_LIBS="-L/c/mingw/lib/ -L/usr/local/lib/ -L/c/dependsBSG/libpng-1.6.9/.libs" ./configure --enable-static --disable-shared --prefix=/c/mingw
 
-png_CFLAGS="-I../libpng-1.6.35" png_LIBS="-L/usr/local/lib/" ./configure	
+png_CFLAGS="-I/c/dependsBSG/libpng-1.6.9" png_LIBS="-L/c/dependsBSG/libpng-1.6.9/.libs" ./configure --enable-static --disable-shared --prefix=/c/mingw
+	
 	make
 
 
@@ -175,7 +188,7 @@ LIBS="../libpng-1.6.9/.libs/libpng16.a /usr/local/lib/libz.a" png_CFLAGS="-I../l
 	
 	
 12. SECP256K1_WIN download from http://cfhcable.dl.sourceforge.net/project/gocoin/secp256k1_win.zip
- ~ extract to c:\deps .. already built.
+ ~ extract to c:\dependsBSG .. already built.
 
 13. QT 5.7.0 - download fromhttp://qt.mirror.constant.com/archive/qt/5.7/5.7.0/single/qt-everywhere-opensource-src-5.7.0.zip
  ~ extract to c:\deps  can rename to qt570 for simplicity
@@ -184,8 +197,10 @@ LIBS="../libpng-1.6.9/.libs/libpng16.a /usr/local/lib/libz.a" png_CFLAGS="-I../l
  ~ CMD PROMPT... 
 	
 	cd c:\deps\qt570
-	configure.bat -release -opensource -confirm-license -static -make libs -no-sql-sqlite -no-opengl -system-libpng -no-angle -no-vcproj -openssl -no-qml-debug
-    mingw32-make 
+	#configure.bat -release -opensource -confirm-license -static -make libs -no-sql-sqlite -no-opengl -system-libpng -no-angle -no-vcproj -openssl -no-qml-debug
+        configure.bat -release -opensource -confirm-license -static -make libs -no-sql-sqlite -no-opengl -system-libpng -no-angle -openssl -no-qml-debug
+
+        mingw32-make 
 	
 14. (OPTIONAL) QT 5.7.0 Build qtbase for lrelease.exe .. if it wasn't built during in step 13.
  ~ CMD PROMPT...
