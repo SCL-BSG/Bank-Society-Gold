@@ -70,32 +70,31 @@ If using Boost 1.37, append -mt to the boost libraries in the makefile.
 == OpenSLL Ubuntu 18.04 and Ubuntu 20.04
 =======================================================
 
-sudo mkdir /opt/openssl
- 
- 1988  ls -lisah openssl
- 1989  cd /usr/bin
- 1990  ls -lisah openssl
+ //sudo mkdir /opt/openssl
 
- 1994  sudo ldconfig
- 1995  which openssl
- 1996  openssl version
- 1997  openssl
+== Determine the system openssl version, we need 1.0.1g  
+openssl version
+
 
 OpenSSL instructions
 ====================
 
-# remove existing openssl (1.1.0)
-apt-get autoremove openssl
+== remove existing openssl (1.1.1)
+sudo apt-get autoremove openssl
 cd /opt
+== if /opt/openssl exists, remove it. Otherwise do NOTHING
 rm -r /opt/openssl
-# Download openssl 1.0.1g
-wget http://www.openssl.org/source/openssl-1.0.1g.tar.gz --no-check-certificate
 
+== Download openssl 1.0.1g
+== Ensure that the download is available in your current folder
+wget http://www.openssl.org/source/openssl-1.0.1g.tar.gz --no-check-certificate
+mv openssl-1.0.1g.tar.gz dependsBSG
 # folder must be defined somewhere, it should be reference in makefile.unix
-cd depend 
-# untar openssl 1.0.1g
+cd dependBSG 
+== Extract openssl 1.0.1g
 tar -xvzf openssl-1.0.1g.tar.gz
 cd openssl-1.0.1g/
+== Build openssl-1.0.1g
 sudo ./config --prefix=/opt/openssl --openssldir=/opt/openssl/ssl
 sudo make
 # sudo make install may fail use install_sw software only
