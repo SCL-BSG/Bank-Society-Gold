@@ -1,13 +1,67 @@
-# Bank Society Gold
-Bank Society Gold or Gold coin is a next generation coin with Proof of Work and Proof of Stake with 
-Smart Contracts planned for a future roadmap.
+Bank Society Coin Gold (Society) is a free open source decentralized project derived from Bitcoin.
+It's an experimental project with the goal of providing a long-term energy-efficient scrypt-based crypto-currency.
+You're using this software with no guarantees or warranty of any kind. Use it at your own risk!
+Built on the foundations of Bitcoin, Litecoin, PeerCoin, NovaCoin, CraveProject, Dash Masternodes
+XUVCoin, BATA, and Crypostle to help further advance the field of crypto-currency.
 
-Proof of Stake with Masternode reward system, all coins are staked in the users wallet, where Masternodes
-provide a verification/validation system and take a percentage of the users staked coin.
-The key concept here is different from Ethereum validators, as a Masternode can only acheve rewards
-if it's active and does not lock coins of the users, as users coins are staked in their decentralised
-wallets. All staking or minting rewards must be validated by the network to ensure the stake of coins is 
-a successful mint on the Bank Society Gold network. eg the stake mints a new valid block on the blockchain and
-is only successful, if a validated by a number of nodes as being correct ( prev/next hash calculation )
+Adjustments based on network hashrate, previous block difficulty simulating real bullion mining: If the difficulty rate is low; using excessive work to produce low value blocks does not yield large return rates. When the ratio of difficulty adjusts and the network hashrate remains constant or declines: The reward per block will reach the maximum level, thus mining becomes very profitable.
 
-Rewards are very light with Bank Society Coin, but much better that the existing Bank savings account rewards.
+This algorithm is intended to discourage >51% attacks, or malicous miners. It will also act as an automatic inflation adjustment based on network conditions.
+
+- Dynamic Block Reward 3.0 (C) 2017 Crypostle
+- Block #1 Up to 50000 [Max PoW: 100 Society] [PoS: 1000% APR] 
+- Block #50001 Up to 120000 [Max PoW: 50 Society] [PoS: 500% APR]
+- Block #120001 Up to 150000 [Max PoW: 25 Society] [PoS: 250% APR]
+- Block #150000 Up to 200000 [Max PoW: 12.5 Society] [PoS: 125% APR]
+- Block #200001 Up to 250000 [Max PoW: 6.25 Society] [PoS: 62% APR]
+- Block #250001+ [Max PoW: 3.125 Society] [PoS: 31% APR]
+- Block Spacing: 240 Seconds (4 minutes)
+- Diff Retarget: 2 Blocks
+- Maturity: 101 Blocks
+- Stake Minimum Age: 1 Hour
+- Masternode Collateral: 150 000 SOCG
+- 30 MegaByte Maximum Block Size (30X Bitcoin Core)
+
+Misc Features:
+
+Society includes an Address Index feature, based on the address index API (searchrawtransactions RPC command) implemented in Bitcoin Core but modified implementation to work with the Society codebase (PoS coins maintain a txindex by default for instance).
+
+Initialize the Address Index By Running with -reindexaddr Command Line Argument. It may take 10-15 minutes to build the initial index.
+
+Main Network Information:
+
+/* RGP */
+nDefaultPort = 23980;
+nRPCPort = 23981;
+/* RGP Magic BYtes */
+pchMessageStart[0] = 0x1c;
+pchMessageStart[1] = 0x43;
+pchMessageStart[2] = 0x45;
+pchMessageStart[3] = 0x96;
+
+- Port: 20060
+- RPC Port: 20061
+- Magic Bytes: 0x1a 0x33 0x25 0x88
+
+Test Network Information:
+
+/* RGP *
+pchMessageStart[0] = 0xd5;
+pchMessageStart[1] = 0xc5;
+pchMessageStart[2] = 0x55;
+pchMessageStart[3] = 0x79;
+nDefaultPort = 23982;
+nRPCPort = 23983;
+strDataDir = "testnet";
+
+- Port: 20062
+- RPC Port: 20063
+- Magic Bytes: 0x6b 0x33 0x25 0x75
+
+Social Network:
+
+- Github: 
+- Forum: 
+- Slack:
+- Telegram: 
+- Discord: 

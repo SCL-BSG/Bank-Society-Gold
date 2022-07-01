@@ -1,0 +1,14 @@
+
+PoS Orphans
+setStakeSeenOrphan.count(pblock->GetProofOfStake()) && !mapOrphanBlocksByPrev.count(hash)){
+
+LogPrintf("*** RGP ProcessBlock Debug Prune 001G \n");
+
+            PruneOrphanBlocks();
+
+mapOrphanBlocks.insert(make_pair(hash, pblock2));
+            mapOrphanBlocksByPrev.insert(make_pair(pblock2->hashPrev, pblock2));
+            if (pblock->IsProofOfStake())
+                setStakeSeenOrphan.insert(pblock->GetProofOfStake());
+// Ask this guy to fill in what we're missing
+            PushGetBlocks(pfrom, pindexBest, GetOrphanRoot(hash));

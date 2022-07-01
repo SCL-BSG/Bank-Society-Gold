@@ -84,7 +84,7 @@ downloads and dependencies: c:/dependsBSG
 == start a MSYS shell c:\msys64\mingw32.exe                        ==
 == start a DOS shell cmd.exe                                       ==
 =====================================================================
-DOS  :  set path=%path%;C:\mingw\bin;C:\dependsBSG\qt-everywhere-opensource-src-5.7.0\qtbase\bin;C:/dependsBSG/usr/local/wbin;c:/dependsBSG/openssl-1.0.1g/include;C:\Python27
+DOS  :  set path=%path%;C:\mingw\bin;C:\dependsBSG\qt-everywhere-opensource-src-5.7.0\qtbase\bin;C:/dependsBSG/usr/local/wbin;c:/dependsBSG/openssl-1.0.1g/include;C:\Python27;C:\dependsBSG\qt570\qtbase\bin
 
 MSYS :  export PATH=${PATH}:/c/mingw/bin:/c/dependsBSG/usr/local/wbin
 
