@@ -1083,6 +1083,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
         ignore_check = false;
         blockchain_stuck = false;
 
+        LogPrintf("*** RGP TimeCheck GETTIME() %d GETBLCOKTIME() %d \n", GetTime(),  pindexBest->GetBlockTime() );
 
         //while ( IsInitialBlockDownload() )
         while ( Time_to_Last_block > 240 )
@@ -1123,6 +1124,9 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                 MilliSleep( 5000 ); /* 5 second delay */
                 /* RGP, Otherwise, blocks are coming in and this may be a synching process */
                 Time_to_Last_block = GetTime() - pindexBest->GetBlockTime();
+
+                LogPrintf("RGP CONFIRM block_time %d pindexBest->GetBlockTime %d Time_to_Last_block %d  \n", Last_known_block_time, pindexBest->GetBlockTime(), Time_to_Last_block );
+
                 /* Update Last know block time ro determine if we are synched */
                 Last_known_block_time = pindexBest->GetBlockTime();
                 continue;
@@ -1131,6 +1135,14 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
             {
                 /* Block time is not changing, could be waiting at end of the block chain */
                 LogPrintf("RGP Miner Stake synch loop, blocks stuck ... \n");
+                Time_to_Last_block = GetTime() - pindexBest->GetBlockTime();
+                LogPrintf(" RGP stuck check time to gettime() %d ",Time_to_Last_block   );
+                if ( Time_to_Last_block > 240 )
+                {
+                    LogPrintf(" RGP stopping create block!");
+                    MilliSleep(1000);
+                    continue;
+                }
             }
 
             /* Check for scenario where the block time is not changing, but time is changing

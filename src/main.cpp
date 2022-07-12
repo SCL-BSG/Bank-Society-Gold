@@ -4821,15 +4821,17 @@ CInv Problem_Blocks_Inv;
 
     }
 
+    /* -- RGP JIRA Reference BSG-123
+       -- */
 
-    else if (pfrom->nVersion == 0)
-    {
+    //else if (pfrom->nVersion == 0)
+    //{
 
         // Must have a version message before anything else
-        LogPrintf("*** RGP MISBEHAVING, Version is ZERO \n");
-        Misbehaving(pfrom->GetId(), 1);
+    //    LogPrintf("*** RGP MISBEHAVING, Version is ZERO \n");
+    //    Misbehaving(pfrom->GetId(), 1);
         //return false;
-    }
+    //}
 
 
     else if (strCommand == "verack")
@@ -5036,7 +5038,7 @@ CInv Problem_Blocks_Inv;
             else
             {
 
-                LogPrintf("*** RGP Inventory, already have this hash %s \n", Inventory_Item.ToString() );
+                //LogPrintf("*** RGP Inventory, already have this hash %s \n", Inventory_Item.ToString() );
 
                 /* RGP test for synch */
                 PushGetBlocks(pfrom, pindexBest, pindexBest->GetBlockHash()  ); /* RGP change the blockhash from 0 */
