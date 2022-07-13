@@ -64,7 +64,20 @@ set<pair<COutPoint, unsigned int> > setStakeSeen;
 
 CBigNum bnProofOfStakeLimit(~uint256(0) >> 20);
 
-unsigned int nStakeMinAge = 60 * 60; // 1 hours
+/* RGP Pre JIRA BSG-67 statment */
+//unsigned int nStakeMinAge = 60 * 60; // 1 hours
+
+/* ---------------------
+   -- RGP JIRA BSG-67 --
+   -----------------------------------------------------------
+   -- nStakeMinAge is extending the time required for coins --
+   -- in a wallet to be mature, before they are considered  --
+   -- for staking.                                          --
+   ----------------------------------------------------------- */
+unsigned int nStakeMinAge = 60 * 60 * 4; // 4 hours
+
+
+
 unsigned int nModifierInterval = 8 * 60; // time to elapse before new modifier is computed (8 hours)
 
 /* RGP, CoinbaseMaturity is value - 20 blocks before you can spend coins
