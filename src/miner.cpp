@@ -1280,18 +1280,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
         /* wait a random time before creating a new block */
         MilliSleep( stake_timeout );
 
-        /* --------------------------------------------
-           -- RGP, replaced auto_ptr with unique_ptr --
-           -------------------------------------------- */
 
-        //* auto_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees)); */
-        //unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
-        //if (!pblock.get())
-        //{
-        //    LogPrintf("*** RGP Minerthread pblock.get failed!!! \n");
-        //    MilliSleep( 10000 );
-        //}
-        //else
         {
 
             /* -------------------------------------------------------------------
@@ -1409,6 +1398,10 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
 
 
             SetThreadPriority(THREAD_PRIORITY_ABOVE_NORMAL);
+
+            /* --------------------------------------------
+               -- RGP, replaced auto_ptr with unique_ptr --
+               -------------------------------------------- */
 
 
             /* auto_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees)); */

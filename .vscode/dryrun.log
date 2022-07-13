@@ -1,0 +1,208 @@
+make.exe: Entering directory `/c/Users/Bob Pickles/Documents/GitHub/BSGold'
+/usr/lib/qt5/bin/qmake -o Makefile Society-Gold-qt.pro
+ 
+make.exe: /usr/lib/qt5/bin/qmake: Command not found
+
+make.exe: *** [Makefile] Error 127
+make.exe: Failed to remake makefile `Makefile'.
+
+cd /home/bpickles/BSC_G/src/leveldb && CC=gcc CXX=g++ make.exe OPT="-pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2" libleveldb.a libmemenv.a
+ 
+/bin/sh: line 0: cd: /home/bpickles/BSC_G/src/leveldb: No such file or directory
+
+make.exe: *** [/home/bpickles/BSC_G/src/leveldb/libleveldb.a] Error 1
+
+cd /home/bpickles/BSC_G/src/secp256k1 && ./autogen.sh && ./configure --enable-module-recovery && CC=gcc CXX=g++ make.exe OPT="-pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2"
+ 
+/bin/sh: line 0: cd: /home/bpickles/BSC_G/src/secp256k1: No such file or directory
+
+make.exe: *** [/home/bpickles/BSC_G/src/secp256k1/src/libsecp256k1_la-secp256k1.o] Error 1
+
+cd /home/bpickles/BSC_G; /bin/sh share/genbuild.sh /home/bpickles/BSC_G/build/build.h
+ 
+make.exe: *** No rule to make target `/usr/lib/qt5/bin/uic', needed by `build/ui_coincontroldialog.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/bio.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/e_os2.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/opensslconf.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/crypto.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/stack.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/safestack.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/opensslv.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/ossl_typ.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/ebcdic.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/symhacks.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/evp.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/objects.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/obj_mac.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/asn1.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/bn.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/buffer.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/rand.h', needed by `build/ui_sendcoinsentry.h'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/sha.h', needed by `build/txdb-leveldb.o'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/ripemd.h', needed by `build/txdb-leveldb.o'.
+
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/coincontroltreewidget.o src/qt/coincontroltreewidget.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/bitcoinaddressvalidator.o src/qt/bitcoinaddressvalidator.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/allocators.o src/allocators.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/version.o src/version.cpp
+ 
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/err.h', needed by `build/util.o'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/lhash.h', needed by `build/util.o'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/ec.h', needed by `build/ecwrapper.o'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/ecdsa.h', needed by `build/ecwrapper.o'.
+
+make.exe: *** No rule to make target `src/secp256k1/include/secp256k1.h', needed by `build/key.o'.
+
+make.exe: *** No rule to make target `src/secp256k1/include/secp256k1_recovery.h', needed by `build/key.o'.
+
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/monitoreddatamapper.o src/qt/monitoreddatamapper.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/trafficgraphwidget.o src/qt/trafficgraphwidget.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/bitcoinstrings.o src/qt/bitcoinstrings.cpp
+ 
+make.exe: *** No rule to make target `/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp', needed by `build/moc_predefs.h'.
+
+make.exe: *** No rule to make target `/usr/lib/qt5/bin/moc', needed by `build/overviewpage.moc'.
+
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/csvmodelwriter.o src/qt/csvmodelwriter.cpp
+ 
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/crypto/evp/evp_locl.h', needed by `build/crypter.o'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/ecdh.h', needed by `build/crypter.o'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/aes.h', needed by `build/crypter.o'.
+
+make.exe: *** No rule to make target `../coin_depends/openssl-1.0.1l/include/openssl/hmac.h', needed by `build/crypter.o'.
+
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/qvalidatedlineedit.o src/qt/qvalidatedlineedit.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/qvaluecombobox.o src/qt/qvaluecombobox.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/notificator.o src/qt/notificator.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/flowlayout.o src/qt/flowlayout.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/hmac_sha256.o src/crypto/hmac_sha256.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/hmac_sha512.o src/crypto/hmac_sha512.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/ripemd160.o src/crypto/ripemd160.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/sha1.o src/crypto/sha1.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/sha256.o src/crypto/sha256.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/sha512.o src/crypto/sha512.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/qcustomplot.o src/qt/qcustomplot.cpp
+ 
+g++ -c -pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2 -std=gnu++11 -D_REENTRANT -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wno-unused-variable -fpermissive -Wno-unused-local-typedefs -fPIC -DENABLE_WALLET -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DQT_DISABLE_DEPRECATED_BEFORE=0 -DBOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT -DUSE_DBUS -DHAVE_BUILD_INFO -DUSE_UPNP=1 -DMINIUPNP_STATICLIB -DSTATICLIB -DLINUX -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB -Isrc -Isrc/json -Isrc/qt -Isrc/qt/plugins/mrichtexteditor -Isrc/leveldb/include -Isrc/leveldb/helpers -Isrc/secp256k1/include -I../coin_depends/openssl-1.0.1l/include -I../coin_depends/openssl-1.0.1l/crypto/bn -I../coin_depends/openssl-1.0.1l/crypto/ec -I../coin_depends/openssl-1.0.1l/crypto/evp -I../coin_depends/openssl-1.0.1l/crypto/hmac -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Ibuild -isystem /usr/include/libdrm -Ibuild -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o build/qvalidatedtextedit.o src/qt/qvalidatedtextedit.cpp
+ 
+make.exe: *** No rule to make target `/usr/lib/qt5/bin/rcc', needed by `qrc_bitcoin.cpp'.
+
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_es_CL.ts -qm src/qt/locale/bitcoin_es_CL.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_ro_RO.ts -qm src/qt/locale/bitcoin_ro_RO.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_fr_CA.ts -qm src/qt/locale/bitcoin_fr_CA.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_pt_BR.ts -qm src/qt/locale/bitcoin_pt_BR.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_gl.ts -qm src/qt/locale/bitcoin_gl.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_it.ts -qm src/qt/locale/bitcoin_it.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_nb.ts -qm src/qt/locale/bitcoin_nb.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_tr.ts -qm src/qt/locale/bitcoin_tr.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_en.ts -qm src/qt/locale/bitcoin_en.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_eo.ts -qm src/qt/locale/bitcoin_eo.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_sl_SI.ts -qm src/qt/locale/bitcoin_sl_SI.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_pl.ts -qm src/qt/locale/bitcoin_pl.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_el_GR.ts -qm src/qt/locale/bitcoin_el_GR.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_es.ts -qm src/qt/locale/bitcoin_es.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_ja.ts -qm src/qt/locale/bitcoin_ja.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_ru.ts -qm src/qt/locale/bitcoin_ru.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_nl.ts -qm src/qt/locale/bitcoin_nl.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_es_DO.ts -qm src/qt/locale/bitcoin_es_DO.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_cs.ts -qm src/qt/locale/bitcoin_cs.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_ar.ts -qm src/qt/locale/bitcoin_ar.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_ko_KR.ts -qm src/qt/locale/bitcoin_ko_KR.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_pt_PT.ts -qm src/qt/locale/bitcoin_pt_PT.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_he.ts -qm src/qt/locale/bitcoin_he.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_fa.ts -qm src/qt/locale/bitcoin_fa.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_ca_ES.ts -qm src/qt/locale/bitcoin_ca_ES.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_lt.ts -qm src/qt/locale/bitcoin_lt.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_da.ts -qm src/qt/locale/bitcoin_da.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_uk.ts -qm src/qt/locale/bitcoin_uk.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_fi.ts -qm src/qt/locale/bitcoin_fi.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_de.ts -qm src/qt/locale/bitcoin_de.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_zh_CN.ts -qm src/qt/locale/bitcoin_zh_CN.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_zh_TW.ts -qm src/qt/locale/bitcoin_zh_TW.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_sk.ts -qm src/qt/locale/bitcoin_sk.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_hr.ts -qm src/qt/locale/bitcoin_hr.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_hu.ts -qm src/qt/locale/bitcoin_hu.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_fr.ts -qm src/qt/locale/bitcoin_fr.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_pam.ts -qm src/qt/locale/bitcoin_pam.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_ka.ts -qm src/qt/locale/bitcoin_ka.qm
+ 
+/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_sv.ts -qm src/qt/locale/bitcoin_sv.qm
+ 
+make.exe: Leaving directory `/c/Users/Bob Pickles/Documents/GitHub/BSGold'
+ 
