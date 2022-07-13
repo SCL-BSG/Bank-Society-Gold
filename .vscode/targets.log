@@ -14,7 +14,7 @@ make.exe: /usr/lib/qt5/bin/qmake: Command not found
 make.exe: *** [Makefile] Error 127
 
 
-# Make data base, printed on Wed Jul 13 06:11:40 2022
+# Make data base, printed on Wed Jul 13 14:29:39 2022
 
 # Variables
 
@@ -25,12 +25,12 @@ make.exe: *** [Makefile] Error 127
 # environment
 ELECTRON_NO_ATTACH_CONSOLE = 1
 # makefile (from `Makefile', line 698)
+ 
 QMAKE_TARGET = societyG-qt
 # makefile
 MAKEFLAGS = Rrp
 # environment
 NDDSHOME = C:\Program Files\rti_connext_dds-6.0.1
- 
 # makefile (from `Makefile', line 700)
 TARGET = societyG-qt
 # automatic
@@ -118,9 +118,10 @@ VK_SDK_PATH = C:\VulkanSDK\1.2.176.1
 # automatic
 %F = $(notdir $%)
 # makefile (from `Makefile', line 43)
+ 
 RANLIB = 
 # environment
-CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_2528_GVBZYUIRNLPZPAJB
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_24232_WOQDUGVYTBEOPOYU
 # makefile (from `Makefile', line 37)
 DISTNAME = societyG-qt1.0.0.6
 # environment
@@ -294,7 +295,8 @@ OBJECTS = build/txdb-leveldb.o build/bitcoin.o build/bitcoingui.o build/transact
 # environment
 VULKAN_SDK = C:\VulkanSDK\1.2.176.1
 # makefile (from `Makefile', line 376)
-DIST = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/sanitize.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/gcc-base.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/gcc-base-unix.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/g++-base.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/g++-unix.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/qconfig.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_accessibility_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_bootstrap_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_designer.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_devicediscovery_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_egl_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_eglfs_kms_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_eglfsdeviceintegration_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_eventdispatcher_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_fb_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_fontdatabase_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_glx_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_help.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_input_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_kms_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_linuxaccessibility_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_opengl.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_opengl_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_openglextensions.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_openglextensions_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_platformcompositor_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_printsupport.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_printsupport_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_qml.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_qmltest.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quick.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quickwidgets.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_service_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_theme_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_uiplugin.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_uitools.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xcb_qpa_lib_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xml.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xml_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_functions.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf .qmake.stash /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resolve_config.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_post.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/thread.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/warn_on.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/moc.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbuscommon.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbusinterfaces.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbusadaptors.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/opengl.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/uic.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qmake_use.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/file_copies.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/testcase_targets.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf Society-Gold-qt.pro src/qt/bitcoingui.h src/qt/transactiontablemodel.h src/qt/addresstablemodel.h src/qt/bantablemodel.h src/qt/optionsdialog.h src/qt/coincontroldialog.h src/qt/coincontroltreewidget.h src/qt/sendcoinsdialog.h src/qt/addressbookpage.h src/qt/signverifymessagedialog.h src/qt/aboutdialog.h src/qt/editaddressdialog.h src/qt/bitcoinaddressvalidator.h src/alert.h src/allocators.h src/addrman.h src/base58.h src/bignum.h src/chainparams.h src/chainparamsseeds.h src/checkpoints.h src/compat.h src/coincontrol.h src/sync.h src/util.h src/hash.h src/uint256.h src/kernel.h src/pbkdf2.h src/serialize.h src/support/cleanse.h src/core.h src/main.h src/miner.h src/net.h src/ecwrapper.h src/key.h src/pubkey.h src/db.h src/txdb.h src/txmempool.h src/walletdb.h src/scrypt.h src/init.h src/mruset.h src/json/json_spirit_writer_template.h src/json/json_spirit_writer.h src/json/json_spirit_value.h src/json/json_spirit_utils.h src/json/json_spirit_stream_reader.h src/json/json_spirit_reader_template.h src/json/json_spirit_reader.h src/json/json_spirit_error_position.h src/json/json_spirit.h src/qt/clientmodel.h src/qt/guiutil.h src/qt/transactionrecord.h src/qt/guiconstants.h src/qt/optionsmodel.h src/qt/monitoreddatamapper.h src/qt/peertablemodel.h src/qt/trafficgraphwidget.h src/qt/transactiondesc.h src/qt/transactiondescdialog.h src/qt/bitcoinamountfield.h src/wallet.h src/keystore.h src/qt/transactionfilterproxy.h src/qt/transactionview.h src/qt/walletmodel.h src/qt/walletmodeltransaction.h src/rpcclient.h src/rpcprotocol.h src/rpcserver.h src/limitedmap.h src/qt/overviewpage.h src/qt/csvmodelwriter.h src/crypter.h src/qt/sendcoinsentry.h src/qt/qvalidatedlineedit.h src/qt/bitcoinunits.h src/qt/qvaluecombobox.h src/qt/askpassphrasedialog.h src/protocol.h src/qt/notificator.h src/qt/paymentserver.h src/ui_interface.h src/qt/rpcconsole.h src/version.h src/netbase.h src/clientversion.h src/threadsafety.h src/tinyformat.h src/stealth.h src/qt/flowlayout.h src/qt/darksendconfig.h src/masternode.h src/darksend.h src/darksend-relay.h src/instantx.h src/activemasternode.h src/masternodeconfig.h src/masternodeman.h src/masternode-payments.h src/script.h src/spork.h src/crypto/common.h src/crypto/hmac_sha256.h src/crypto/hmac_sha512.h src/crypto/ripemd160.h src/crypto/sha1.h src/crypto/sha256.h src/crypto/sha512.h src/qt/masternodemanager.h src/qt/addeditadrenalinenode.h src/qt/adrenalinenodeconfigdialog.h src/qt/qcustomplot.h src/smessage.h src/qt/messagepage.h src/qt/messagemodel.h src/qt/sendmessagesdialog.h src/qt/sendmessagesentry.h src/qt/blockbrowser.h src/qt/plugins/mrichtexteditor/mrichtextedit.h src/qt/qvalidatedtextedit.h src/txdb-leveldb.cpp src/qt/bitcoin.cpp src/qt/bitcoingui.cpp src/qt/transactiontablemodel.cpp src/qt/addresstablemodel.cpp src/qt/bantablemodel.cpp src/qt/optionsdialog.cpp src/qt/sendcoinsdialog.cpp src/qt/coincontroldialog.cpp src/qt/coincontroltreewidget.cpp src/qt/addressbookpage.cpp src/qt/signverifymessagedialog.cpp src/qt/aboutdialog.cpp src/qt/editaddressdialog.cpp src/qt/bitcoinaddressvalidator.cpp src/alert.cpp src/allocators.cpp src/base58.cpp src/chainparams.cpp src/version.cpp src/script.cpp src/sync.cpp src/txmempool.cpp src/util.cpp src/hash.cpp src/netbase.cpp src/ecwrapper.cpp src/key.cpp src/pubkey.cpp src/scrypt.cpp src/core.cpp src/main.cpp src/miner.cpp src/init.cpp src/net.cpp src/checkpoints.cpp src/addrman.cpp src/db.cpp src/walletdb.cpp src/qt/clientmodel.cpp src/qt/guiutil.cpp src/qt/transactionrecord.cpp src/qt/optionsmodel.cpp src/qt/monitoreddatamapper.cpp src/qt/peertablemodel.cpp src/qt/trafficgraphwidget.cpp src/qt/transactiondesc.cpp src/qt/transactiondescdialog.cpp src/qt/bitcoinstrings.cpp src/qt/bitcoinamountfield.cpp src/wallet.cpp src/keystore.cpp src/qt/transactionfilterproxy.cpp src/qt/transactionview.cpp src/qt/walletmodel.cpp src/qt/walletmodeltransaction.cpp src/rpcclient.cpp src/rpcprotocol.cpp src/rpcserver.cpp src/rpcdump.cpp src/rpcmisc.cpp src/rpcnet.cpp src/rpcmining.cpp src/rpcwallet.cpp src/rpcblockchain.cpp src/rpcrawtransaction.cpp src/qt/overviewpage.cpp src/qt/csvmodelwriter.cpp src/crypter.cpp src/qt/sendcoinsentry.cpp src/qt/qvalidatedlineedit.cpp src/qt/bitcoinunits.cpp src/qt/qvaluecombobox.cpp src/qt/askpassphrasedialog.cpp src/protocol.cpp src/qt/notificator.cpp src/qt/paymentserver.cpp src/qt/rpcconsole.cpp src/noui.cpp src/kernel.cpp src/pbkdf2.cpp src/support/cleanse.cpp src/stealth.cpp src/qt/flowlayout.cpp src/qt/darksendconfig.cpp src/masternode.cpp src/darksend.cpp src/darksend-relay.cpp src/rpcdarksend.cpp src/instantx.cpp src/activemasternode.cpp src/masternodeman.cpp src/masternode-payments.cpp src/spork.cpp src/masternodeconfig.cpp src/crypto/hmac_sha256.cpp src/crypto/hmac_sha512.cpp src/crypto/ripemd160.cpp src/crypto/sha1.cpp src/crypto/sha256.cpp src/crypto/sha512.cpp src/qt/masternodemanager.cpp src/qt/addeditadrenalinenode.cpp src/qt/adrenalinenodeconfigdialog.cpp src/qt/qcustomplot.cpp src/smessage.cpp src/qt/messagepage.cpp src/qt/messagemodel.cpp src/qt/sendmessagesdialog.cpp src/qt/sendmessagesentry.cpp src/qt/blockbrowser.cpp src/qt/qvalidatedtextedit.cpp src/qt/plugins/mrichtexteditor/mrichtextedit.cpp src/rpcsmessage.cpp
+DIST = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/sanitize.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/gcc-base.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/gcc-base-unix.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/g++-base.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/g++-unix.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/qconfig.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_accessibility_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_bootstrap_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_designer.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_devicediscovery_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_egl_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_eglfs_kms_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_eglfsdeviceintegration_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_eventdispatcher_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_fb_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_fontdatabase_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_glx_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_help.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_input_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_kms_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_linuxaccessibility_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_opengl.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_opengl_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_openglextensions.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_openglextensions_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_platformcompositor_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_printsupport.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_printsupport_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_qml.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_qmltest.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quick.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quickwidgets.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_service_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_theme_support_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_uiplugin.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_uitools.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xcb_qpa_lib_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xml.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xml_private.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_functions.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf .qmake.stash /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resolve_config.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_post.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/thread.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/warn_on.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/moc.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbuscommon.pri /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbusinterfaces.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbusadaptors.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/opengl.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/uic.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qmake_use.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/file_copies.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/testcase_targets.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf Society-Gold-qt.pro src/qt/bitcoingui.h src/qt/transactiontablemodel.h src/qt/addresstablemodel.h src/qt/bantablemodel.h src/qt/optionsdialog.h src/qt/coincontroldialog.h src/qt/coincontroltreewidget.h src/qt/sendcoinsdialog.h src/qt/addressbookpage.h src/qt/signverifymessagedialog.h src/qt/aboutdialog.h src/qt/editaddressdialog.h src/qt/bitcoinaddressvalidator.h src/alert.h src/allocators.h src/addrman.h src/base58.h src/bignum.h src/chainparams.h src/chainparamsseeds.h src/checkpoints.h src/compat.h src/coincontrol.h src/sync.h src/util.h src/hash.h src/uint256.h src/kernel.h src/pbkdf2.h src/serialize.h src/support/cleanse.h src/core.h src/main.h src/miner.h src/net.h src/ecwrapper.h src/key.h src/pubkey.h src/db.h src/txdb.h src/txmempool.h src/walletdb.h src/scrypt.h src/init.h src/mruset.h src/json/json_spirit_writer_template.h src/json/json_spirit_writer.h src/json/json_spirit_value.h src/json/json_spirit_utils.h src/json/json_spirit_stream_reader.h src/json/json_spirit_reader_template.h src/json/json_spirit_reader.h src/json/json_spirit_error_position.h src/json/json_spirit.h src/qt/clientmodel.h src/qt/guiutil.h src/qt/transactionrecord.h src/qt/guiconstants.h src/qt/optionsmodel.h src/qt/monitoreddatamapper.h src/qt/peertablemodel.h src/qt/trafficgraphwidget.h src/qt/transactiondesc.h src/qt/transactiondescdialog.h src/qt/bitcoinamountfield.h src/wallet.h src/keystore.h src/qt/transactionfilterproxy.h src/qt/transactionview.h src/qt/walletmodel.h src/qt/walletmodeltransaction.h src/rpcclient.h src/rpcprotocol.h src/rpcserver.h src/limitedmap.h src/qt/overviewpage.h src/qt/csvmodelwriter.h src/crypter.h src/qt/sendcoinsentry.h src/qt/qvalidatedlineedit.h src/qt/bitcoinunits.h src/qt/qvaluecombobox.h src/qt/askpassphrasedialog.h src/protocol.h src/qt/notificator.h src/qt/paymentserver.h src/ui_interface.h src/qt/rpcconsole.h src/version.h src/netbase.h src/clientversion.h src/threadsafety.h src/tinyformat.h src/stealth.h src/qt/flowlayout.h src/qt/darksendconfig.h src/masternode.h src/darksend.h src/darksend-relay.h src/instantx.h src/activemasternode.h src/masternodeconfig.h src/masternodeman.h src/masternode-payments.h src/script.h src/spork.h src/crypto/common.h src/crypto/hmac_sha256.h src/crypto/hmac_sha512.h src/crypto/ripemd160.h src/crypto/sha1.h src/crypto/sha256.h src/crypto/sha512.h src/qt/masternodemanager.h src/qt/addeditadrenalinenode.h src/qt/adrenalinenodeconfigdialog.h src/qt/qcustomplot.h src/smessage.h src/qt/messagepage.h src/qt/messagemodel.h src/qt/sendmessagesdialog.h src/qt/sendmessagesentry.h src/qt/blockbrowser.h src/qt/plugins/mrichtexteditor/mrichtextedit.h src/qt/qvalidatedtextedit.h src/txdb-leveldb.cpp src/qt/bitcoin.cpp src/qt/bitcoingui.cpp src/qt/transactiontablemodel.cpp src/qt/addresstablemodel.cpp src/qt/bantablemodel.cpp src/qt/optionsdialog.cpp src/qt/sendcoinsdialog.cpp src/qt/coincontroldialog.cpp src/qt/coincontroltreewidget.cpp src/qt/addressbookpage.cpp src/qt/signverifymessagedialog.cpp src/qt/aboutdialog.cpp src/qt/editaddressdialog.cpp src/qt/bitcoinaddressvalidator.cpp src/alert.cpp src/allocators.cpp src/base58.cpp src/chainparams.cpp src/version.cpp src/script.cpp src/sync.cpp src/txmempool.cpp src/util.cpp src/hash.cpp src/netbase.cpp src/ecwrapper.cpp src/key.cpp src/pubkey.cpp src/scrypt.cpp src/core.cpp src/main.cpp src/miner.cpp src/init.cpp src/net.cpp src/checkpoints.cpp src/addrman.cpp src/db.cpp src/walletdb.cpp src/qt/clientmodel.cpp src/qt/guiutil.cpp src/qt/transactionrecord.cpp src/qt/optionsmodel.cpp src/qt/monitoreddatamapper.cpp  
+src/qt/peertablemodel.cpp src/qt/trafficgraphwidget.cpp src/qt/transactiondesc.cpp src/qt/transactiondescdialog.cpp src/qt/bitcoinstrings.cpp src/qt/bitcoinamountfield.cpp src/wallet.cpp src/keystore.cpp src/qt/transactionfilterproxy.cpp src/qt/transactionview.cpp src/qt/walletmodel.cpp src/qt/walletmodeltransaction.cpp src/rpcclient.cpp src/rpcprotocol.cpp src/rpcserver.cpp src/rpcdump.cpp src/rpcmisc.cpp src/rpcnet.cpp src/rpcmining.cpp src/rpcwallet.cpp src/rpcblockchain.cpp src/rpcrawtransaction.cpp src/qt/overviewpage.cpp src/qt/csvmodelwriter.cpp src/crypter.cpp src/qt/sendcoinsentry.cpp src/qt/qvalidatedlineedit.cpp src/qt/bitcoinunits.cpp src/qt/qvaluecombobox.cpp src/qt/askpassphrasedialog.cpp src/protocol.cpp src/qt/notificator.cpp src/qt/paymentserver.cpp src/qt/rpcconsole.cpp src/noui.cpp src/kernel.cpp src/pbkdf2.cpp src/support/cleanse.cpp src/stealth.cpp src/qt/flowlayout.cpp src/qt/darksendconfig.cpp src/masternode.cpp src/darksend.cpp src/darksend-relay.cpp src/rpcdarksend.cpp src/instantx.cpp src/activemasternode.cpp src/masternodeman.cpp src/masternode-payments.cpp src/spork.cpp src/masternodeconfig.cpp src/crypto/hmac_sha256.cpp src/crypto/hmac_sha512.cpp src/crypto/ripemd160.cpp src/crypto/sha1.cpp src/crypto/sha256.cpp src/crypto/sha512.cpp src/qt/masternodemanager.cpp src/qt/addeditadrenalinenode.cpp src/qt/adrenalinenodeconfigdialog.cpp src/qt/qcustomplot.cpp src/smessage.cpp src/qt/messagepage.cpp src/qt/messagemodel.cpp src/qt/sendmessagesdialog.cpp src/qt/sendmessagesentry.cpp src/qt/blockbrowser.cpp src/qt/qvalidatedtextedit.cpp src/qt/plugins/mrichtexteditor/mrichtextedit.cpp src/rpcsmessage.cpp
 # environment
 LANG = C
 # environment
@@ -306,11 +308,10 @@ FPS_BROWSER_APP_PROFILE_STRING = Internet Explorer
 # makefile (from `Makefile', line 33)
 DEL_DIR = rmdir
 # environment
-VSCODE_PID = 2528
+VSCODE_PID = 24232
 # environment
 USERDOMAIN_ROAMINGPROFILE = LAPTOP-N3V2EBUU
 # variable set hash-table stats:
- 
 # Load=145/1024=14%, Rehash=0, Collisions=19/177=11%
 
 # Pattern-specific Variable Values
@@ -498,6 +499,7 @@ build/ui_signverifymessagedialog.h: src/qt/forms/signverifymessagedialog.ui /usr
 	
 
 src/qt/locale/bitcoin_en.qm: src/qt/locale/bitcoin_en.ts
+ 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -508,7 +510,6 @@ src/qt/locale/bitcoin_en.qm: src/qt/locale/bitcoin_en.ts
 # Not a target:
 src/qt/locale/bitcoin_ka.ts:
 #  Implicit rule search has not been done.
- 
 #  Modification time never checked.
 #  File has not been updated.
 
@@ -704,7 +705,6 @@ src/qt/locale/bitcoin_he.qm: src/qt/locale/bitcoin_he.ts
 	/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_he.ts -qm src/qt/locale/bitcoin_he.qm
 	
 
- 
 # Not a target:
 src/qt/locale/bitcoin_ky.ts:
 #  Implicit rule search has not been done.
@@ -734,6 +734,7 @@ build/moc_sendmessagesentry.cpp: src/qt/sendmessagesentry.h build/moc_predefs.h 
 	
 
 # Not a target:
+ 
 src/qt/locale/bitcoin_tr.ts:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -879,7 +880,6 @@ build/overviewpage.o: src/qt/overviewpage.cpp src/qt/overviewpage.h src/util.h s
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 #  commands to execute (from `Makefile', line 5556):
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/overviewpage.o src/qt/overviewpage.cpp
 	
@@ -1003,6 +1003,7 @@ src/ecwrapper.cpp:
 build/rpcmisc.o: src/rpcmisc.cpp src/base58.h src/chainparams.h src/bignum.h src/serialize.h src/allocators.h src/support/cleanse.h src/version.h src/clientversion.h src/uint256.h ../coin_depends/openssl-1.0.1l/include/openssl/bn.h ../coin_depends/openssl-1.0.1l/include/openssl/e_os2.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslconf.h ../coin_depends/openssl-1.0.1l/include/openssl/ossl_typ.h ../coin_depends/openssl-1.0.1l/include/openssl/crypto.h ../coin_depends/openssl-1.0.1l/include/openssl/stack.h ../coin_depends/openssl-1.0.1l/include/openssl/safestack.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslv.h ../coin_depends/openssl-1.0.1l/include/openssl/ebcdic.h ../coin_depends/openssl-1.0.1l/include/openssl/symhacks.h src/util.h src/tinyformat.h ../coin_depends/openssl-1.0.1l/include/openssl/bio.h ../coin_depends/openssl-1.0.1l/include/openssl/evp.h ../coin_depends/openssl-1.0.1l/include/openssl/objects.h ../coin_depends/openssl-1.0.1l/include/openssl/obj_mac.h ../coin_depends/openssl-1.0.1l/include/openssl/asn1.h ../coin_depends/openssl-1.0.1l/include/openssl/buffer.h ../coin_depends/openssl-1.0.1l/include/openssl/rand.h src/pubkey.h src/hash.h ../coin_depends/openssl-1.0.1l/include/openssl/sha.h ../coin_depends/openssl-1.0.1l/include/openssl/ripemd.h src/crypto/ripemd160.h src/crypto/sha256.h src/script.h src/keystore.h src/key.h src/sync.h src/threadsafety.h src/stealth.h src/init.h src/wallet.h src/walletdb.h src/db.h src/crypter.h src/main.h src/core.h src/txmempool.h src/net.h src/compat.h src/limitedmap.h src/mruset.h src/netbase.h src/protocol.h src/scrypt.h src/ui_interface.h src/rpcserver.h src/rpcprotocol.h src/json/json_spirit_reader_template.h src/json/json_spirit_value.h src/json/json_spirit_error_position.h src/json/json_spirit_utils.h src/json/json_spirit_writer_template.h src/spork.h src/darksend.h src/activemasternode.h src/masternode.h src/masternodeman.h src/masternode-payments.h src/darksend-relay.h
 #  Implicit rule search has not been done.
 #  Modification time never checked.
+ 
 #  File has not been updated.
 #  commands to execute (from `Makefile', line 5138):
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/rpcmisc.o src/rpcmisc.cpp
@@ -1072,7 +1073,6 @@ build/sha512.o: src/crypto/sha512.cpp src/crypto/sha512.h src/crypto/common.h
 #  File has not been updated.
 #  commands to execute (from `Makefile', line 6859):
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/sha512.o src/crypto/sha512.cpp
- 
 	
 
 # Not a target:
@@ -1225,6 +1225,7 @@ src/json/json_spirit.h:
 
 build/ui_messagepage.h: src/qt/forms/messagepage.ui /usr/lib/qt5/bin/uic src/qt/plugins/mrichtexteditor/mrichtextedit.h build/ui_mrichtextedit.h
 #  Implicit rule search has not been done.
+ 
 #  Modification time never checked.
 #  File has not been updated.
 #  commands to execute (from `Makefile', line 2301):
@@ -1258,7 +1259,6 @@ src/qt/plugins/mrichtexteditor/mrichtextedit.h:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quickwidgets.pri:
 #  Implicit rule search has been done.
@@ -1414,7 +1414,6 @@ build/qvaluecombobox.o: src/qt/qvaluecombobox.cpp src/qt/qvaluecombobox.h
 #  Modification time never checked.
 #  File has not been updated.
 #  commands to execute (from `Makefile', line 5742):
- 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/qvaluecombobox.o src/qt/qvaluecombobox.cpp
 	
 
@@ -1496,6 +1495,7 @@ build/rpcrawtransaction.o: src/rpcrawtransaction.cpp src/base58.h src/chainparam
 
 # Not a target:
 ../coin_depends/openssl-1.0.1l/include/openssl/ossl_typ.h:
+ 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -1545,7 +1545,6 @@ src/qt/messagepage.cpp:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 
 src/qt/locale/bitcoin_bs.qm: src/qt/locale/bitcoin_bs.ts
 #  Implicit rule search has not been done.
@@ -1691,7 +1690,6 @@ build/masternodeman.o: src/masternodeman.cpp src/masternodeman.h src/bignum.h sr
 	
 
 # Not a target:
- 
 src/qt/locale/bitcoin_es_CL.ts:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -1727,6 +1725,7 @@ src/walletdb.cpp:
 
 # Not a target:
 ../coin_depends/openssl-1.0.1l/include/openssl/obj_mac.h:
+ 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -1906,7 +1905,6 @@ src/qt/locale/bitcoin_sr.qm: src/qt/locale/bitcoin_sr.ts
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 #  commands to execute (from `Makefile', line 1117):
 	/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_sr.ts -qm src/qt/locale/bitcoin_sr.qm
 	
@@ -2054,12 +2052,12 @@ src/qt/forms/masternodemanager.ui:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 
 /home/bpickles/BSC_G/src/secp256k1/src/libsecp256k1_la-secp256k1.o: FORCE
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
+ 
 #  commands to execute (from `Makefile', line 935):
 	cd /home/bpickles/BSC_G/src/secp256k1 && ./autogen.sh && ./configure --enable-module-recovery && CC=gcc CXX=g++ $(MAKE) OPT="-pipe -fstack-protector-all --param ssp-buffer-size=1 -D_FORTIFY_SOURCE=2 -O2"
 	
@@ -2133,7 +2131,6 @@ Makefile: Society-Gold-qt.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qm
 #  commands to execute (from `Makefile', line 801):
 	$(QMAKE) -o Makefile Society-Gold-qt.pro
 	
- 
 
 # Not a target:
 src/qt/res/icons/clock4.png:
@@ -2260,6 +2257,7 @@ src/pbkdf2.h:
 #  Modification time never checked.
 #  File has not been updated.
 
+ 
 src/qt/locale/bitcoin_cy.qm: src/qt/locale/bitcoin_cy.ts
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -2298,7 +2296,6 @@ build/rpcdump.o: src/rpcdump.cpp src/init.h src/wallet.h src/walletdb.h src/db.h
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 #  commands to execute (from `Makefile', line 5066):
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/rpcdump.o src/rpcdump.cpp
 	
@@ -2419,7 +2416,6 @@ build/noui.o: src/noui.cpp src/ui_interface.h src/init.h src/wallet.h src/wallet
 # Not a target:
 src/qt/res/icons/tx_output.png:
 #  Implicit rule search has not been done.
- 
 #  Modification time never checked.
 #  File has not been updated.
 
@@ -2497,6 +2493,7 @@ src/qt/bantablemodel.cpp:
 
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network.pri:
 #  Implicit rule search has been done.
+ 
 #  File does not exist.
 #  File has been updated.
 #  Successfully updated.
@@ -2587,7 +2584,6 @@ src/qt/forms/addressbookpage.ui:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf:
 #  Implicit rule search has been done.
@@ -2715,6 +2711,7 @@ src/qt/optionsmodel.h:
 #  File has not been updated.
 
 # Not a target:
+ 
 src/masternodeconfig.h:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -2748,7 +2745,6 @@ build/moc_blockbrowser.o: build/moc_blockbrowser.cpp
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 #  commands to execute (from `Makefile', line 7679):
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/moc_blockbrowser.o build/moc_blockbrowser.cpp
 	
@@ -2906,7 +2902,6 @@ src/qt/locale/bitcoin_ms_MY.qm: src/qt/locale/bitcoin_ms_MY.ts
 
 # Not a target:
 /usr/lib/qt5/bin/moc:
- 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -2947,7 +2942,8 @@ src/qt/qcustomplot.h:
 #  Modification time never checked.
 #  File has not been updated.
 
-build/wallet.o: src/wallet.cpp src/wallet.h src/walletdb.h src/db.h src/serialize.h src/allocators.h src/support/cleanse.h src/version.h src/clientversion.h src/sync.h src/threadsafety.h src/key.h src/pubkey.h src/hash.h src/uint256.h ../coin_depends/openssl-1.0.1l/include/openssl/sha.h ../coin_depends/openssl-1.0.1l/include/openssl/e_os2.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslconf.h ../coin_depends/openssl-1.0.1l/include/openssl/ripemd.h src/crypto/ripemd160.h src/crypto/sha256.h src/keystore.h src/script.h src/bignum.h ../coin_depends/openssl-1.0.1l/include/openssl/bn.h ../coin_depends/openssl-1.0.1l/include/openssl/ossl_typ.h ../coin_depends/openssl-1.0.1l/include/openssl/crypto.h ../coin_depends/openssl-1.0.1l/include/openssl/stack.h ../coin_depends/openssl-1.0.1l/include/openssl/safestack.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslv.h ../coin_depends/openssl-1.0.1l/include/openssl/ebcdic.h ../coin_depends/openssl-1.0.1l/include/openssl/symhacks.h src/util.h src/tinyformat.h ../coin_depends/openssl-1.0.1l/include/openssl/bio.h ../coin_depends/openssl-1.0.1l/include/openssl/evp.h ../coin_depends/openssl-1.0.1l/include/openssl/objects.h ../coin_depends/openssl-1.0.1l/include/openssl/obj_mac.h ../coin_depends/openssl-1.0.1l/include/openssl/asn1.h ../coin_depends/openssl-1.0.1l/include/openssl/buffer.h ../coin_depends/openssl-1.0.1l/include/openssl/rand.h src/stealth.h src/crypter.h src/main.h src/core.h src/txmempool.h src/net.h src/compat.h src/limitedmap.h src/mruset.h src/netbase.h src/protocol.h src/chainparams.h src/scrypt.h src/ui_interface.h src/base58.h src/coincontrol.h src/kernel.h src/txdb.h src/txdb-leveldb.h src/leveldb/include/leveldb/db.h src/leveldb/include/leveldb/iterator.h src/leveldb/include/leveldb/slice.h src/leveldb/include/leveldb/status.h src/leveldb/include/leveldb/options.h src/leveldb/include/leveldb/write_batch.h src/spork.h src/darksend.h src/activemasternode.h src/masternode.h src/init.h src/masternodeman.h src/masternode-payments.h src/darksend-relay.h src/instantx.h src/smessage.h src/lz4/lz4.h
+build/wallet.o: src/wallet.cpp src/wallet.h src/walletdb.h src/db.h src/serialize.h src/allocators.h src/support/cleanse.h src/version.h src/clientversion.h src/sync.h src/threadsafety.h src/key.h src/pubkey.h src/hash.h src/uint256.h ../coin_depends/openssl-1.0.1l/include/openssl/sha.h ../coin_depends/openssl-1.0.1l/include/openssl/e_os2.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslconf.h ../coin_depends/openssl-1.0.1l/include/openssl/ripemd.h src/crypto/ripemd160.h src/crypto/sha256.h src/keystore.h src/script.h src/bignum.h ../coin_depends/openssl-1.0.1l/include/openssl/bn.h ../coin_depends/openssl-1.0.1l/include/openssl/ossl_typ.h ../coin_depends/openssl-1.0.1l/include/openssl/crypto.h ../coin_depends/openssl-1.0.1l/include/openssl/stack.h ../coin_depends/openssl-1.0.1l/include/openssl/safestack.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslv.h ../coin_depends/openssl-1.0.1l/include/openssl/ebcdic.h ../coin_depends/openssl-1.0.1l/include/openssl/symhacks.h src/util.h src/tinyformat.h ../coin_depends/openssl-1.0.1l/include/openssl/bio.h ../coin_depends/openssl-1.0.1l/include/openssl/evp.h ../coin_depends/openssl-1.0.1l/include/openssl/objects.h ../coin_depends/openssl-1.0.1l/include/openssl/obj_mac.h ../coin_depends/openssl-1.0.1l/include/openssl/asn1.h ../coin_depends/openssl-1.0.1l/include/openssl/buffer.h ../coin_depends/openssl-1.0.1l/include/openssl/rand.h src/stealth.h src/crypter.h src/main.h src/core.h src/txmempool.h src/net.h src/compat.h src/limitedmap.h src/mruset.h src/netbase.h src/protocol.h src/chainparams.h src/scrypt.h src/ui_interface.h src/base58.h src/coincontrol.h src/kernel.h src/txdb.h src/txdb-leveldb.h src/leveldb/include/leveldb/db.h src/leveldb/include/leveldb/iterator.h src/leveldb/include/leveldb/slice.h src/leveldb/include/leveldb/status.h src/leveldb/include/leveldb/options.h src/leveldb/include/leveldb/write_batch.h src/spork.h src/darksend.h src/activemasternode.h src/masternode.h src/init.h src/masternodeman.h src/masternode-payments.h src/darksend-relay. 
+h src/instantx.h src/smessage.h src/lz4/lz4.h
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -3053,7 +3049,6 @@ build/sendmessagesdialog.o: src/qt/sendmessagesdialog.cpp src/qt/sendmessagesdia
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/sendmessagesdialog.o src/qt/sendmessagesdialog.cpp
 	
 
- 
 # Not a target:
 ../coin_depends/openssl-1.0.1l/include/openssl/ecdsa.h:
 #  Implicit rule search has not been done.
@@ -3220,12 +3215,12 @@ build/ui_adrenalinenodeconfigdialog.h: src/qt/forms/adrenalinenodeconfigdialog.u
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 #  commands to execute (from `Makefile', line 2295):
 	/usr/lib/qt5/bin/uic src/qt/forms/adrenalinenodeconfigdialog.ui -o build/ui_adrenalinenodeconfigdialog.h
 	
 
 build/moc_askpassphrasedialog.cpp: src/qt/askpassphrasedialog.h build/moc_predefs.h /usr/lib/qt5/bin/moc
+ 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -3401,8 +3396,7 @@ src/qt/locale/bitcoin_tr.qm: src/qt/locale/bitcoin_tr.ts
 	/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_tr.ts -qm src/qt/locale/bitcoin_tr.qm
 	
 
-build/rpcserver.o: src/rpcserver.cpp src/rpcserver.h src/uint256.h src/rpcprotocol.h src/compat.h src/json/json_spirit_reader_template.h src/json/json_spirit_value.h src/json/json_spirit_error_position.h src/json/json_spirit_utils.h src/json/json_spirit_writer_template.h src/base58.h src/chainparams.h src/bignum.h src/serialize.h src/allocators.h src/support/cleanse.h src/version.h src/clientversion.h ../coin_depends/openssl-1.0.1l/include/openssl/bn.h ../coin_depends/openssl-1.0.1l/include/openssl/e_os2.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslconf.h ../coin_depends/openssl-1.0.1l/include/openssl/ossl_typ.h ../coin_depends/openssl-1.0.1l/include/openssl/crypto.h ../coin_depends/openssl-1.0.1l/include/openssl/stack.h ../coin_depends/openssl-1.0.1l/include/openssl/safestack.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslv.h ../coin_depends/openssl-1.0.1l/include/openssl/ebcdic.h ../coin_depends/openssl-1.0.1l/include/openssl/symhacks.h src/util.h src/tinyformat.h ../coin_depends/openssl 
--1.0.1l/include/openssl/bio.h ../coin_depends/openssl-1.0.1l/include/openssl/evp.h ../coin_depends/openssl-1.0.1l/include/openssl/objects.h ../coin_depends/openssl-1.0.1l/include/openssl/obj_mac.h ../coin_depends/openssl-1.0.1l/include/openssl/asn1.h ../coin_depends/openssl-1.0.1l/include/openssl/buffer.h ../coin_depends/openssl-1.0.1l/include/openssl/rand.h src/pubkey.h src/hash.h ../coin_depends/openssl-1.0.1l/include/openssl/sha.h ../coin_depends/openssl-1.0.1l/include/openssl/ripemd.h src/crypto/ripemd160.h src/crypto/sha256.h src/script.h src/keystore.h src/key.h src/sync.h src/threadsafety.h src/stealth.h src/init.h src/wallet.h src/walletdb.h src/db.h src/crypter.h src/main.h src/core.h src/txmempool.h src/net.h src/limitedmap.h src/mruset.h src/netbase.h src/protocol.h src/scrypt.h src/ui_interface.h
+build/rpcserver.o: src/rpcserver.cpp src/rpcserver.h src/uint256.h src/rpcprotocol.h src/compat.h src/json/json_spirit_reader_template.h src/json/json_spirit_value.h src/json/json_spirit_error_position.h src/json/json_spirit_utils.h src/json/json_spirit_writer_template.h src/base58.h src/chainparams.h src/bignum.h src/serialize.h src/allocators.h src/support/cleanse.h src/version.h src/clientversion.h ../coin_depends/openssl-1.0.1l/include/openssl/bn.h ../coin_depends/openssl-1.0.1l/include/openssl/e_os2.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslconf.h ../coin_depends/openssl-1.0.1l/include/openssl/ossl_typ.h ../coin_depends/openssl-1.0.1l/include/openssl/crypto.h ../coin_depends/openssl-1.0.1l/include/openssl/stack.h ../coin_depends/openssl-1.0.1l/include/openssl/safestack.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslv.h ../coin_depends/openssl-1.0.1l/include/openssl/ebcdic.h ../coin_depends/openssl-1.0.1l/include/openssl/symhacks.h src/util.h src/tinyformat.h ../coin_depends/openssl-1.0.1l/include/openssl/bio.h ../coin_depends/openssl-1.0.1l/include/openssl/evp.h ../coin_depends/openssl-1.0.1l/include/openssl/objects.h ../coin_depends/openssl-1.0.1l/include/openssl/obj_mac.h ../coin_depends/openssl-1.0.1l/include/openssl/asn1.h ../coin_depends/openssl-1.0.1l/include/openssl/buffer.h ../coin_depends/openssl-1.0.1l/include/openssl/rand.h src/pubkey.h src/hash.h ../coin_depends/openssl-1.0.1l/include/openssl/sha.h ../coin_depends/openssl-1.0.1l/include/openssl/ripemd.h src/crypto/ripemd160.h src/crypto/sha256.h src/script.h src/keystore.h src/key.h src/sync.h src/threadsafety.h src/stealth.h src/init.h src/wallet.h src/walletdb.h src/db.h src/crypter.h src/main.h src/core.h src/txmempool.h src/net.h src/limitedmap.h src/mruset.h src/netbase.h src/protocol.h src/scrypt.h src/ui_interface.h
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -3494,6 +3488,7 @@ src/qt/transactiondesc.cpp:
 #  Modification time never checked.
 #  File has not been updated.
 
+ 
 # Not a target:
 src/qt/blockbrowser.cpp:
 #  Implicit rule search has not been done.
@@ -3557,7 +3552,6 @@ build/moc_sendcoinsentry.o: build/moc_sendcoinsentry.cpp
 #  File does not exist.
 #  File has been updated.
 #  Successfully updated.
- 
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
 
@@ -3707,7 +3701,6 @@ src/qt/peertablemodel.cpp:
 
 build/moc_messagepage.o: build/moc_messagepage.cpp
 #  Implicit rule search has not been done.
- 
 #  Modification time never checked.
 #  File has not been updated.
 #  commands to execute (from `Makefile', line 7667):
@@ -3760,6 +3753,7 @@ build/moc_transactionview.o: build/moc_transactionview.cpp
 	
 
 build/moc_peertablemodel.cpp: src/main.h src/core.h src/uint256.h src/serialize.h src/allocators.h src/support/cleanse.h src/version.h src/clientversion.h src/script.h src/keystore.h src/key.h src/pubkey.h src/hash.h ../coin_depends/openssl-1.0.1l/include/openssl/sha.h ../coin_depends/openssl-1.0.1l/include/openssl/e_os2.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslconf.h ../coin_depends/openssl-1.0.1l/include/openssl/ripemd.h src/crypto/ripemd160.h src/crypto/sha256.h src/sync.h src/threadsafety.h src/bignum.h ../coin_depends/openssl-1.0.1l/include/openssl/bn.h ../coin_depends/openssl-1.0.1l/include/openssl/ossl_typ.h ../coin_depends/openssl-1.0.1l/include/openssl/crypto.h ../coin_depends/openssl-1.0.1l/include/openssl/stack.h ../coin_depends/openssl-1.0.1l/include/openssl/safestack.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslv.h ../coin_depends/openssl-1.0.1l/include/openssl/ebcdic.h ../coin_depends/openssl-1.0.1l/include/openssl/symhacks.h src/util.h src/tinyformat.h ../coin_depends/openssl-1.0.1l/include/openssl/bio.h ../coin_depends/openssl-1.0.1l/include/openssl/evp.h ../coin_depends/openssl-1.0.1l/include/openssl/objects.h ../coin_depends/openssl-1.0.1l/include/openssl/obj_mac.h ../coin_depends/openssl-1.0.1l/include/openssl/asn1.h ../coin_depends/openssl-1.0.1l/include/openssl/buffer.h ../coin_depends/openssl-1.0.1l/include/openssl/rand.h src/stealth.h src/txmempool.h src/net.h src/compat.h src/limitedmap.h src/mruset.h src/netbase.h src/protocol.h src/chainparams.h src/scrypt.h src/qt/peertablemodel.h build/moc_predefs.h /usr/lib/qt5/bin/moc
+ 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -3891,7 +3885,6 @@ src/qt/res/icons/black/tx_mined.png:
 #  Modification time never checked.
 #  File has not been updated.
 
- 
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_printsupport.pri:
 #  Implicit rule search has been done.
 #  File does not exist.
@@ -4008,6 +4001,7 @@ build/darksendconfig.o: src/qt/darksendconfig.cpp src/qt/darksendconfig.h build/
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
+ 
 #  commands to execute (from `Makefile', line 6185):
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/darksendconfig.o src/qt/darksendconfig.cpp
 	
@@ -4243,6 +4237,7 @@ src/qt/locale/bitcoin_et.ts:
 
 build/ui_addeditadrenalinenode.h: src/qt/forms/addeditadrenalinenode.ui /usr/lib/qt5/bin/uic
 #  Implicit rule search has not been done.
+ 
 #  Modification time never checked.
 #  File has not been updated.
 #  commands to execute (from `Makefile', line 2291):
@@ -4270,12 +4265,12 @@ build/moc_qvalidatedlineedit.cpp: src/qt/qvalidatedlineedit.h build/moc_predefs.
 #  Successfully updated.
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+ 
 
 # Not a target:
 src/qt/walletmodel.h:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
- 
 #  File has not been updated.
 
 # Not a target:
@@ -4411,7 +4406,6 @@ build/rpcprotocol.o: src/rpcprotocol.cpp src/rpcprotocol.h src/compat.h src/json
 #  commands to execute (from `Makefile', line 4936):
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/rpcprotocol.o src/rpcprotocol.cpp
 	
- 
 
 # Not a target:
 src/qt/bitcoingui.h:
@@ -4449,6 +4443,7 @@ src/qt/locale/bitcoin_de.qm: src/qt/locale/bitcoin_de.ts
 src/smessage.cpp:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
+ 
 #  File has not been updated.
 
 # Not a target:
@@ -4552,7 +4547,6 @@ build/transactiondesc.o: src/qt/transactiondesc.cpp src/qt/transactiondesc.h src
 #  commands to execute (from `Makefile', line 4467):
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/transactiondesc.o src/qt/transactiondesc.cpp
 	
- 
 
 # Not a target:
 src/noui.cpp:
@@ -4692,6 +4686,7 @@ src/qt/trafficgraphwidget.h:
 #  Modification time never checked.
 #  File has not been updated.
 
+ 
 build/db.o: src/db.cpp src/db.h src/serialize.h src/allocators.h src/support/cleanse.h src/version.h src/clientversion.h src/sync.h src/threadsafety.h src/addrman.h src/netbase.h src/compat.h src/protocol.h src/chainparams.h src/bignum.h src/uint256.h ../coin_depends/openssl-1.0.1l/include/openssl/bn.h ../coin_depends/openssl-1.0.1l/include/openssl/e_os2.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslconf.h ../coin_depends/openssl-1.0.1l/include/openssl/ossl_typ.h ../coin_depends/openssl-1.0.1l/include/openssl/crypto.h ../coin_depends/openssl-1.0.1l/include/openssl/stack.h ../coin_depends/openssl-1.0.1l/include/openssl/safestack.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslv.h ../coin_depends/openssl-1.0.1l/include/openssl/ebcdic.h ../coin_depends/openssl-1.0.1l/include/openssl/symhacks.h src/util.h src/tinyformat.h ../coin_depends/openssl-1.0.1l/include/openssl/bio.h ../coin_depends/openssl-1.0.1l/include/openssl/evp.h ../coin_depends/openssl-1.0.1l/include/openssl/objects.h ../coin_depends/openssl-1.0.1l/include/openssl/obj_mac.h ../coin_depends/openssl-1.0.1l/include/openssl/asn1.h ../coin_depends/openssl-1.0.1l/include/openssl/buffer.h ../coin_depends/openssl-1.0.1l/include/openssl/rand.h src/hash.h ../coin_depends/openssl-1.0.1l/include/openssl/sha.h ../coin_depends/openssl-1.0.1l/include/openssl/ripemd.h src/crypto/ripemd160.h src/crypto/sha256.h
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -4717,7 +4712,6 @@ src/qt/res/icons/onion.png:
 # Not a target:
 src/qt/res/icons/transaction0.png:
 #  Implicit rule search has not been done.
- 
 #  Modification time never checked.
 #  File has not been updated.
 
@@ -4859,7 +4853,6 @@ src/qt/bitcoinaddressvalidator.h:
 #  Implicit rule search has been done.
 #  File does not exist.
 #  File has been updated.
- 
 #  Successfully updated.
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
@@ -4980,7 +4973,6 @@ build/moc_sendcoinsentry.cpp: src/qt/sendcoinsentry.h build/moc_predefs.h /usr/l
 src/lz4/lz4.h:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
- 
 #  File has not been updated.
 
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_eglfsdeviceintegration_private.pri:
@@ -4993,6 +4985,7 @@ src/lz4/lz4.h:
 
 # Not a target:
 src/qt/transactiondescdialog.h:
+ 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -5113,7 +5106,6 @@ build/rpcmining.o: src/rpcmining.cpp src/rpcserver.h src/uint256.h src/rpcprotoc
 	
 
 # Not a target:
- 
 src/allocators.cpp:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -5236,6 +5228,7 @@ build/masternode-payments.o: src/masternode-payments.cpp src/masternode-payments
 #  File does not exist.
 #  File has been updated.
 #  Successfully updated.
+ 
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
 
@@ -5279,7 +5272,6 @@ src/qt/res/icons/black/staking_on.png:
 #  File has been updated.
 #  Successfully updated.
 # variable set hash-table stats:
- 
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
 
 # Not a target:
@@ -5442,7 +5434,6 @@ build/moc_paymentserver.cpp: src/qt/paymentserver.h build/moc_predefs.h /usr/lib
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 #  commands to execute (from `Makefile', line 1754):
 	/usr/lib/qt5/bin/moc $(DEFINES) --include build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/bpickles/BSC_G -I/home/bpickles/BSC_G/src -I/home/bpickles/BSC_G/src/json -I/home/bpickles/BSC_G/src/qt -I/home/bpickles/BSC_G/src/qt/plugins/mrichtexteditor -I/home/bpickles/BSC_G/src/leveldb/include -I/home/bpickles/BSC_G/src/leveldb/helpers -I/home/bpickles/BSC_G/src/secp256k1/include -I/home/bpickles/coin_depends/openssl-1.0.1l/include -I/home/bpickles/coin_depends/openssl-1.0.1l/crypto/bn -I/home/bpickles/coin_depends/openssl-1.0.1l/crypto/ec -I/home/bpickles/coin_depends/openssl-1.0.1l/crypto/evp -I/home/bpickles/coin_depends/openssl-1.0.1l/crypto/hmac -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5/QtCore -Ic:/mingw32/lib/gcc/i686-w64-mingw32/4.9.2/include -Ic:/mingw32/lib/gcc/i686-w64-mingw32/4.9.2/include-fixed -Ic:/mingw32/i686-w64-mingw32/include -Ic:/mingw32/i686-w64-mingw32/include/c++ -Ic:/mingw32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -Ic:/mingw32/i686-w64-mingw32/include/c++/backward -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include src/qt/paymentserver.h -o build/moc_paymentserver.cpp
 	
@@ -5600,7 +5591,6 @@ src/spork.h:
 #  File has not been updated.
 
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xcb_qpa_lib_private.pri:
- 
 #  Implicit rule search has been done.
 #  File does not exist.
 #  File has been updated.
@@ -5646,6 +5636,7 @@ src/qt/locale/bitcoin_be_BY.qm: src/qt/locale/bitcoin_be_BY.ts
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
+ 
 #  commands to execute (from `Makefile', line 958):
 	/usr/lib/qt5/bin/lrelease src/qt/locale/bitcoin_be_BY.ts -qm src/qt/locale/bitcoin_be_BY.qm
 	
@@ -5755,7 +5746,6 @@ build/bitcoinamountfield.o: src/qt/bitcoinamountfield.cpp src/qt/bitcoinamountfi
 	
 
 # Not a target:
- 
 src/qt/editaddressdialog.h:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -5944,8 +5934,8 @@ src/qt/locale/bitcoin_pam.ts:
 #  Modification time never checked.
 #  File has not been updated.
 
- 
-build/moc_bantablemodel.cpp: src/net.h src/compat.h src/core.h src/uint256.h src/serialize.h src/allocators.h src/support/cleanse.h src/version.h src/clientversion.h src/script.h src/keystore.h src/key.h src/pubkey.h src/hash.h ../coin_depends/openssl-1.0.1l/include/openssl/sha.h ../coin_depends/openssl-1.0.1l/include/openssl/e_os2.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslconf.h ../coin_depends/openssl-1.0.1l/include/openssl/ripemd.h src/crypto/ripemd160.h src/crypto/sha256.h src/sync.h src/threadsafety.h src/bignum.h ../coin_depends/openssl-1.0.1l/include/openssl/bn.h ../coin_depends/openssl-1.0.1l/include/openssl/ossl_typ.h ../coin_depends/openssl-1.0.1l/include/openssl/crypto.h ../coin_depends/openssl-1.0.1l/include/openssl/stack.h ../coin_depends/openssl-1.0.1l/include/openssl/safestack.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslv.h ../coin_depends/openssl-1.0.1l/include/openssl/ebcdic.h ../coin_depends/openssl-1.0.1l/include/openssl/symhacks.h src/util.h src/tinyformat.h ../coin_depends/openssl-1.0.1l/include/openssl/bio.h ../coin_depends/openssl-1.0.1l/include/openssl/evp.h ../coin_depends/openssl-1.0.1l/include/openssl/objects.h ../coin_depends/openssl-1.0.1l/include/openssl/obj_mac.h ../coin_depends/openssl-1.0.1l/include/openssl/asn1.h ../coin_depends/openssl-1.0.1l/include/openssl/buffer.h ../coin_depends/openssl-1.0.1l/include/openssl/rand.h src/stealth.h src/limitedmap.h src/mruset.h src/netbase.h src/protocol.h src/chainparams.h src/qt/bantablemodel.h build/moc_predefs.h /usr/lib/qt5/bin/moc
+build/moc_bantablemodel.cpp: src/net.h src/compat.h src/core.h src/uint256.h src/serialize.h src/allocators.h src/support/cleanse.h src/version.h src/clientversion.h src/script.h src/keystore.h src/key.h src/pubkey.h src/hash.h ../coin_depends/openssl-1.0.1l/include/openssl/sha.h ../coin_depends/openssl-1.0.1l/include/openssl/e_os2.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslconf.h ../coin_depends/openssl-1.0.1l/include/openssl/ripemd.h src/crypto/ripemd160.h src/crypto/sha256.h src/sync.h src/threadsafety.h src/bignum.h ../coin_depends/openssl-1.0.1l/include/openssl/bn.h ../coin_depends/openssl-1.0.1l/include/openssl/ossl_typ.h ../coin_depends/openssl-1.0.1l/include/openssl/crypto.h ../coin_depends/openssl-1.0.1l/include/openssl/stack.h ../coin_depends/openssl-1.0.1l/include/openssl/safestack.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslv.h ../coin_depends/openssl-1.0.1l/include/openssl/ebcdic.h ../coin_depends/openssl-1.0.1l/include/openssl/symhacks.h src/util.h src/tinyformat.h ../co 
+in_depends/openssl-1.0.1l/include/openssl/bio.h ../coin_depends/openssl-1.0.1l/include/openssl/evp.h ../coin_depends/openssl-1.0.1l/include/openssl/objects.h ../coin_depends/openssl-1.0.1l/include/openssl/obj_mac.h ../coin_depends/openssl-1.0.1l/include/openssl/asn1.h ../coin_depends/openssl-1.0.1l/include/openssl/buffer.h ../coin_depends/openssl-1.0.1l/include/openssl/rand.h src/stealth.h src/limitedmap.h src/mruset.h src/netbase.h src/protocol.h src/chainparams.h src/qt/bantablemodel.h build/moc_predefs.h /usr/lib/qt5/bin/moc
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -6108,7 +6098,6 @@ build/keystore.o: src/keystore.cpp src/keystore.h src/key.h src/allocators.h src
 
 src/qt/locale/bitcoin_ko_KR.qm: src/qt/locale/bitcoin_ko_KR.ts
 #  Implicit rule search has not been done.
- 
 #  Modification time never checked.
 #  File has not been updated.
 #  commands to execute (from `Makefile', line 1063):
@@ -6209,6 +6198,7 @@ src/uint256.h:
 #  Modification time never checked.
 #  File has not been updated.
 
+ 
 build/chainparams.o: src/chainparams.cpp src/chainparams.h src/bignum.h src/serialize.h src/allocators.h src/support/cleanse.h src/version.h src/clientversion.h src/uint256.h ../coin_depends/openssl-1.0.1l/include/openssl/bn.h ../coin_depends/openssl-1.0.1l/include/openssl/e_os2.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslconf.h ../coin_depends/openssl-1.0.1l/include/openssl/ossl_typ.h ../coin_depends/openssl-1.0.1l/include/openssl/crypto.h ../coin_depends/openssl-1.0.1l/include/openssl/stack.h ../coin_depends/openssl-1.0.1l/include/openssl/safestack.h ../coin_depends/openssl-1.0.1l/include/openssl/opensslv.h ../coin_depends/openssl-1.0.1l/include/openssl/ebcdic.h ../coin_depends/openssl-1.0.1l/include/openssl/symhacks.h src/util.h src/tinyformat.h ../coin_depends/openssl-1.0.1l/include/openssl/bio.h ../coin_depends/openssl-1.0.1l/include/openssl/evp.h ../coin_depends/openssl-1.0.1l/include/openssl/objects.h ../coin_depends/openssl-1.0.1l/include/openssl/obj_mac.h ../coin_depends/openssl-1.0.1l/include/openssl/asn1.h ../coin_depends/openssl-1.0.1l/include/openssl/buffer.h ../coin_depends/openssl-1.0.1l/include/openssl/rand.h src/main.h src/core.h src/script.h src/keystore.h src/key.h src/pubkey.h src/hash.h ../coin_depends/openssl-1.0.1l/include/openssl/sha.h ../coin_depends/openssl-1.0.1l/include/openssl/ripemd.h src/crypto/ripemd160.h src/crypto/sha256.h src/sync.h src/threadsafety.h src/stealth.h src/txmempool.h src/net.h src/compat.h src/limitedmap.h src/mruset.h src/netbase.h src/protocol.h src/scrypt.h src/chainparamsseeds.h
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -6252,7 +6242,6 @@ compiler_yacc_decl_clean:
 
 # Not a target:
 src/qt/res/icons/edit.png:
- 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -6457,7 +6446,6 @@ build/flowlayout.o: src/qt/flowlayout.cpp src/qt/flowlayout.h
 	
 
 src/qt/locale/bitcoin_ca.qm: src/qt/locale/bitcoin_ca.ts
- 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -6508,6 +6496,6 @@ build/moc_signverifymessagedialog.cpp: src/qt/signverifymessagedialog.h build/mo
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Wed Jul 13 06:11:40 2022
+# Finished Make data base on Wed Jul 13 14:29:39 2022
 
  
