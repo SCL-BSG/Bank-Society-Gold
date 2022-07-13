@@ -4821,16 +4821,19 @@ CInv Problem_Blocks_Inv;
 
     }
 
-    /* -- RGP JIRA Reference BSG-123
-       -- */
+    /* ----------------------------------
+       -- RGP JIRA Reference BSG-123   --
+       --------------------------------------------------------------------
+       -- This section of code was causing banning of nodes during synch --
+       -- The code section had no purpose, classified as legacy code.    --
+       -------------------------------------------------------------------- */
 
     //else if (pfrom->nVersion == 0)
     //{
 
         // Must have a version message before anything else
-    //    LogPrintf("*** RGP MISBEHAVING, Version is ZERO \n");
-    //    Misbehaving(pfrom->GetId(), 1);
-        //return false;
+        //    Misbehaving(pfrom->GetId(), 1);
+        // return false;
     //}
 
 
