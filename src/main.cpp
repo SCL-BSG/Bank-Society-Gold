@@ -64,7 +64,7 @@ set<pair<COutPoint, unsigned int> > setStakeSeen;
 
 CBigNum bnProofOfStakeLimit(~uint256(0) >> 20);
 
-/* RGP Pre JIRA BSG-67 statment */
+/* RGP Pre JIRA BSG-67 statement */
 //unsigned int nStakeMinAge = 60 * 60; // 1 hours
 
 /* ---------------------

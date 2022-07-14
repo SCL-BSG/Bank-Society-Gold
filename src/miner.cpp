@@ -1137,10 +1137,23 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                 LogPrintf("RGP Miner Stake synch loop, blocks stuck ... \n");
                 Time_to_Last_block = GetTime() - pindexBest->GetBlockTime();
                 LogPrintf(" RGP stuck check time to gettime() %d ",Time_to_Last_block   );
+
+                /* ---------------------
+                   -- RGP JIRA BSG-93 --
+                   --------------------------------------------------------------
+                   -- Added condition to check if time difference between the  --
+                   -- last blockchain received 'pindexBex->GetBlockTime()' and --  
+                   -- GetTime() are close or far apart.                        --
+                   -- BlockSpacing is 240 seconds, used this for the check     --                                                            
+                   -------------------------------------------------------------- */
                 if ( Time_to_Last_block > 240 )
                 {
-                    LogPrintf(" RGP stopping create block!");
-                    MilliSleep(1000);
+                    /* -------------------------------------------------------------------
+                       --  Difference between 'pindexBex->GetBlockTime()' and GetTime() --
+                       --  is more than 240 seconds, exit the loop and return to        --
+                       --  Initial checks again.                                        --
+                       ------------------------------------------------------------------- */ 
+                    MilliSleep(5000);
                     continue;
                 }
             }
@@ -1402,7 +1415,6 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
             /* --------------------------------------------
                -- RGP, replaced auto_ptr with unique_ptr --
                -------------------------------------------- */
-
 
             /* auto_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees)); */
             unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
