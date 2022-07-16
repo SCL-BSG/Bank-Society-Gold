@@ -1,20 +1,26 @@
 ﻿
-Bank Society Coin Masternode Install Guide - Setup Guide (Single VPS/IP)
-========================================================================
+Bank Society Gold Coin Masternode Install Guide - Setup Guide (Single VPS/IP)
+=============================================================================
 
 Important : Never try to setup a Masternode on the same domain as your wallet, as this will
-            never work. THe Masternode concept requires a UNIQUE node IP. THerefore, a VPS
-            (Virtual Private Server) is the cheapest way to implement a Masternode. 
+            never work. THe Masternode concept requires a UNIQUE node IP. Therefore, a VPS
+            (Virtual Private Server) or Cloud Host is the cheapest way to implement a Masternode.
+            Hardware Requirements : 1 Virtual CPU, 1 GByte RAM, 25GByte or more Hard Disk or SSD
 
 Masternode Rewards Information
 ------------------------------
 
+To setup a masternode you will first need 150,000 SOCG, a Virtual Private Server and a SocietyG-qt (GUI Wallet). 
+A small amount of technical knowledge is required to follow the setup guide below.
+A masternode is a combination of two seperate wallets. 
+A Controller and slave wallet setup ensures secure storage of your collateral. 
+A VPS (slave) wallet will be configured to allow your GUI controller wallet to communicate and exchange information. 
+The controller wallet must remain unlocked and connected through the Society network to your slave (VPS) at all 
+times for active status. 
+It's recommended to setup your controller wallet on a computer that only you have physical access to, behind a firewall, running linux or Windows with a good anti-virus.
 
-To setup a masternode you will first need 20,000 SOCI, a Virtual Private Server and a Society-qt (GUI Wallet). A small amount of technical knowledge is required to follow the setup guide below.
-
-A masternode is a combination of two seperate wallets. A Controller and slave wallet setup ensures secure storage of your collateral. A VPS (slave) wallet will be configured to allow your GUI controller wallet to communicate and exchange information. The controller wallet must remain unlocked and connected through the Society network to your slave (VPS) at all times for active status. It's recommended to setup your controller wallet on a computer that only you have physical access to, behind a firewall, running linux or Windows with a good anti-virus.
-
-A VPS wallet will be configured to allow your GUI controller wallet to communicate and exchange information. The controller wallet must remain connected through the Society network to your VPS at all times for active status.
+A VPS wallet will be configured to allow your GUI controller wallet to communicate and exchange information. 
+The controller wallet must remain connected through the Society network to your VPS at all times for active status.
 
 This means that the master wallet must be open and connected to receive Masternode rewards.
 
@@ -26,15 +32,16 @@ This means that the master wallet must be open and connected to receive Masterno
 Setup your controller wallet - this will keep your coins safe.
 Install Society-qt on Windows or Linux from the official releases. 
 
-Load your Society-qt wallet and sync.
-Shut-down Society-qt
-Find your society.conf file Help - Debug - Information - Click society.conf button under Troubleshooting or browse c:\Users\username\AppData\LocalRoaming\Society  (windows) or home/username/.Society/ (Linux)
-Edit society.conf with notepad or gedit/nano
+Load your SocietyG-qt wallet and sync.
+Shut-down SocietyG-qt
+Find your societyG.conf file Help - Debug - Information - Click society.conf button under 
+Troubleshooting or browse c:\Users\username\AppData\LocalRoaming\SocietyG  (windows) or home/username/.SocietyG/ (Linux)
+Edit societyG.conf with notepad or gedit/nano
 
 
 Add the following line:
 
-addnode=your_VPS_server_IP
+addnode=your_VPS_server_IP ( IP Address )
 
 Save and exit
 
@@ -49,7 +56,7 @@ Backup your private keys and wallet file!
 Create your Masternode Collateral.
 
 Click "Receive" and generate a new address with the label "Masternode 1"
-Send exactly 150000 Society Gold Coin to this address and wait for confirmations.
+Send exactly 150 000 Bank Society Gold Coin to this address and wait for confirmations.
 
 ============
 == STEP 3 ==
@@ -219,8 +226,8 @@ logtimestamps=1
 shrinkdebugfile=1
 masternode=1
 maxconnections=256
-externalip=server_ip:23960
-masternodeaddr=server_ip:23960
+externalip=server_ip:23980
+masternodeaddr=server_ip:23980
 masternodeprivkey=replace_me
 
 Modify the above information:
@@ -240,11 +247,11 @@ Press: Y then ENTER to overwrite.
 
 Start your slave wallet:
 
-societyd
+./societyGd
 
 If it looks like it's just sitting there idle on the last step try using:
 
-societyd getinfo
+societyGd getinfo
 
 Wait until full sync - try the above commands periodically to view the progress:
 
