@@ -3416,6 +3416,8 @@ extern volatile bool fRequestShutdown;
                         }
                     }
                 }
+                else
+                    LogPrintf("*** RGP LockRecv failed in net.cpp \n");
             }
             //boost::this_thread::interruption_point();
 
@@ -3432,7 +3434,7 @@ extern volatile bool fRequestShutdown;
                 //}
                 //else
                 //{
-                    MilliSleep(20); /* RGP Optimisation */
+                //    MilliSleep(20); /* RGP Optimisation */
                 //}
             }
             //boost::this_thread::interruption_point();
