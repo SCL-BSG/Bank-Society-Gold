@@ -2330,7 +2330,7 @@ MilliSleep(1);
                                 //{
                                     LogPrintf("Error: Unexpected idle interruption 1 %s\n", pnode->addrName);
                                 //}
-                                //pnode->CloseSocketDisconnect();
+                                pnode->CloseSocketDisconnect();
                             }
                         }
                     }
@@ -2359,7 +2359,7 @@ MilliSleep(1);
                                 //{
                                     LogPrintf("Error: Unexpected idle interruption 2 %s\n", pnode->addrName);
                                 //}
-                                //pnode->CloseSocketDisconnect();
+                                pnode->CloseSocketDisconnect();
                             }
                         }
                     }
@@ -2383,7 +2383,7 @@ MilliSleep(1);
                         //{
                             LogPrintf("Error: Unexpected idle interruption  3 %s\n", pnode->addrName);
                         //}
-                        //pnode->CloseSocketDisconnect();
+                        pnode->CloseSocketDisconnect();
                     }
                 }
             }
