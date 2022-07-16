@@ -1153,7 +1153,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                        --  is more than 240 seconds, exit the loop and return to        --
                        --  Initial checks again.                                        --
                        ------------------------------------------------------------------- */ 
-                    MilliSleep(5000);
+                    MilliSleep(20000);
                     continue;
                 }
             }

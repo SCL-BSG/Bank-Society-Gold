@@ -3286,13 +3286,16 @@ void static StartSync(const vector<CNode*> &vNodes)
     // Iterate over all nodes
     BOOST_FOREACH(CNode* pnode, vNodes)
     {
-        LogPrintf("*** RGP StartSyncn start \n" );
+        LogPrintf("*** RGP StartSync start nBestHeight %d pnode->nStartingHeight %d \n", nBestHeight, pnode->nStartingHeight );
+        LogPrintf("*** RGP StartSync version %d ", pnode->nVersion );
 
         // check preconditions for allowing a sync
         if (!pnode->fClient && !pnode->fOneShot &&
-            !pnode->fDisconnect && pnode->fSuccessfullyConnected &&
-            (pnode->nStartingHeight > (nBestHeight - 144)) &&
-            (pnode->nVersion < NOBLKS_VERSION_START || pnode->nVersion >= NOBLKS_VERSION_END))
+            !pnode->fDisconnect && pnode->fSuccessfullyConnected )
+//                &&
+//            (pnode->nStartingHeight > (nBestHeight - 144)) )
+//                &&
+//            (pnode->nVersion < NOBLKS_VERSION_START || pnode->nVersion >= NOBLKS_VERSION_END))
         {
             // if ok, compare node's score with the best so far
             nScore = NodeSyncScore(pnode);
@@ -3337,8 +3340,10 @@ void static StartSync(const vector<CNode*> &vNodes)
 void ThreadMessageHandler()
 {
 extern volatile bool fRequestShutdown;
+unsigned int filter;
 
     SetThreadPriority(THREAD_PRIORITY_BELOW_NORMAL);
+    filter = 50;
 
     while ( !fRequestShutdown )
     {
@@ -3348,7 +3353,8 @@ extern volatile bool fRequestShutdown;
         {
             LOCK(cs_vNodes);
             vNodesCopy = vNodes;
-            BOOST_FOREACH(CNode* pnode, vNodesCopy) {
+            BOOST_FOREACH(CNode* pnode, vNodesCopy)
+            {
                 pnode->AddRef();
                 if (pnode == pnodeSync)
                     fHaveSyncNode = true;
@@ -3357,9 +3363,16 @@ extern volatile bool fRequestShutdown;
 
         MilliSleep(5); /* RGP Optimisation */
 
-        if (!fHaveSyncNode){
-            StartSync(vNodesCopy);
-        }
+        if (filter == 50 )
+            if (!fHaveSyncNode)
+            {
+                StartSync(vNodesCopy);
+            }
+        else
+            filter--;
+
+        if (filter <= 0 )
+            filter = 50;
 
         // Poll the connected nodes for messages
         CNode* pnodeTrickle = NULL;
