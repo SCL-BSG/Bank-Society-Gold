@@ -49,15 +49,12 @@ void CDarksendPool::ProcessMessageDarksend(CNode* pfrom, std::string& strCommand
 {
     if(fLiteMode) return; //disable all darksend/Masternode related functionality
 
-    //LogPrintf("*** RGP ProcessMessageDarksend start.");
-
     if(!IsBlockchainSynced())
     {
-        LogPrintf("*** RGP ProcessMessageDarksend BLOCK IS NOT SYNCHED.");
+        //LogPrintf("*** RGP ProcessMessageDarksend BLOCK IS NOT SYNCHED. \n");
         return;
     }
 
-    //LogPrintf("*** RGP ProcessMessageDarksend BLOCK IS SYNCHED ");
 
     if (strCommand == "dsa") { //DarkSend Accept Into Pool
         if (pfrom->nVersion < MIN_POOL_PEER_PROTO_VERSION) {
@@ -461,8 +458,6 @@ bool CDarksendPool::IsBlockchainSynced()
     if(fBlockchainSynced) return true;
 
     if (fImporting || fReindex) return false;
-
-    /* -- RGP, Look into introducing more advanced locks, this does not work -- */
 
     //TRY_LOCK(cs_main, lockMain);
     //if(!lockMain)
