@@ -73,8 +73,9 @@ CBigNum bnProofOfStakeLimit(~uint256(0) >> 20);
    -- nStakeMinAge is extending the time required for coins --
    -- in a wallet to be mature, before they are considered  --
    -- for staking.                                          --
+   -- Note : Reversed this stops synch validation...        --
    ----------------------------------------------------------- */
-unsigned int nStakeMinAge = 60 * 60 * 4; // 4 hours
+unsigned int nStakeMinAge = 60 * 60 * 1; // 4 hours
 
 
 
@@ -1582,7 +1583,7 @@ int nFinalSubsidy = 0;
         if ( nHeight < 101 )
         {
             /* do nothing, as it's PREMINE phase */
-            LogPrintf("RGP Debug Premine time \n");
+            //LogPrintf("RGP Debug Premine time \n");
         }
         else
         {
@@ -2454,8 +2455,20 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
         if (nStakeReward > nCalculatedStakeReward)
         {
 
-            return DoS(100, error("ConnectBlock() : coinstake pays too much(actual=%d vs calculated=%d)", nStakeReward, nCalculatedStakeReward));
-        }
+            switch ( pindexBest->nHeight )
+            {
+                case 21189  : /* ignore this block */
+                              //LogPrintf("*** RGP ConnectBlock ignoring block 21189");
+                              break;
+
+                default     :  if ( pindexBest->nHeight < 260000 )
+                                  LogPrintf("*** RGP ConnectBlock block failed validation %d ", pindexBest->nHeight );
+                               else
+                                   return DoS(100, error("ConnectBlock() : coinstake pays too much(actual=%d vs calculated=%d)", nStakeReward, nCalculatedStakeReward));
+
+            }
+
+                               }
     }
 
     // ppcoin: track money supply and mint amount info
@@ -3174,7 +3187,7 @@ uint256 hash;
 
             From_Node->AskFor( Inventory_to_Request, false );
 
-            LogPrintf("*** RGP Debug Accept() Previous Block not found \n");
+            //LogPrintf("*** RGP Debug Accept() Previous Block not found \n");
 
             //LogPrintf("AcceptBlock() : prev block not found \n");
             return false;
@@ -3421,7 +3434,7 @@ bool PoS_Mining_Block;
         //    LogPrintf("*** ProcessBlock Already have the newly provide block HASH \n");
         //}
         //return error("ProcessBlock() : already have block %d %s", mapBlockIndex[hash]->nHeight, hash.ToString());
-        MilliSleep(5);
+        MilliSleep(1);
         return true;
     }
 
@@ -3440,19 +3453,19 @@ bool PoS_Mining_Block;
         // Store to disk
         if (!pblock->AcceptBlock())
         {
-            LogPrintf("*** RGP ProcessBlock failed \n");
+            //LogPrintf("*** RGP ProcessBlock failed \n");
 
             /* Previous block is missing, let's ask for it. However, this will repeat
                backwords until it finds the correct block, could take a while         */
-            pfrom->AskFor(CInv(MSG_BLOCK, pblock->hashPrevBlock ) );
+            pfrom->AskFor(CInv(MSG_BLOCK, pblock->hashPrevBlock ),  true );
 
-            MilliSleep( 5 );
+            MilliSleep( 1 );
 
-            if ( BSC_Wallet_Synching )
-            {
+            //if ( BSC_Wallet_Synching )
+            //{
                 PushGetBlocks(pfrom, pindexBest, pindexBest->GetBlockHash() ); /* also ask for everything from current block height */
                 //PushGetBlocks(pfrom, pindexBest, pblock->hashPrevBlock );
-            }
+            //}
             return false; /* return false, as (ProcessMessage will then clear ask for list for this orphan */
         }
         else
@@ -4948,7 +4961,7 @@ CInv Problem_Blocks_Inv;
 
     else if (strCommand == "inv")
     {
-
+        int net_request_filter = 0;
         vector<CInv> vInv;
         vRecv >> vInv;
 
@@ -5035,19 +5048,19 @@ CInv Problem_Blocks_Inv;
 
                    /* RGP experimental */
 
-                   PushGetBlocks(pfrom, pindexBest, pindexBest->GetBlockHash() );
+                   //PushGetBlocks(pfrom, pindexBest, pindexBest->GetBlockHash() );
                    MilliSleep( 1 ); /* RGP Optimize */
 
                    if ( !mapBlockIndex.count( Inventory_Item.hash ) )
                    {
 
                        pfrom->AskFor( Inventory_Item, false );
-                       MilliSleep( 1 ); /* RGP Optimize */
+                       //MilliSleep( 1 ); /* RGP Optimize */
                    }
 
                 }
 
-                PushGetBlocks(pfrom, pindexBest, pindexBest->GetBlockHash() );
+                //PushGetBlocks(pfrom, pindexBest, pindexBest->GetBlockHash() );
 
                 MilliSleep( 1 ); /* RGP Optimize */
             }
@@ -5056,12 +5069,14 @@ CInv Problem_Blocks_Inv;
 
                 //LogPrintf("*** RGP Inventory, already have this hash %s \n", Inventory_Item.ToString() );
 
-                /* RGP test for synch */
+                /* RGP test for synch
+                   This could mean that we have the inventory,but not the actual blockchain yet
+                   ask for blocks from latest blockheight */
                 PushGetBlocks(pfrom, pindexBest, pindexBest->GetBlockHash()  ); /* RGP change the blockhash from 0 */
 
                 if ( !mapBlockIndex.count( Inventory_Item.hash ) )
                 {
-
+                    LogPrintf("*** RGP INV processing, we have, check orphans \n");
                     pfrom->AskFor( Inventory_Item, false );
                     MilliSleep( 1 ); /* RGP Optimize */
 
@@ -5085,6 +5100,8 @@ CInv Problem_Blocks_Inv;
                         /* RGP if we have orphans also ask for latest blockheight */
 
                         //PushGetBlocks(pfrom, pindexBest, uint256(0) );
+
+                        LogPrintf("*** RGP INV processing, check orphans, it's in orphans \n");
 
                         MilliSleep( 1 ); /* RGP Optimize */
                     }
@@ -5119,8 +5136,18 @@ CInv Problem_Blocks_Inv;
                 else
                 {
                    /* ALREADY in BlockIndex */
-                    /* RGP experimental */
-                   PushGetBlocks(pfrom, pindexBest, pindexBest->GetBlockHash()  ); /* RGP change the blockhash from 0 */
+                   //LogPrintf("*** RGP INVENTORY Processing, Already have in blockchain!!! \n");
+                   if ( net_request_filter <= 0 )
+                   {
+                       LogPrintf("*** RGP INVENTORY Processing, Already have in blockchain!!! \n");
+
+                       PushGetBlocks(pfrom, pindexBest, pindexBest->GetBlockHash()  ); /* RGP change the blockhash from 0 */
+                       net_request_filter = 200;
+                   }
+                   else
+                       net_request_filter--;
+
+                   //PushGetBlocks(pfrom, pindexBest, pindexBest->GetBlockHash()  ); /* RGP change the blockhash from 0 */
                    //PushGetBlocks(pfrom, pindexBest, uint256(0));
                 }
 
@@ -5201,9 +5228,9 @@ CInv Problem_Blocks_Inv;
         {
             // LogPrintf("*** RGP ProcessMessage GETBLOCKS, Wallet Synching... \n" );
 
-            MilliSleep(1000);
+            MilliSleep(1);
 
-            pfrom->PushInventory(CInv(MSG_BLOCK, pindexBest->GetBlockHash()));
+            //pfrom->PushInventory(CInv(MSG_BLOCK, pindexBest->GetBlockHash()));
             //pfrom->hashContinue = pindex->GetBlockHash(); /* RGP */
        }
        else
@@ -5265,7 +5292,7 @@ CInv Problem_Blocks_Inv;
                     // getblocks the next batch of inventory.
                     //LogPrintf("net, getblocks stopping at limit %d %s\n", pindex->nHeight, pindex->GetBlockHash().ToString());
                     pfrom->hashContinue = pindex->GetBlockHash();
-                    MilliSleep(1000);
+                    MilliSleep(1);
                     break;
                 }
 
@@ -5495,14 +5522,16 @@ CInv Problem_Blocks_Inv;
            --     the chain, when synching, which does not help... try to --
            --     get them to produce what we want.                       --
            ----------------------------------------------------------------- */
- //      if ( block.GetBlockTime() > ( pindexBest->GetBlockTime() + 50000 ) )
- //       {
- //           LogPrintf("*** RGP BLOCK MESSAGE REJECT DUE TO TIMING >>> BUG!!! %s \n", block.GetHash().ToString() );
-
-  //           PushGetBlocks( pfrom,  pindexBest, uint256( 0 ) );
-  //          LogPrintf("%");
-  //          //return true;
-//        }
+      if ( block.GetBlockTime() > ( pindexBest->GetBlockTime() + 50000 ) )
+      {
+            /* ------------------------------------------------------------------
+               -- The block from the synch node is way in advance, reject this --
+               -- block but ask for inventory from the current best block      --
+               ------------------------------------------------------------------ */
+            PushGetBlocks(pfrom, pindexBest, pindexBest->GetBlockHash()  );
+            LogPrintf("%");
+           //return true;
+      }
 
         CInv inv(MSG_BLOCK, hashBlock);
         fAlreadyHave = AlreadyHave(txdb, inv );
@@ -5511,14 +5540,15 @@ CInv Problem_Blocks_Inv;
 
 
         /* RGP, Don't add if we already have */
-        if ( !fAlreadyHave )
-        {
-            pfrom->AddInventoryKnown( inv );
-        }
-        else
-        {
+        //if ( !fAlreadyHave )
+        //{
+        //     LogPrintf("*** RGP BLOCK message hash INventry NOT KNOWN???? %s \n", inv.hash.ToString() );
+        //    pfrom->AddInventoryKnown( inv );
+        //}
+        //else
+        //{
             // LogPrintf("*** RGP ProcessMessage block already have %s \n", hashBlock.ToString() );
-        }
+        //}
 
         if (fDebug )
         {
@@ -5538,13 +5568,13 @@ CInv Problem_Blocks_Inv;
         {
 
 
-            LogPrintf("*** RGP debug Process Block FAILED, may be caused by Staking errors !\n");
+            //LogPrintf("*** RGP debug Process Block FAILED, may be caused by Staking errors !\n");
 
 
             if (block.nDoS)
             {
                     LogPrintf("*** RGP block.nDOS DETECTED!!! %d node %s \n", block.nDoS, pfrom->addr.ToString()  );
-                    // Misbehaving(pfrom->GetId(), block.nDoS);
+                    Misbehaving(pfrom->GetId(), block.nDoS);
             }
 
         }
@@ -5866,7 +5896,7 @@ string strCommand;
             continue;
         }
 
-        MilliSleep( 5 );
+        MilliSleep( 1 );
 
         // Process message
         bool fRet = false;
@@ -5875,7 +5905,7 @@ string strCommand;
             //LogPrintf("*** RGP ProcessMessages before call to ProcessMessage \n");
             fRet = ProcessMessage(pfrom, strCommand, vRecv);
 
-            MilliSleep( 5 );
+            MilliSleep( 1 );
 
             //boost::this_thread::interruption_point();
         }
@@ -5910,7 +5940,7 @@ string strCommand;
 
         //LogPrintf("ProcessMessage, after ProcessMessage, after try catch \n");
 
-        MilliSleep( 5 );
+        MilliSleep( 1 );
 
 
 
@@ -5929,7 +5959,7 @@ string strCommand;
             return false;
         }
 
-        MilliSleep( 5 );
+        MilliSleep( 1 );
 
         //LogPrintf("ProcessMessage, after ProcessMessage, before End of while loop \n");
 
@@ -6315,7 +6345,7 @@ extern bool BSC_Wallet_Synching; /* RGP defined in main.h */
        -- SendMessage is called to service message sending, --
        -- sometimes there is nothing to send.               --
        ------------------------------------------------------- */
-    MilliSleep(5);   /* RGP Optimize */
+    MilliSleep(1);   /* RGP Optimize */
 
     return true;
 }

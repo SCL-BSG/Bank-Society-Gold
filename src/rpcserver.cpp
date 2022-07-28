@@ -33,6 +33,9 @@
 #include <boost/shared_ptr.hpp>
 #include <list>
 
+/* RGP */
+#define DEFAULT_RPC_SERVER_THREADS      20
+
 using namespace std;
 using namespace boost;
 using namespace boost::asio;
@@ -716,7 +719,7 @@ void StartRPCThreads()
     }
 
     rpc_worker_group = new boost::thread_group();
-    for (int i = 0; i < GetArg("-rpcthreads", 4); i++)
+    for (int i = 0; i < GetArg("-rpcthreads", DEFAULT_RPC_SERVER_THREADS ); i++)
         rpc_worker_group->create_thread(boost::bind(&asio::io_service::run, rpc_io_service));
 }
 

@@ -198,10 +198,29 @@ bool CheckStakeKernelHash(CBlockIndex* pindexPrev, unsigned int nBits, unsigned 
         return error("CheckStakeKernelHash() : nTime violation");
     }
 
+    /* --------------------------------------------------------
+       -- RGP JIRA BSG-67                                    --
+       --------------------------------------------------------
+       -- nStakeMinAge was changed in main.cpp to be 4hrs.   --
+       -- This causes all previous stake times to be invalid --
+       -- This code fixes this without having to hard fork   --
+       -------------------------------------------------------- */
+
     if (nTimeBlockFrom + nStakeMinAge > nTimeTx) // Min age requirement
     {
-        LogPrintf("*** RGP CheckStakeKernelHash min time violation \n ");
-        return error("CheckStakeKernelHash() : min age violation");
+
+        switch ( pindexBest->nHeight )
+        {
+            case 21189  : /* ignore this block */
+                          break;
+
+             default     :  if ( pindexBest->nHeight < 260000 )
+                               LogPrintf("*** RGP ConnectBlock block failed validation %d ", pindexBest->nHeight );
+                            else
+                               return error("CheckStakeKernelHash() : min age violation");
+
+        }
+
     }
 
     // Base target
@@ -292,8 +311,8 @@ int64_t Time_to_Last_block;
         Time_to_Last_block = GetTime() - pindexBest->GetBlockTime();
         if ( Time_to_Last_block > 1800  )
         {
-            LogPrintf("*** RGP CheckProofofStake  need fix for this issue!!! \n");
-            return false;
+            LogPrintf("*** RGP CheckProofofStake  need fix for this issue!!! %d \n", Time_to_Last_block );
+            return true;
         }
         else
         {

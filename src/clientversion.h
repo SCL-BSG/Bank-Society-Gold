@@ -1,7 +1,7 @@
 #ifndef CLIENTVERSION_H
 #define CLIENTVERSION_H
 
-/* RGP : Changed on April 14th 2022*/
+/* RGP : Changed on 26th July 2022 */
 
 //
 // client versioning
@@ -10,7 +10,7 @@
 // These need to be macros, as version.cpp's and bitcoin-qt.rc's voodoo requires it
 #define CLIENT_VERSION_MAJOR       2
 #define CLIENT_VERSION_MINOR       0
-#define CLIENT_VERSION_REVISION    3
+#define CLIENT_VERSION_REVISION    4
 #define CLIENT_VERSION_BUILD       0
 
 // Set to true for release, false for prerelease or test build
