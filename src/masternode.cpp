@@ -182,8 +182,8 @@ void CMasternode::Check()
     TRY_LOCK(cs_main, lockRecv);
     if(!lockRecv)
     {
-        LogPrintf("*** RGP CMasterNode::Check LockRecv failed, exit! \n");
-        LogPrintf("*** RGP ignoring issue...\n");
+        //LogPrintf("*** RGP CMasterNode::Check LockRecv failed, exit! \n");
+        //LogPrintf("*** RGP ignoring issue...\n");
         //return;
     }
 
@@ -196,7 +196,6 @@ void CMasternode::Check()
 
     if(!UpdatedWithin(MASTERNODE_REMOVAL_SECONDS))
     {
-        LogPrintf("*** RGP CMasterNode::Check Debug 001\n");
         activeState = MASTERNODE_REMOVE;
         return;
     }

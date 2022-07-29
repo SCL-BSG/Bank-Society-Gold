@@ -3903,12 +3903,12 @@ int64_t nSearchTime;
     CKey key;
     CTransaction txCoinStake;
 
-    LogPrintf("*** RGP Signblock, txCoinStake before %d \n",txCoinStake.nTime  );
+    //LogPrintf("*** RGP Signblock, txCoinStake before %d \n",txCoinStake.nTime  );
 
     /* RGP updated this mask to stop staking until after 240 seconds */
     txCoinStake.nTime &= ~GOLD_STAKE_TIMESTAMP_MASK; // mask is 240 seconds
 
-    LogPrintf("*** RGP Signblock, txCoinStake after mask %d \n",txCoinStake.nTime  );
+    //LogPrintf("*** RGP Signblock, txCoinStake after mask %d \n",txCoinStake.nTime  );
 
     nSearchTime = txCoinStake.nTime; // search to current time
 

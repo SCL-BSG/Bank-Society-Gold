@@ -1319,7 +1319,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
 
                 /* Calculate haw long to the next block and sleep */
                 Time_in_since_Last_Block = GetTime() - pindexBest->GetBlockTime();
-                LogPrintf("*** RGP Before Signblock, time between last block %d and now %d, time since last block stored %d \n", pindexBest->GetBlockTime(), GetTime(), Time_in_since_Last_Block );
+                //LogPrintf("*** RGP Before Signblock, time between last block %d and now %d, time since last block stored %d \n", pindexBest->GetBlockTime(), GetTime(), Time_in_since_Last_Block );
 
                 /* RGP Sleep until next block is created */
                 /* REMOVED STAKE ADJUST */
@@ -1327,17 +1327,17 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                     Time_in_since_Last_Block = 100;
 
                 time_to_sleep = ( ( STAKE_BLOCK_TIME - Time_in_since_Last_Block  ) * 1000 );
-                LogPrintf("*** RGP time to sleep %d \n", time_to_sleep );
+                //LogPrintf("*** RGP time to sleep %d \n", time_to_sleep );
 
                 MilliSleep( time_to_sleep  );
                 first_time = false;
 
-                LogPrintf("*** RGP Time check,  pindexBest->GetBlockTime %d and last_recorded_block_time %d \n", pindexBest->GetBlockTime(), last_recorded_block_time );
+                //LogPrintf("*** RGP Time check,  pindexBest->GetBlockTime %d and last_recorded_block_time %d \n", pindexBest->GetBlockTime(), last_recorded_block_time );
 
 
                 if ( pindexBest->GetBlockTime() > last_recorded_block_time )
                 {
-                    LogPrintf(" New block must have been seen... \n");
+                    //LogPrintf(" New block must have been seen... \n");
                     /* there must have been a new block generated, wait again */
                     if ( last_recorded_block_time != pindexBest->GetBlockTime() )
                         last_recorded_block_time = pindexBest->GetBlockTime();
@@ -1345,7 +1345,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                        -- RGP, logic dictates that if a new block just got created, try to --
                        --      create a new stake block, as the delay has been implemented --
                        ---------------------------------------------------------------------- */
-                    LogPrintf("Let's wait again... \n");
+                    //LogPrintf("Let's wait again... \n");
                     wait_for_best_time = false; /* RGP BIG TEST */
                 }
                 else
@@ -1387,7 +1387,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                         last_block_stake_check = 0;
                         while (  pindexBest->GetBlockTime() == last_recorded_block_time )
                         {
-                            LogPrintf("*** Wait for next block pindexBest->GetBlockTime %d and last_recorded_block_time %d \n", pindexBest->GetBlockTime(), last_recorded_block_time );
+                            //LogPrintf("*** Wait for next block pindexBest->GetBlockTime %d and last_recorded_block_time %d \n", pindexBest->GetBlockTime(), last_recorded_block_time );
 
                             MilliSleep( GetRandInt( 240 ) * 1000 );
 
@@ -1398,7 +1398,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                                 break;
                         }
 
-                        LogPrintf(" exiting block stake time!! \n");
+                        //LogPrintf(" exiting block stake time!! \n");
                         wait_for_best_time = true;
                     }
                 }
@@ -1445,11 +1445,11 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
 
                 MilliSleep( after_stake_success_timeout );
 
-                LogPrintf("*** RGP new Mint stake after delay %d \n", after_stake_success_timeout);
+                //LogPrintf("*** RGP new Mint stake after delay %d \n", after_stake_success_timeout);
             }
             else
             {
-                LogPrintf("*** RGP before delay %d \n", nMinerSleep);
+                //LogPrintf("*** RGP before delay %d \n", nMinerSleep);
 
                 /* Failed, let's delay */
                 MilliSleep(nMinerSleep);

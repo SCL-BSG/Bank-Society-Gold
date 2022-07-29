@@ -1263,7 +1263,7 @@ void BitcoinGUI::updateStakingIcon()
         unsigned nEstimateTime = 0;
         nEstimateTime = TARGET_SPACING * nNetworkWeight / nStakeWeight;
 
-        LogPrintf("*** RGP Networkweight %d stakeweight %d Estimate %d \n", nNetworkWeight, nStakeWeight, nEstimateTime);
+        //LogPrintf("*** RGP Networkweight %d stakeweight %d Estimate %d \n", nNetworkWeight, nStakeWeight, nEstimateTime);
 
 
         QString text;
@@ -1287,7 +1287,7 @@ void BitcoinGUI::updateStakingIcon()
         nStakeWeight /= COIN;
         nNetworkWeight /= COIN;
 
-        LogPrintf("*** RGP Networkweight %d stakeweight %d coin %d \n", nNetworkWeight, nStakeWeight, COIN );
+        //LogPrintf("*** RGP Networkweight %d stakeweight %d coin %d \n", nNetworkWeight, nStakeWeight, COIN );
 
         labelStakingIcon->setPixmap(QIcon(fUseBlackTheme ? ":/icons/black/staking_on" : ":/icons/staking_on").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelStakingIcon->setToolTip(tr("Staking.<br>Your weight is %1<br>Network weight is %2<br>Expected time to earn reward is %3").arg(nStakeWeight).arg(nNetworkWeight).arg(text));

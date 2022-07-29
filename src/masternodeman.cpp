@@ -461,7 +461,7 @@ CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight,
     // scan for winner
     BOOST_FOREACH(CMasternode& mn, vMasternodes)
     {
-        LogPrintf("*** RGP GetCurrentMasterNode loop \n");
+        //LogPrintf("*** RGP GetCurrentMasterNode loop \n");
 
         mn.Check();
         if(mn.protocolVersion < minProtocol || !mn.IsEnabled())

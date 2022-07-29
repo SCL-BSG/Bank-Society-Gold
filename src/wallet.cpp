@@ -3603,19 +3603,19 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
         //spork
         if(!masternodePayments.GetBlockPayee(pindexPrev->nHeight+1, payee, vin))
         {
-            LogPrintf("*** RGP BEFORE GetCurrentMasterNode start \n");
+            //LogPrintf("*** RGP BEFORE GetCurrentMasterNode start \n");
 
             CMasternode* winningNode = mnodeman.GetCurrentMasterNode(1);
 
-            LogPrintf("*** RGP AFTER GetCurrentMasterNode start \n");
+            //LogPrintf("*** RGP AFTER GetCurrentMasterNode start \n");
             if ( winningNode == NULL )
                 return false;
 
-            //if ( fDebug )
-            //{
+            if ( fDebug )
+            {
                 LogPrintf("*** RGP CreateCoinStake Address %s Port %d \n",  winningNode->addr.ToString(), winningNode->addr.GetPort() );
 
-            //}
+            }
 
             if( winningNode )
             {
@@ -3625,7 +3625,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             }
             else
             {                
-                LogPrintf("*** RGP Failed to detect masternode to pay\n ");
+                //LogPrintf("*** RGP Failed to detect masternode to pay\n ");
                 return false;
             }
         }
