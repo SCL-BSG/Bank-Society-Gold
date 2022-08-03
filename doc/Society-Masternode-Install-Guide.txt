@@ -212,8 +212,8 @@ cd ..
 
 Create your configuration File:
 
-mkdir /root/.Society
-nano /root/.Society/society.conf
+mkdir /root/.SocietyG
+nano /root/.SocietyG/societyG.conf
 
 Copy and paste the following (Slave wallet only):
 
