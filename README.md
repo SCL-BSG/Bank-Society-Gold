@@ -9,12 +9,7 @@ Adjustments based on network hashrate, previous block difficulty simulating real
 This algorithm is intended to discourage >51% attacks, or malicous miners. It will also act as an automatic inflation adjustment based on network conditions.
 
 - Dynamic Block Reward 3.0 (C) 2017 Crypostle
-- Block #1 Up to 50000 [Max PoW: 100 Society] [PoS: 1000% APR] 
-- Block #50001 Up to 120000 [Max PoW: 50 Society] [PoS: 500% APR]
-- Block #120001 Up to 150000 [Max PoW: 25 Society] [PoS: 250% APR]
-- Block #150000 Up to 200000 [Max PoW: 12.5 Society] [PoS: 125% APR]
-- Block #200001 Up to 250000 [Max PoW: 6.25 Society] [PoS: 62% APR]
-- Block #250001+ [Max PoW: 3.125 Society] [PoS: 31% APR]
+- Block rewards to be updated
 - Block Spacing: 240 Seconds (4 minutes)
 - Diff Retarget: 2 Blocks
 - Maturity: 101 Blocks
