@@ -908,6 +908,7 @@ bool status;
 
     status = false;
 
+
     uint256 proofHash = 0, hashTarget = 0;
     uint256 hashBlock = pblock->GetHash();
 
@@ -923,7 +924,7 @@ bool status;
     if (!CheckProofOfStake(mapBlockIndex[pblock->hashPrevBlock], pblock->vtx[1], pblock->nBits, proofHash, hashTarget))
     {
         MilliSleep(5); /* RGP Optimize */
-        LogPrintf("*** RGP MIner not check proof of stake returned \n");
+        LogPrintf("*** RGP Miner not check proof of stake returned \n");
         return status;
         //return error("%s : proof-of-stake checking failed", __FUNCTION__);
     }
@@ -955,7 +956,12 @@ bool status;
         {
             // Track how many getdata requests this block gets
             LOCK(wallet.cs_wallet);
-            wallet.mapRequestCount[hashBlock] = 0;
+            {
+                LogPrintf("*** RGP ProcessBlockStake wallet lock SUCCESS \n");
+                wallet.mapRequestCount[hashBlock] = 0;
+            }
+
+
         }
         // Global Namespace End       
 

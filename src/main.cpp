@@ -3163,10 +3163,8 @@ uint256 hash;
 
     if (mapBlockIndex.count(hash))
     {
-        /* We have the new block, try to get blocks from pindexbest */
-        //PushGetBlocks(From_Node, pindexBest, uint256(0) ); /* ask for again */
+        /* We have the new block, try to get blocks from pindexbest */        
         PushGetBlocks(From_Node, pindexBest, pindexBest->GetBlockHash() ); /* ask for again from best block */
-
         MilliSleep( 1 );
 
         LogPrintf("*** RGP Debug Accept() Block already in MapBlockIndex \n");
@@ -3180,14 +3178,13 @@ uint256 hash;
         map<uint256, CBlockIndex*>::iterator mi_second = mapBlockIndex.find(hashPrevBlock);
         if (mi_second == mapBlockIndex.end())
         {
+            /* The blockhash was not found in the local store, look for
+               the previous blockhash, if we do not have it, ask for it */
 
-            /* Request Inventory that is missing */
+            /* Creare and inventory request message, it will result in a block being returned */
             Inventory_to_Request.type = MSG_BLOCK;
             Inventory_to_Request.hash = hashPrevBlock;
-
             From_Node->AskFor( Inventory_to_Request, false );
-
-            //LogPrintf("*** RGP Debug Accept() Previous Block not found \n");
 
             //LogPrintf("AcceptBlock() : prev block not found \n");
             return false;
@@ -3213,12 +3210,30 @@ uint256 hash;
         }
     }
 
+    /* -------------------------
+       -- RGP : JIRA 177 test --
+       ------------------------- */
+    if (mapBlockIndex.count(hash))
+    {
+        LogPrintf("*** RGP JIRA 177 check one exit \n");
+        return false;
+    }
+
     if (IsProofOfStake() && nHeight < Params().POSStartBlock())
         return DoS(100, error("AcceptBlock() : reject proof-of-stake at height <= %d", nHeight));
 
     // Check coinbase timestamp
     if (GetBlockTime() > FutureDrift((int64_t)vtx[0].nTime) && IsProofOfStake())
         return DoS(50, error("AcceptBlock() : coinbase timestamp is too early"));
+
+    /* -------------------------
+       -- RGP : JIRA 177 test --
+       ------------------------- */
+    if (mapBlockIndex.count(hash))
+    {
+        LogPrintf("*** RGP JIRA 177 check two exit \n");
+        return false;
+    }
 
     // Check coinstake timestamp
     if (IsProofOfStake() && !CheckCoinStakeTimestamp(nHeight, GetBlockTime(), (int64_t)vtx[1].nTime))
@@ -3235,6 +3250,15 @@ uint256 hash;
     // Check timestamp against prev
     if (GetBlockTime() <= pindexPrev->GetPastTimeLimit() || FutureDrift(GetBlockTime()) < pindexPrev->GetBlockTime())
         return error("AcceptBlock() : block's timestamp is too early");
+
+    /* -------------------------
+       -- RGP : JIRA 177 test --
+       ------------------------- */
+    if (mapBlockIndex.count(hash))
+    {
+        LogPrintf("*** RGP JIRA 177 check three exit \n");
+        return false;
+    }
 
     // Check that all transactions are finalized
     BOOST_FOREACH(const CTransaction& tx, vtx)
@@ -3282,6 +3306,15 @@ uint256 hash;
     if (!Checkpoints::CheckSync(nHeight))
         return error("AcceptBlock() : rejected by synchronized checkpoint");
 
+    /* -------------------------
+       -- RGP : JIRA 177 test --
+       ------------------------- */
+    if (mapBlockIndex.count(hash))
+    {
+        LogPrintf("*** RGP JIRA 177 check four exit \n");
+        return false;
+    }
+
     // Enforce rule that the coinbase starts with serialized block height
     CScript expect = CScript() << nHeight;
     if (vtx[0].vin[0].scriptSig.size() < expect.size() ||
@@ -3293,6 +3326,16 @@ uint256 hash;
         return error("AcceptBlock() : out of disk space");
     unsigned int nFile = -1;
     unsigned int nBlockPos = 0;
+
+    /* -------------------------
+       -- RGP : JIRA 177 test --
+       ------------------------- */
+    if (mapBlockIndex.count(hash))
+    {
+        LogPrintf("*** RGP JIRA 177 check five exit \n");
+        return false;
+    }
+
     if (!WriteToDisk(nFile, nBlockPos))
         return error("AcceptBlock() : WriteToDisk failed");
     if (!AddToBlockIndex(nFile, nBlockPos, hashProof))
@@ -5775,6 +5818,14 @@ string strCommand;
 
     //LogPrintf("\n\n ProcessMessages Start\n\n");
 
+    /* Let's check that the node is still connected */
+    if ( pfrom->fDisconnect )
+    {
+        LogPrintf("*** RGP ProcessMessages node disconnected for node %s \n", pfrom->addr.ToStringIP() );
+        return false;
+    }
+
+
     if ( pfrom->mapAskFor.size() == 0 )
     {
         /* Nothing being asked for, request. */
@@ -5851,12 +5902,36 @@ string strCommand;
 
             /* RGP delete messages or the same message will be used again and again */
 
+            try
+            {
+                LogPrintf("*** RGP ProcessMessages TRYING to free the vRecvMsg buffer \n");
+                pfrom->vRecvMsg.erase(pfrom->vRecvMsg.begin(), it);
 
-            pfrom->vRecvMsg.erase(pfrom->vRecvMsg.begin(), it);
+                MilliSleep( 1 );
+            }
+            catch (std::ios_base::failure& e)
+            {
+
+                PrintExceptionContinue(&e, "ProcessMessages()" );
+
+            }
+            catch (boost::thread_interrupted)
+            {
+                /* nothing */
+            }
+            catch (std::exception& e) {
+
+                PrintExceptionContinue(&e, "ProcessMessages()");
+            } catch (...) {
+
+                PrintExceptionContinue(NULL, "ProcessMessages()");
+            }
+
+
 
             /* Returning false will disconnect the node in net.cpp */
             LogPrintf("*** RGP stopped Disconnect... \n");
-            pfrom->fDisconnect = false;
+            pfrom->fDisconnect = true;
             return false;
         }
 
