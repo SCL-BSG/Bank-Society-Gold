@@ -253,6 +253,15 @@ extern json_spirit::Value getblock(const json_spirit::Array& params, bool fHelp)
 extern json_spirit::Value getblockbynumber(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value getcheckpoint(const json_spirit::Array& params, bool fHelp);
 
+/* ---------------------
+   -- RGP JIRA BSG-51 --
+   -----------------------------------------------------
+   -- added getnetworkinfo to list of server commands --
+   ----------------------------------------------------- */
+
+extern json_spirit::Value getnetworkinfo(const json_spirit::Array& params, bool fHelp);
+
+
 extern json_spirit::Value getnewstealthaddress(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value liststealthaddresses(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value importstealthaddress(const json_spirit::Array& params, bool fHelp);

@@ -269,6 +269,14 @@ static const CRPCCommand vRPCCommands[] =
     { "verifymessage",          &verifymessage,          false,     false,     false },
     { "searchrawtransactions",  &searchrawtransactions,  false,     false,     false },
 
+    /* ---------------------
+       -- RGP JIRA BSG-51 --
+       -----------------------------------------------------
+       -- added getnetworkinfo to list of server commands --
+       ----------------------------------------------------- */
+
+    { "getnetworkinfo",         &getnetworkinfo,         true,      false,     false },
+
     /* Firewall General Session Settings */
     { "firewallstatus",                                &firewallstatus,                             false,      false,    false },
     { "firewallenabled",                               &firewallenabled,                             false,      false,    false },
