@@ -1537,6 +1537,20 @@ bool IsLocal(const CService& addr)
     return mapLocalHost.count(addr) > 0;
 }
 
+/* ---------------------
+   -- RGP JIRA BSG-51 --
+   ------------------------------------------------------------
+   -- added IsReachable() overloaded function for rpcnet.cpp --
+   ------------------------------------------------------------ */
+
+/* check whether a given network is one we can probably connect to */
+bool IsReachable(enum Network net )
+{
+    LOCK(cs_mapLocalHost);
+    return !vfLimited[net];
+}
+
+
 /** check whether a given address is in a network we can probably connect to */
 bool IsReachable(const CNetAddr& addr)
 {
@@ -1840,7 +1854,7 @@ void CNode::CloseSocketDisconnect()
     fDisconnect = true;
     if (hSocket != INVALID_SOCKET)
     {
-        LogPrintf("*** RGP, disconnecting node %s\n", addrName);
+        LogPrintf("*** RGP, disconnecting node %s /n", addrName);
         closesocket(hSocket);
         hSocket = INVALID_SOCKET;
     }
@@ -1863,7 +1877,7 @@ void CNode::PushVersion()
     CAddress addrMe = GetLocalAddress(&addr);
 
     GetRandBytes((unsigned char*)&nLocalHostNonce, sizeof(nLocalHostNonce));
-    LogPrint("net", "send version message: version %d, blocks=%d, us=%s, them=%s, peer=%s\n", PROTOCOL_VERSION, nBestHeight, addrMe.ToString(), addrYou.ToString(), addr.ToString());
+    LogPrint("net", "send version message: version %d, blocks=%d, us=%s, them=%s, peer=%s /n", PROTOCOL_VERSION, nBestHeight, addrMe.ToString(), addrYou.ToString(), addr.ToString());
     PushMessage("version", PROTOCOL_VERSION, nLocalServices, nTime, addrYou, addrMe,
                 nLocalHostNonce, strSubVersion, nBestHeight);
 
@@ -2324,13 +2338,13 @@ MilliSleep(1);
                     {
                         if (GetTime() - pnode->nLastRecv > 60)
                         {
-                            if (GetTime() - pnode->nLastSend > 120 )
+                            if (GetTime() - pnode->nLastSend < 60)
                             {
                                 //if ( fDebug )
                                 //{
                                     LogPrintf("Error: Unexpected idle interruption 1 %s\n", pnode->addrName);
                                 //}
-                                pnode->CloseSocketDisconnect();
+                                //pnode->CloseSocketDisconnect();
                             }
                         }
                     }
@@ -2353,13 +2367,13 @@ MilliSleep(1);
                     {
                         if (GetTime() - pnode->nLastRecv > 120)
                         {
-                            if (GetTime() - pnode->nLastSend > 120)
+                            if (GetTime() - pnode->nLastSend < 120)
                             {
                                 //if ( fDebug )
                                 //{
                                     LogPrintf("Error: Unexpected idle interruption 2 %s\n", pnode->addrName);
                                 //}
-                                pnode->CloseSocketDisconnect();
+                                //pnode->CloseSocketDisconnect();
                             }
                         }
                     }
@@ -2377,13 +2391,13 @@ MilliSleep(1);
             {
                 if (GetTime() - pnode->nLastRecv > 120)
                 {
-                    if (GetTime() - pnode->nLastSend > 120)
+                    if (GetTime() - pnode->nLastSend < 120)
                     {
                         //if ( fDebug )
                         //{
                             LogPrintf("Error: Unexpected idle interruption  3 %s\n", pnode->addrName);
                         //}
-                        pnode->CloseSocketDisconnect();
+                        //pnode->CloseSocketDisconnect();
                     }
                 }
             }
@@ -3286,16 +3300,13 @@ void static StartSync(const vector<CNode*> &vNodes)
     // Iterate over all nodes
     BOOST_FOREACH(CNode* pnode, vNodes)
     {
-        LogPrintf("*** RGP StartSync start nBestHeight %d pnode->nStartingHeight %d \n", nBestHeight, pnode->nStartingHeight );
-        LogPrintf("*** RGP StartSync version %d ", pnode->nVersion );
+        LogPrintf("*** RGP StartSyncn start \n" );
 
         // check preconditions for allowing a sync
         if (!pnode->fClient && !pnode->fOneShot &&
-            !pnode->fDisconnect && pnode->fSuccessfullyConnected )
-//                &&
-//            (pnode->nStartingHeight > (nBestHeight - 144)) )
-//                &&
-//            (pnode->nVersion < NOBLKS_VERSION_START || pnode->nVersion >= NOBLKS_VERSION_END))
+            !pnode->fDisconnect && pnode->fSuccessfullyConnected &&
+            (pnode->nStartingHeight > (nBestHeight - 144)) &&
+            (pnode->nVersion < NOBLKS_VERSION_START || pnode->nVersion >= NOBLKS_VERSION_END))
         {
             // if ok, compare node's score with the best so far
             nScore = NodeSyncScore(pnode);
@@ -3340,10 +3351,8 @@ void static StartSync(const vector<CNode*> &vNodes)
 void ThreadMessageHandler()
 {
 extern volatile bool fRequestShutdown;
-unsigned int filter;
 
     SetThreadPriority(THREAD_PRIORITY_BELOW_NORMAL);
-    filter = 50;
 
     while ( !fRequestShutdown )
     {
@@ -3353,8 +3362,7 @@ unsigned int filter;
         {
             LOCK(cs_vNodes);
             vNodesCopy = vNodes;
-            BOOST_FOREACH(CNode* pnode, vNodesCopy)
-            {
+            BOOST_FOREACH(CNode* pnode, vNodesCopy) {
                 pnode->AddRef();
                 if (pnode == pnodeSync)
                     fHaveSyncNode = true;
@@ -3363,16 +3371,9 @@ unsigned int filter;
 
         MilliSleep(5); /* RGP Optimisation */
 
-        if (filter == 50 )
-            if (!fHaveSyncNode)
-            {
-                StartSync(vNodesCopy);
-            }
-        else
-            filter--;
-
-        if (filter <= 0 )
-            filter = 50;
+        if (!fHaveSyncNode){
+            StartSync(vNodesCopy);
+        }
 
         // Poll the connected nodes for messages
         CNode* pnodeTrickle = NULL;
@@ -3429,8 +3430,6 @@ unsigned int filter;
                         }
                     }
                 }
-                else
-                    LogPrintf("*** RGP LockRecv failed in net.cpp \n");
             }
             //boost::this_thread::interruption_point();
 
@@ -3447,7 +3446,7 @@ unsigned int filter;
                 //}
                 //else
                 //{
-                //    MilliSleep(20); /* RGP Optimisation */
+                    MilliSleep(20); /* RGP Optimisation */
                 //}
             }
             //boost::this_thread::interruption_point();
