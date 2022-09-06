@@ -1757,35 +1757,41 @@ int64_t GetProofOfStakeReward(const CBlockIndex* pindexPrev, int64_t nCoinAge, i
     /* ------ Initial Mining Phase: Block #101 Up to 500 000 ------ */
     if (pindexPrev->nHeight > 100)
     {
-        nSubsidy = nSubsidy * 0.035;
+        /* RGP, JIRA BSG-181 Update */
+        nSubsidy = nSubsidy * 0.35;
     }
     /* ------ Initial Mining Phase: Block #500 001 Up to 1 000 000 ------ */
     if (pindexPrev->nHeight > 1000000)
     {
-        nSubsidy = nSubsidy * 0.030;
+        /* RGP, JIRA BSG-181 Update */
+        nSubsidy = nSubsidy * 0.30;
     }
     /* ------ Regular Mining Phase: Block #1 000 001 Up to 5 000 000 ------ */
     if (pindexPrev->nHeight > 5000000)
     {
-        nSubsidy = nSubsidy * 0.015;  //
+        /* RGP, JIRA BSG-181 Update */
+        nSubsidy = nSubsidy * 0.15;  //
     }
 
     /* ------ Regular Mining Phase: Block #5 000 001 Up to 20 000 000  ------ */
     if (pindexPrev->nHeight > 5000000)
     {
-        nSubsidy = nSubsidyBase * 0.01; //
+        /* RGP, JIRA BSG-181 Update */
+        nSubsidy = nSubsidyBase * 0.1; //
     }
 
     /* ------ Regular Mining Phase: Block #20 000 001 Up to 50 000 000  ------ */
     if (pindexPrev->nHeight > 20000000)
     {
-        nSubsidy = nSubsidyBase * 0.005; //
+        /* RGP, JIRA BSG-181 Update */
+        nSubsidy = nSubsidyBase * 0.05; //
     }
 
     /* ------ Regular Mining Phase: Block #50 000 001 Up to 75 000 000  ------ */
     if (pindexPrev->nHeight > 50000001 )
     {
-        nSubsidy = nSubsidyBase * 0.002; //
+        /* RGP, JIRA BSG-181 Update */
+        nSubsidy = nSubsidyBase * 0.02; //
     }
 
     //LogPrintf("Coin Stake creation GetProofOfStakeReward(): create=%s subsidybase %s nCoinAge=%d\n", FormatMoney(nSubsidy), nSubsidyBase, nCoinAge);
@@ -3474,7 +3480,7 @@ bool PoS_Mining_Block;
     {
         //if ( fDebug )
         //{
-        //    LogPrintf("*** ProcessBlock Already have the newly provide block HASH \n");
+            LogPrintf("*** ProcessBlock Already have the newly provide block HASH \n");
         //}
         //return error("ProcessBlock() : already have block %d %s", mapBlockIndex[hash]->nHeight, hash.ToString());
         MilliSleep(1);
@@ -3496,7 +3502,7 @@ bool PoS_Mining_Block;
         // Store to disk
         if (!pblock->AcceptBlock())
         {
-            //LogPrintf("*** RGP ProcessBlock failed \n");
+            LogPrintf("*** RGP ProcessBlock failed \n");
 
             /* Previous block is missing, let's ask for it. However, this will repeat
                backwords until it finds the correct block, could take a while         */
@@ -3513,13 +3519,14 @@ bool PoS_Mining_Block;
         }
         else
         {
+             LogPrintf("*** RGP ProcessBlock SUCCESS \n");
 
             if(!IsInitialBlockDownload()){
 
-                if ( fDebug )
-                {
+                //if ( fDebug )
+                //{
                     LogPrintf("*** RGP ProcessBlock, Masternode payment section and no IsInialBlockDownload \n");
-                }
+                //}
 
                 CScript payee;
                 CTxIn vin;
@@ -3527,16 +3534,24 @@ bool PoS_Mining_Block;
                 // If we're in LiteMode disable darksend features without disabling masternodes
                 if (!fLiteMode && !fImporting && !fReindex && pindexBest->nHeight > Checkpoints::GetTotalBlocksEstimate()){
 
-                  if(masternodePayments.GetBlockPayee(pindexBest->nHeight, payee, vin)){
+                  LogPrintf("*** RGP ProcessBlock not light mode \n");
+
+                  if(masternodePayments.GetBlockPayee(pindexBest->nHeight, payee, vin))
+                  {
                         //UPDATE MASTERNODE LAST PAID TIME
                         CMasternode* pmn = mnodeman.Find(vin);
-                        if(pmn != NULL) {
+                        if(pmn != NULL)
+                        {
 
                             pmn->nLastPaid = GetAdjustedTime();
                         }
 
                        LogPrintf("ProcessBlock() : Update Masternode Last Paid Time - %d\n", pindexBest->nHeight);
-                    }
+                  }
+                  else
+                      LogPrintf("*** RGP ProcessBlock not light mode, fell out 1 \n");
+
+
 
                     darkSendPool.CheckTimeout();
                     darkSendPool.NewBlock();
@@ -3544,7 +3559,9 @@ bool PoS_Mining_Block;
 
                 } else if (fLiteMode && !fImporting && !fReindex && pindexBest->nHeight > Checkpoints::GetTotalBlocksEstimate())
                 {
+                    LogPrintf("*** RGP ProcessBlock light mode \n");
 
+                    /* Lite Mode */
                     if(masternodePayments.GetBlockPayee(pindexBest->nHeight, payee, vin)){
                         //UPDATE MASTERNODE LAST PAID TIME
                         CMasternode* pmn = mnodeman.Find(vin);
@@ -3557,6 +3574,8 @@ bool PoS_Mining_Block;
                            LogPrintf("ProcessBlock() : Update Masternode Last Paid Time - %d\n", pindexBest->nHeight);
                         }
                     }
+                    else
+                        LogPrintf("*** RGP ProcessBlock not light mode, fell out 2 \n");
 
                     masternodePayments.ProcessBlock(GetHeight()+10);
                 }

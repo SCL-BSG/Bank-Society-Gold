@@ -226,26 +226,40 @@ void CMasternodePayments::CleanPaymentList()
 
 bool CMasternodePayments::ProcessBlock(int nBlockHeight)
 {
-    // LogPrintf("*** RGP CMasternodePayments::ProcessBlock Start \n");
+uint256 hash;
+unsigned int nHash;
+int nMinimumAge;
+
+    LogPrintf("*** RGP CMasternodePayments::ProcessBlock Start \n");
 
     LOCK(cs_masternodepayments);
 
-    if(nBlockHeight <= nLastBlockHeight) return false;
-    if(!enabled) return false;
+    /* ------------------------------------------------------------
+       -- RGP, Check that the Masternode is Enabled and that the --
+       --      blockheight is greater that the masternode last   --
+       --      block height.                                     --
+       ------------------------------------------------------------ */
+
+    if ( nBlockHeight <= nLastBlockHeight ) return false;
+    if ( !enabled ) return false;
+
     CMasternodePaymentWinner newWinner;
-    int nMinimumAge = mnodeman.CountEnabled();
+    nMinimumAge = mnodeman.CountEnabled();
     CScript payeeSource;
 
-    uint256 hash;
-    if(!GetBlockHash(hash, nBlockHeight-10)) return false;
-    unsigned int nHash;
+
+    if( !GetBlockHash(hash, nBlockHeight-10)) return false;
+
     memcpy(&nHash, &hash, 2);
 
-    // LogPrintf("*** RGP ProcessBlock Start nHeight %d - vin %s. \n", nBlockHeight, activeMasternode.vin.ToString().c_str());
+    LogPrintf("*** RGP ProcessBlock Start nHeight %d - vin %s. \n", nBlockHeight, activeMasternode.vin.ToString().c_str());
 
     std::vector<CTxIn> vecLastPayments;
     BOOST_REVERSE_FOREACH(CMasternodePaymentWinner& winner, vWinning)
     {
+
+        LogPrintf("*** RGP, Looking for last winner %d \n, winner.vin ");
+
         //if we already have the same vin - we have one full payment cycle, break
         if(vecLastPayments.size() > (unsigned int)nMinimumAge) break;
         vecLastPayments.push_back(winner.vin);

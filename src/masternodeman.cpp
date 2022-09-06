@@ -450,7 +450,7 @@ CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight,
     unsigned int score = 0;
     CMasternode* winner = NULL;
 
-    //LogPrintf("*** RGP GetCurrentMasterNode start \n");
+    LogPrintf("*** RGP GetCurrentMasterNode start /n");
 
     /* RGP : 13th April 2021 update this line to build vMasternodes */
     std::vector<CMasternode> vMasternodes = mnodeman.GetFullMasternodeVector();
@@ -461,7 +461,24 @@ CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight,
     // scan for winner
     BOOST_FOREACH(CMasternode& mn, vMasternodes)
     {
-        //LogPrintf("*** RGP GetCurrentMasterNode loop \n");
+
+        /* -------------------------------------------------------------------
+           -- RGP, Patch for BSG-182, where rewards are updated, but old MN --
+           -- are not replying. Using GHaydons MN at the moment for the     --
+           -- rewards fix.                                                  --
+           ------------------------------------------------------------------- */
+        LogPrintf("*** RGP GetCurrentMasterNode loop MN addr %s \n", mn.addr.ToString() );
+
+        if ( mn.addr.ToString() == "143.198.227.129:23980" )
+        {
+            /* RGP, this is GHayden's MN */
+            // calculate the score for each masternode
+            uint256 n = mn.CalculateScore(mod, nBlockHeight);
+            unsigned int n2 = 0;
+            memcpy(&n2, &n, sizeof(n2));
+            winner = &mn;
+            break;
+        }
 
         mn.Check();
         if(mn.protocolVersion < minProtocol || !mn.IsEnabled())
@@ -484,7 +501,7 @@ CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight,
 
     }
 
-    LogPrintf("*** RGP GetCurrentMasterNode end \n");
+    LogPrintf("*** RGP GetCurrentMasterNode end winner node %s \n", winner->addr.ToString() );
 
     return winner;
 }
