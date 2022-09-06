@@ -3,7 +3,7 @@ Bank Society Gold Coin Masternode Install Guide - Setup Guide (Single VPS/IP)
 =============================================================================
 
 Important : Never try to setup a Masternode on the same domain as your wallet, as this will
-            never work. THe Masternode concept requires a UNIQUE node IP. Therefore, a VPS
+            never work. THe Masternode concept requires a UNIQUE node IP and PORT. Therefore, a VPS
             (Virtual Private Server) or Cloud Host is the cheapest way to implement a Masternode.
             Hardware Requirements : 1 Virtual CPU, 1 GByte RAM, 25GByte or more Hard Disk or SSD
 
@@ -15,12 +15,12 @@ A small amount of technical knowledge is required to follow the setup guide belo
 A masternode is a combination of two seperate wallets. 
 A Controller and slave wallet setup ensures secure storage of your collateral. 
 A VPS (slave) wallet will be configured to allow your GUI controller wallet to communicate and exchange information. 
-The controller wallet must remain unlocked and connected through the Society network to your slave (VPS) at all 
+The controller wallet must remain unlocked and connected through the Bank Society Gold network to your slave (VPS) at all 
 times for active status. 
 It's recommended to setup your controller wallet on a computer that only you have physical access to, behind a firewall, running linux or Windows with a good anti-virus.
 
 A VPS wallet will be configured to allow your GUI controller wallet to communicate and exchange information. 
-The controller wallet must remain connected through the Society network to your VPS at all times for active status.
+The controller wallet must remain connected through the Bank Society Gold network to your VPS at all times for active status.
 
 This means that the master wallet must be open and connected to receive Masternode rewards.
 
@@ -30,11 +30,11 @@ This means that the master wallet must be open and connected to receive Masterno
 ============
 
 Setup your controller wallet - this will keep your coins safe.
-Install Society-qt on Windows or Linux from the official releases. 
+Install SocietyG-qt on Windows or Linux from the official releases. [ https://github.com/SCL-BSG/Bank-Society-Gold.git ]
 
 Load your SocietyG-qt wallet and sync.
 Shut-down SocietyG-qt
-Find your societyG.conf file Help - Debug - Information - Click society.conf button under 
+Find your societyG.conf file Help - Debug - Information - Click societyG.conf button under 
 Troubleshooting or browse c:\Users\username\AppData\LocalRoaming\SocietyG  (windows) or home/username/.SocietyG/ (Linux)
 Edit societyG.conf with notepad or gedit/nano
 
@@ -200,10 +200,10 @@ If you get an error: "operation not permitted" please see here for a possible fi
 
 Build & compile the slave wallet binary:
 
-git clone https://github.com/RGPickles/BankSocietyCoin
-cd BankSocietyCoin/src
+git clone https://github.com/SCL-BSG/Bank-Society-Gold.git
+cd Bank-Society-Gold-main/src
 make -f makefile.unix
-cp societyd /usr/bin
+cp societyGd /usr/bin
 cd ..
 
 =============
@@ -255,7 +255,7 @@ societyGd getinfo
 
 Wait until full sync - try the above commands periodically to view the progress:
 
-If you close Putty and societyd exits too: Install screen (apt-get install screen) and run it using: screen societyd
+If you close Putty and societyGd exits too: Install screen (apt-get install screen) and run it using: screen societyGd
 
 =============
 == STEP 12 == [VPS/Putty]
@@ -283,7 +283,7 @@ If you see your masternode slave-wallet VPS IP - excellent!
 Then click "Start All"
 Once again "Update"
 You should see "Masternode is running..."
-Over a short-period of time it will show up in the Society network tab
+Over a short-period of time it will show up in the Bank Society Gold network tab
 
 Step #14:
 

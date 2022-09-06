@@ -1757,35 +1757,41 @@ int64_t GetProofOfStakeReward(const CBlockIndex* pindexPrev, int64_t nCoinAge, i
     /* ------ Initial Mining Phase: Block #101 Up to 500 000 ------ */
     if (pindexPrev->nHeight > 100)
     {
-        nSubsidy = nSubsidy * 0.035;
+        /* RGP, JIRA BSG-181 Update */
+        nSubsidy = nSubsidy * 0.35;
     }
     /* ------ Initial Mining Phase: Block #500 001 Up to 1 000 000 ------ */
     if (pindexPrev->nHeight > 1000000)
     {
-        nSubsidy = nSubsidy * 0.030;
+        /* RGP, JIRA BSG-181 Update */
+        nSubsidy = nSubsidy * 0.30;
     }
     /* ------ Regular Mining Phase: Block #1 000 001 Up to 5 000 000 ------ */
     if (pindexPrev->nHeight > 5000000)
     {
-        nSubsidy = nSubsidy * 0.015;  //
+        /* RGP, JIRA BSG-181 Update */
+        nSubsidy = nSubsidy * 0.15;  //
     }
 
     /* ------ Regular Mining Phase: Block #5 000 001 Up to 20 000 000  ------ */
     if (pindexPrev->nHeight > 5000000)
     {
-        nSubsidy = nSubsidyBase * 0.01; //
+        /* RGP, JIRA BSG-181 Update */
+        nSubsidy = nSubsidyBase * 0.1; //
     }
 
     /* ------ Regular Mining Phase: Block #20 000 001 Up to 50 000 000  ------ */
     if (pindexPrev->nHeight > 20000000)
     {
-        nSubsidy = nSubsidyBase * 0.005; //
+        /* RGP, JIRA BSG-181 Update */
+        nSubsidy = nSubsidyBase * 0.05; //
     }
 
     /* ------ Regular Mining Phase: Block #50 000 001 Up to 75 000 000  ------ */
     if (pindexPrev->nHeight > 50000001 )
     {
-        nSubsidy = nSubsidyBase * 0.002; //
+        /* RGP, JIRA BSG-181 Update */
+        nSubsidy = nSubsidyBase * 0.02; //
     }
 
     //LogPrintf("Coin Stake creation GetProofOfStakeReward(): create=%s subsidybase %s nCoinAge=%d\n", FormatMoney(nSubsidy), nSubsidyBase, nCoinAge);
@@ -3163,10 +3169,8 @@ uint256 hash;
 
     if (mapBlockIndex.count(hash))
     {
-        /* We have the new block, try to get blocks from pindexbest */
-        //PushGetBlocks(From_Node, pindexBest, uint256(0) ); /* ask for again */
+        /* We have the new block, try to get blocks from pindexbest */        
         PushGetBlocks(From_Node, pindexBest, pindexBest->GetBlockHash() ); /* ask for again from best block */
-
         MilliSleep( 1 );
 
         LogPrintf("*** RGP Debug Accept() Block already in MapBlockIndex \n");
@@ -3180,14 +3184,13 @@ uint256 hash;
         map<uint256, CBlockIndex*>::iterator mi_second = mapBlockIndex.find(hashPrevBlock);
         if (mi_second == mapBlockIndex.end())
         {
+            /* The blockhash was not found in the local store, look for
+               the previous blockhash, if we do not have it, ask for it */
 
-            /* Request Inventory that is missing */
+            /* Creare and inventory request message, it will result in a block being returned */
             Inventory_to_Request.type = MSG_BLOCK;
             Inventory_to_Request.hash = hashPrevBlock;
-
             From_Node->AskFor( Inventory_to_Request, false );
-
-            //LogPrintf("*** RGP Debug Accept() Previous Block not found \n");
 
             //LogPrintf("AcceptBlock() : prev block not found \n");
             return false;
@@ -3213,12 +3216,30 @@ uint256 hash;
         }
     }
 
+    /* -------------------------
+       -- RGP : JIRA 177 test --
+       ------------------------- */
+    if (mapBlockIndex.count(hash))
+    {
+        LogPrintf("*** RGP JIRA 177 check one exit \n");
+        return false;
+    }
+
     if (IsProofOfStake() && nHeight < Params().POSStartBlock())
         return DoS(100, error("AcceptBlock() : reject proof-of-stake at height <= %d", nHeight));
 
     // Check coinbase timestamp
     if (GetBlockTime() > FutureDrift((int64_t)vtx[0].nTime) && IsProofOfStake())
         return DoS(50, error("AcceptBlock() : coinbase timestamp is too early"));
+
+    /* -------------------------
+       -- RGP : JIRA 177 test --
+       ------------------------- */
+    if (mapBlockIndex.count(hash))
+    {
+        LogPrintf("*** RGP JIRA 177 check two exit \n");
+        return false;
+    }
 
     // Check coinstake timestamp
     if (IsProofOfStake() && !CheckCoinStakeTimestamp(nHeight, GetBlockTime(), (int64_t)vtx[1].nTime))
@@ -3235,6 +3256,15 @@ uint256 hash;
     // Check timestamp against prev
     if (GetBlockTime() <= pindexPrev->GetPastTimeLimit() || FutureDrift(GetBlockTime()) < pindexPrev->GetBlockTime())
         return error("AcceptBlock() : block's timestamp is too early");
+
+    /* -------------------------
+       -- RGP : JIRA 177 test --
+       ------------------------- */
+    if (mapBlockIndex.count(hash))
+    {
+        LogPrintf("*** RGP JIRA 177 check three exit \n");
+        return false;
+    }
 
     // Check that all transactions are finalized
     BOOST_FOREACH(const CTransaction& tx, vtx)
@@ -3282,6 +3312,15 @@ uint256 hash;
     if (!Checkpoints::CheckSync(nHeight))
         return error("AcceptBlock() : rejected by synchronized checkpoint");
 
+    /* -------------------------
+       -- RGP : JIRA 177 test --
+       ------------------------- */
+    if (mapBlockIndex.count(hash))
+    {
+        LogPrintf("*** RGP JIRA 177 check four exit \n");
+        return false;
+    }
+
     // Enforce rule that the coinbase starts with serialized block height
     CScript expect = CScript() << nHeight;
     if (vtx[0].vin[0].scriptSig.size() < expect.size() ||
@@ -3293,6 +3332,16 @@ uint256 hash;
         return error("AcceptBlock() : out of disk space");
     unsigned int nFile = -1;
     unsigned int nBlockPos = 0;
+
+    /* -------------------------
+       -- RGP : JIRA 177 test --
+       ------------------------- */
+    if (mapBlockIndex.count(hash))
+    {
+        LogPrintf("*** RGP JIRA 177 check five exit \n");
+        return false;
+    }
+
     if (!WriteToDisk(nFile, nBlockPos))
         return error("AcceptBlock() : WriteToDisk failed");
     if (!AddToBlockIndex(nFile, nBlockPos, hashProof))
@@ -3431,7 +3480,7 @@ bool PoS_Mining_Block;
     {
         //if ( fDebug )
         //{
-        //    LogPrintf("*** ProcessBlock Already have the newly provide block HASH \n");
+            LogPrintf("*** ProcessBlock Already have the newly provide block HASH \n");
         //}
         //return error("ProcessBlock() : already have block %d %s", mapBlockIndex[hash]->nHeight, hash.ToString());
         MilliSleep(1);
@@ -3453,7 +3502,7 @@ bool PoS_Mining_Block;
         // Store to disk
         if (!pblock->AcceptBlock())
         {
-            //LogPrintf("*** RGP ProcessBlock failed \n");
+            LogPrintf("*** RGP ProcessBlock failed \n");
 
             /* Previous block is missing, let's ask for it. However, this will repeat
                backwords until it finds the correct block, could take a while         */
@@ -3470,13 +3519,14 @@ bool PoS_Mining_Block;
         }
         else
         {
+             LogPrintf("*** RGP ProcessBlock SUCCESS \n");
 
             if(!IsInitialBlockDownload()){
 
-                if ( fDebug )
-                {
+                //if ( fDebug )
+                //{
                     LogPrintf("*** RGP ProcessBlock, Masternode payment section and no IsInialBlockDownload \n");
-                }
+                //}
 
                 CScript payee;
                 CTxIn vin;
@@ -3484,16 +3534,24 @@ bool PoS_Mining_Block;
                 // If we're in LiteMode disable darksend features without disabling masternodes
                 if (!fLiteMode && !fImporting && !fReindex && pindexBest->nHeight > Checkpoints::GetTotalBlocksEstimate()){
 
-                  if(masternodePayments.GetBlockPayee(pindexBest->nHeight, payee, vin)){
+                  LogPrintf("*** RGP ProcessBlock not light mode \n");
+
+                  if(masternodePayments.GetBlockPayee(pindexBest->nHeight, payee, vin))
+                  {
                         //UPDATE MASTERNODE LAST PAID TIME
                         CMasternode* pmn = mnodeman.Find(vin);
-                        if(pmn != NULL) {
+                        if(pmn != NULL)
+                        {
 
                             pmn->nLastPaid = GetAdjustedTime();
                         }
 
                        LogPrintf("ProcessBlock() : Update Masternode Last Paid Time - %d\n", pindexBest->nHeight);
-                    }
+                  }
+                  else
+                      LogPrintf("*** RGP ProcessBlock not light mode, fell out 1 \n");
+
+
 
                     darkSendPool.CheckTimeout();
                     darkSendPool.NewBlock();
@@ -3501,7 +3559,9 @@ bool PoS_Mining_Block;
 
                 } else if (fLiteMode && !fImporting && !fReindex && pindexBest->nHeight > Checkpoints::GetTotalBlocksEstimate())
                 {
+                    LogPrintf("*** RGP ProcessBlock light mode \n");
 
+                    /* Lite Mode */
                     if(masternodePayments.GetBlockPayee(pindexBest->nHeight, payee, vin)){
                         //UPDATE MASTERNODE LAST PAID TIME
                         CMasternode* pmn = mnodeman.Find(vin);
@@ -3514,6 +3574,8 @@ bool PoS_Mining_Block;
                            LogPrintf("ProcessBlock() : Update Masternode Last Paid Time - %d\n", pindexBest->nHeight);
                         }
                     }
+                    else
+                        LogPrintf("*** RGP ProcessBlock not light mode, fell out 2 \n");
 
                     masternodePayments.ProcessBlock(GetHeight()+10);
                 }
@@ -5775,6 +5837,14 @@ string strCommand;
 
     //LogPrintf("\n\n ProcessMessages Start\n\n");
 
+    /* Let's check that the node is still connected */
+    if ( pfrom->fDisconnect )
+    {
+        LogPrintf("*** RGP ProcessMessages node disconnected for node %s \n", pfrom->addr.ToStringIP() );
+        return false;
+    }
+
+
     if ( pfrom->mapAskFor.size() == 0 )
     {
         /* Nothing being asked for, request. */
@@ -5851,12 +5921,36 @@ string strCommand;
 
             /* RGP delete messages or the same message will be used again and again */
 
+            try
+            {
+                LogPrintf("*** RGP ProcessMessages TRYING to free the vRecvMsg buffer \n");
+                pfrom->vRecvMsg.erase(pfrom->vRecvMsg.begin(), it);
 
-            pfrom->vRecvMsg.erase(pfrom->vRecvMsg.begin(), it);
+                MilliSleep( 1 );
+            }
+            catch (std::ios_base::failure& e)
+            {
+
+                PrintExceptionContinue(&e, "ProcessMessages()" );
+
+            }
+            catch (boost::thread_interrupted)
+            {
+                /* nothing */
+            }
+            catch (std::exception& e) {
+
+                PrintExceptionContinue(&e, "ProcessMessages()");
+            } catch (...) {
+
+                PrintExceptionContinue(NULL, "ProcessMessages()");
+            }
+
+
 
             /* Returning false will disconnect the node in net.cpp */
             LogPrintf("*** RGP stopped Disconnect... \n");
-            pfrom->fDisconnect = false;
+            pfrom->fDisconnect = true;
             return false;
         }
 
