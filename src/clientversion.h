@@ -1,7 +1,7 @@
 #ifndef CLIENTVERSION_H
 #define CLIENTVERSION_H
 
-/* RGP : Changed on 26th July 2022 */
+/* RGP : Changed on 7th Sep 2022 */
 
 //
 // client versioning
@@ -11,7 +11,7 @@
 #define CLIENT_VERSION_MAJOR       2
 #define CLIENT_VERSION_MINOR       0
 #define CLIENT_VERSION_REVISION    4
-#define CLIENT_VERSION_BUILD       2
+#define CLIENT_VERSION_BUILD       3
 
 
 static const int CLIENT_VERSION_RPC =
