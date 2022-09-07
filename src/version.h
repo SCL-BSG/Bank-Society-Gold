@@ -30,23 +30,38 @@ static const int DATABASE_VERSION = 70000;
 // network protocol versioning
 //
 
-static const int PROTOCOL_VERSION = 10006;
+/* --------------------------------------------------
+   -- RGP, JIRA BSG-182 PROTOCOL_VERSION was 10006 --
+   -------------------------------------------------- */
+static const int PROTOCOL_VERSION = 10007;
 
 // intial proto version, to be increased after version/verack negotiation
 static const int INIT_PROTO_VERSION = 209;
 
+/* ------------------------------------------------------
+   -- RGP, JIRA BSG-182 MIN_PEER_PROTO_VERSION = 10005 --
+   ------------------------------------------------------ */
 // disconnect from peers older than this proto version
-static const int MIN_PEER_PROTO_VERSION = 10005;
+static const int MIN_PEER_PROTO_VERSION = 10007;
 
+/* -----------------------------------------------------------
+   -- RGP, JIRA BSG-182 MIN_POOL_PEER_PROTO_VERSION = 10005 --
+   --                   MIN_INSTANTX_PROTO_VERSION  = 10005 --
+   ----------------------------------------------------------- */
 // minimum peer version accepted by DarkSendPool
-static const int MIN_POOL_PEER_PROTO_VERSION = 10005; 
-static const int MIN_INSTANTX_PROTO_VERSION = 10005;
+static const int MIN_POOL_PEER_PROTO_VERSION = 10007;
+static const int MIN_INSTANTX_PROTO_VERSION = 10007;
+
+/* ----------------------------------------------------------------------
+   -- RGP, JIRA BSG-182 MIN_MASTERNODE_PAYMENT_PROTO_VERSION_1 = 10005 --
+   --                   MIN_MASTERNODE_PAYMENT_PROTO_VERSION_2 = 10005 --
+   ---------------------------------------------------------------------- */
 
 //! minimum peer version that can receive masternode payments
 // V1 - Last protocol version before update
 // V2 - Newest protocol version
-static const int MIN_MASTERNODE_PAYMENT_PROTO_VERSION_1 = 10005;
-static const int MIN_MASTERNODE_PAYMENT_PROTO_VERSION_2 = 10005;
+static const int MIN_MASTERNODE_PAYMENT_PROTO_VERSION_1 = 10007;
+static const int MIN_MASTERNODE_PAYMENT_PROTO_VERSION_2 = 10007;
 
 // nTime field added to CAddress, starting with this version;
 // if possible, avoid requesting addresses nodes older than this
