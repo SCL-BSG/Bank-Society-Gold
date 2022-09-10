@@ -31,6 +31,9 @@ void ProcessSpork(CNode* pfrom, std::string& strCommand, CDataStream& vRecv)
 {
     if(fLiteMode) return; //disable all darksend/masternode related functionality
 
+    LogPrintf("*** RGP ProcessSpork Start %s \n", pfrom->addr.ToString().c_str() );
+
+
     if (strCommand == "spork")
     {
         //LogPrintf("ProcessSpork::spork\n");
@@ -41,12 +44,16 @@ void ProcessSpork(CNode* pfrom, std::string& strCommand, CDataStream& vRecv)
         if(pindexBest == NULL) return;
 
         uint256 hash = spork.GetHash();
-        if(mapSporksActive.count(spork.nSporkID)) {
-            if(mapSporksActive[spork.nSporkID].nTimeSigned >= spork.nTimeSigned){
-                if(fDebug) LogPrintf("spork - seen %s block %d \n", hash.ToString().c_str(), pindexBest->nHeight);
+        if(mapSporksActive.count(spork.nSporkID))
+        {
+            if(mapSporksActive[spork.nSporkID].nTimeSigned >= spork.nTimeSigned)
+            {
+                LogPrintf("spork - seen %s block %d \n", hash.ToString().c_str(), pindexBest->nHeight);
                 return;
-            } else {
-                if(fDebug) LogPrintf("spork - got updated spork %s block %d \n", hash.ToString().c_str(), pindexBest->nHeight);
+            }
+            else
+            {
+                LogPrintf("spork - got updated spork %s block %d \n", hash.ToString().c_str(), pindexBest->nHeight);
             }
         }
 

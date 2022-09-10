@@ -24,9 +24,19 @@ int CMasternodePayments::GetMinMasternodePaymentsProto() {
 
 void ProcessMessageMasternodePayments(CNode* pfrom, std::string& strCommand, CDataStream& vRecv)
 {
-    if(!darkSendPool.IsBlockchainSynced()) return;
+    LogPrintf("*** RGP ProcessMessageMasternodePayments Start \n");
+
+    if(!darkSendPool.IsBlockchainSynced())
+    {
+        LogPrintf("*** RGP ProcessMessageMasternodePayments darkSendPool IsBlockchainSynced Failed \n");
+        //return;
+    }
+
+    LogPrintf("*** RGP ProcessMessageMasternodePayments Debug 1 \n");
 
     if (strCommand == "mnget") { //Masternode Payments Request Sync
+
+        LogPrintf("*** RGP ProcessMessageMasternodePayments mnget \n");
 
         if(pfrom->HasFulfilledRequest("mnget")) {
             LogPrintf("mnget - peer already asked me for the list\n");
@@ -39,6 +49,8 @@ void ProcessMessageMasternodePayments(CNode* pfrom, std::string& strCommand, CDa
         LogPrintf("mnget - Sent Masternode winners to %s\n", pfrom->addr.ToString().c_str());
     }
     else if (strCommand == "mnw") { //Masternode Payments Declare Winner
+
+        LogPrintf("*** RGP ProcessMessageMasternodePayments mnw \n");
 
         LOCK(cs_masternodepayments);
 
@@ -83,6 +95,9 @@ void ProcessMessageMasternodePayments(CNode* pfrom, std::string& strCommand, CDa
             masternodePayments.Relay(winner);
         }
     }
+
+    LogPrintf("*** RGP ProcessMessageMasternodePayments End \n");
+
 }
 
 
@@ -172,15 +187,19 @@ bool CMasternodePayments::GetWinningMasternode(int nBlockHeight, CTxIn& vinOut)
 bool CMasternodePayments::AddWinningMasternode(CMasternodePaymentWinner& winnerIn)
 {
     uint256 blockHash = 0;
-    if(!GetBlockHash(blockHash, winnerIn.nBlockHeight-576)) {
+    if(!GetBlockHash(blockHash, winnerIn.nBlockHeight-576))
+    {
+        LogPrintf("CMasternodePayments::AddWinningMasternode GetBlockHash failed");
         return false;
     }
 
     winnerIn.score = CalculateScore(blockHash, winnerIn.vin);
 
     bool foundBlock = false;
-    BOOST_FOREACH(CMasternodePaymentWinner& winner, vWinning){
-        if(winner.nBlockHeight == winnerIn.nBlockHeight) {
+    BOOST_FOREACH(CMasternodePaymentWinner& winner, vWinning)
+    {
+        if(winner.nBlockHeight == winnerIn.nBlockHeight)
+        {
             foundBlock = true;
             if(winner.score < winnerIn.score){
                 winner.score = winnerIn.score;
@@ -240,19 +259,32 @@ int nMinimumAge;
        --      block height.                                     --
        ------------------------------------------------------------ */
 
-    if ( nBlockHeight <= nLastBlockHeight ) return false;
-    if ( !enabled ) return false;
+    if ( nBlockHeight <= nLastBlockHeight )
+    {
+        LogPrintf("*** RGP CMasternodePayments::ProcessBlock nBlockHeight %d nLastBlockHeight %d \n", nBlockHeight, nLastBlockHeight );
+        return false;
+    }
+
+    if ( !enabled )
+    {
+        LogPrintf("*** RGP CMasternodePayments::ProcessBlock NOT ENABLED!!! \n" );
+        return false;
+    }
 
     CMasternodePaymentWinner newWinner;
     nMinimumAge = mnodeman.CountEnabled();
     CScript payeeSource;
 
 
-    if( !GetBlockHash(hash, nBlockHeight-10)) return false;
+    if( !GetBlockHash(hash, nBlockHeight-10))
+    {
+        LogPrintf("*** RGP CMasternodePayments::ProcessBlock GetBlockHash FAILED!!! \n" );
+        return false;
+    }
 
     memcpy(&nHash, &hash, 2);
 
-    LogPrintf("*** RGP ProcessBlock Start nHeight %d - vin %s. \n", nBlockHeight, activeMasternode.vin.ToString().c_str());
+    //LogPrintf("*** RGP ProcessBlock Start nHeight %d vin %s. \n", nBlockHeight, activeMasternode.vin.ToString().c_str() );
 
     std::vector<CTxIn> vecLastPayments;
     BOOST_REVERSE_FOREACH(CMasternodePaymentWinner& winner, vWinning)
@@ -301,7 +333,8 @@ int nMinimumAge;
                 newWinner.nBlockHeight = nBlockHeight;
                 newWinner.vin = pmn->vin;
 
-                if(pmn->rewardPercentage > 0 && (nHash % 100) <= (unsigned int)pmn->rewardPercentage) {
+                if(pmn->rewardPercentage > 0 && (nHash % 100) <= (unsigned int)pmn->rewardPercentage)
+                {
                     newWinner.payee = pmn->rewardAddress;
                 } else {
                     newWinner.payee = GetScriptForDestination(pmn->pubkey.GetID());
@@ -344,10 +377,13 @@ void CMasternodePayments::Relay(CMasternodePaymentWinner& winner)
 {
     CInv inv(MSG_MASTERNODE_WINNER, winner.GetHash());
 
+    LogPrintf("A");
+
     vector<CInv> vInv;
     vInv.push_back(inv);
     LOCK(cs_vNodes);
-    BOOST_FOREACH(CNode* pnode, vNodes){
+    BOOST_FOREACH(CNode* pnode, vNodes)
+    {
         pnode->PushMessage("inv", vInv);
     }
 }
@@ -356,9 +392,15 @@ void CMasternodePayments::Sync(CNode* node)
 {
     LOCK(cs_masternodepayments);
 
+     LogPrintf("");
+
     BOOST_FOREACH(CMasternodePaymentWinner& winner, vWinning)
+    {
         if(winner.nBlockHeight >= pindexBest->nHeight-10 && winner.nBlockHeight <= pindexBest->nHeight + 20)
+        {
             node->PushMessage("mnw", winner);
+        }
+    }
 }
 
 

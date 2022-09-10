@@ -1109,7 +1109,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
         while ( vNodes.size() < Nodes_for_Staking )
         {
 
-            LogPrintf("*** RGP MIner 2 Stake nodes waiting \n" );
+            LogPrintf("*** RGP Miner 2 Stake nodes waiting \n" );
             MilliSleep(5000);
 
             if ( fRequestShutdown == true )
@@ -1145,12 +1145,17 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
             LogPrintf("*** RGP ThreadStakeMiner synch block loop check, time %d \n ", Time_to_Last_block);
 
             /* RGP Synch Loop,
-               Remeber, block time is physical time, but synching may be a lot faster
+               Remember, block time is physical time, but synching may be a lot faster
                Delay_factor is 10 instead of 1000 */
 
             LogPrintf("*** RGP ThreadStakeMiner delaying! %d \n", ( Time_to_Last_block - 480 ) * 10 );
-
-            MilliSleep( ( Time_to_Last_block - 480 ) * 10 );
+            if ( Time_to_Last_block > 1000 )
+            {
+                /* Consider block may be stuck */
+                MilliSleep( 1000 );
+            }
+            else
+                MilliSleep( ( Time_to_Last_block - 480 ) * 10 );
 
             //MilliSleep( 10000 );
 
@@ -1206,8 +1211,18 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                        --  is more than 240 seconds, exit the loop and return to        --
                        --  Initial checks again.                                        --
                        ------------------------------------------------------------------- */ 
-                    MilliSleep(20000);
-                    continue;
+
+                    Time_to_Last_block = GetTime() - pindexBest->GetBlockTime();
+                    if ( Time_to_Last_block > 2000  )
+                    {
+                        /* something is wrong for code into next sequence */
+
+                    }
+                    else
+                    {
+                       MilliSleep(5000);
+                       continue;
+                    }
                 }
             }
 

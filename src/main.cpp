@@ -5806,17 +5806,27 @@ CInv Problem_Blocks_Inv;
 
     else
     {
-        //LogPrintf("*** RGP UNKNOWN message debug 001 > %s \n", strCommand );
-
-        //PushGetBlocks(pfrom, pindexBest, uint256(0) ); /* RGP test */
+        LogPrintf("*** RGP UNKNOWN message debug 001 > %s \n", strCommand );
 
         if (fSecMsgEnabled)
             SecureMsgReceiveData(pfrom, strCommand, vRecv);
 
         darkSendPool.ProcessMessageDarksend(pfrom, strCommand, vRecv);
+
+        LogPrintf("*** RGP Before mnodeman.ProcessMessage   \n");
+
         mnodeman.ProcessMessage(pfrom, strCommand, vRecv);
+
+        LogPrintf("*** RGP Before ProcessMessageMasternodePayments   \n");
+
         ProcessMessageMasternodePayments(pfrom, strCommand, vRecv);
+
+        LogPrintf("*** RGP Before ProcessMessageInstantX   \n");
+
         ProcessMessageInstantX(pfrom, strCommand, vRecv);
+
+        LogPrintf("*** RGP Before ProcessSpork   \n");
+
         ProcessSpork(pfrom, strCommand, vRecv);
 
         // Ignore unknown commands for extensibility

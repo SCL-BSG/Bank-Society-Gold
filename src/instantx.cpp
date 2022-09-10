@@ -37,9 +37,12 @@ void ProcessMessageInstantX(CNode* pfrom, std::string& strCommand, CDataStream& 
     if(!IsSporkActive(SPORK_2_INSTANTX)) return;
     if(!darkSendPool.IsBlockchainSynced()) return;
 
+
+    LogPrintf("*** RGP ProcessMessageInstantX Start node address \n" );
+
     if (strCommand == "txlreq")
     {
-        //LogPrintf("ProcessMessageInstantX::txlreq\n");
+        LogPrintf("ProcessMessageInstantX::txlreq command \n");
         CDataStream vMsg(vRecv);
         CTransaction tx;
         vRecv >> tx;
@@ -51,12 +54,16 @@ void ProcessMessageInstantX(CNode* pfrom, std::string& strCommand, CDataStream& 
             return;
         }
 
-        if(!IsIXTXValid(tx)){
+        if(!IsIXTXValid(tx))
+        {
+            LogPrintf("ProcessMessageInstantX::txlreq Not a valid TX \n");
             return;
         }
 
-        BOOST_FOREACH(const CTxOut o, tx.vout){
-            if(!o.scriptPubKey.IsNormalPaymentScript() && !o.scriptPubKey.IsUnspendable()){
+        BOOST_FOREACH(const CTxOut o, tx.vout)
+        {
+            if(!o.scriptPubKey.IsNormalPaymentScript() && !o.scriptPubKey.IsUnspendable())
+            {
                 LogPrintf("ProcessMessageInstantX::txlreq - Invalid Script %s\n", tx.ToString().c_str());
                 return;
             }
@@ -75,9 +82,14 @@ void ProcessMessageInstantX(CNode* pfrom, std::string& strCommand, CDataStream& 
             LOCK(cs_main);
             fAccepted = AcceptToMemoryPool(mempool, tx, true, &fMissingInputs);
         }
+
         if (fAccepted)
         {
+            LogPrintf("*** RGP ProcessMessageInstantX::txlreq Before RelayInventory \n");
+
             RelayInventory(inv);
+
+            LogPrintf("*** RGP ProcessMessageInstantX::txlreq Before DoConsensusVote \n");
 
             DoConsensusVote(tx, nBlockHeight);
 
@@ -90,7 +102,12 @@ void ProcessMessageInstantX(CNode* pfrom, std::string& strCommand, CDataStream& 
 
             return;
 
-        } else {
+        }
+        else
+        {
+
+            LogPrintf("*** RGP ProcessMessageInstantX::txlreq NOT Accepted \n");
+
             mapTxLockReqRejected.insert(make_pair(tx.GetHash(), tx));
 
             // can we get the conflicting transaction as proof?
@@ -128,6 +145,8 @@ void ProcessMessageInstantX(CNode* pfrom, std::string& strCommand, CDataStream& 
     {
         CConsensusVote ctx;
         vRecv >> ctx;
+
+        LogPrintf("*** RGP ProcessMessageInstantX::txlvote Before RelayInventory \n");
 
         CInv inv(MSG_TXLOCK_VOTE, ctx.GetHash());
         pfrom->AddInventoryKnown(inv);
@@ -169,7 +188,10 @@ void ProcessMessageInstantX(CNode* pfrom, std::string& strCommand, CDataStream& 
     }
 }
 
-bool IsIXTXValid(const CTransaction& txCollateral){
+bool IsIXTXValid(const CTransaction& txCollateral)
+{
+    LogPrintf("*** RGP ProcessMessageInstantX::IsIXTXValid  \n");
+
     if(txCollateral.vout.size() < 1) return false;
     if(txCollateral.nLockTime != 0) return false;
 
@@ -212,11 +234,14 @@ bool IsIXTXValid(const CTransaction& txCollateral){
         return false;
     }
 
+    LogPrintf("*** RGP ProcessMessageInstantX::IsIXTXValid Good ending \n");
+
     return true;
 }
 
 int64_t CreateNewLock(CTransaction tx)
 {
+    LogPrintf("*** RGP ProcessMessageInstantX::CreateNewLock  \n");
 
     int64_t nTxAge = 0;
     BOOST_REVERSE_FOREACH(CTxIn i, tx.vin){
@@ -255,6 +280,9 @@ int64_t CreateNewLock(CTransaction tx)
 // check if we need to vote on this transaction
 void DoConsensusVote(CTransaction& tx, int64_t nBlockHeight)
 {
+
+    LogPrintf("*** RGP ProcessMessageInstantX::DoConsensusVote  \n");
+
     if(!fMasterNode) return;
 
     int n = mnodeman.GetMasternodeRank(activeMasternode.vin, nBlockHeight, MIN_INSTANTX_PROTO_VERSION);
@@ -300,6 +328,10 @@ void DoConsensusVote(CTransaction& tx, int64_t nBlockHeight)
 //received a consensus vote
 bool ProcessConsensusVote(CNode* pnode, CConsensusVote& ctx)
 {
+
+    LogPrintf("*** RGP ProcessMessageInstantX::ProcessConsensusVote  \n");
+
+
     int n = mnodeman.GetMasternodeRank(ctx.vinMasternode, ctx.nBlockHeight, MIN_INSTANTX_PROTO_VERSION);
 
     CMasternode* pmn = mnodeman.Find(ctx.vinMasternode);
@@ -401,6 +433,10 @@ bool ProcessConsensusVote(CNode* pnode, CConsensusVote& ctx)
 
 bool CheckForConflictingLocks(CTransaction& tx)
 {
+
+    LogPrintf("*** RGP ProcessMessageInstantX::CheckForConflictingLocks  \n");
+
+
     /*
         It's possible (very unlikely though) to get 2 conflicting transaction locks approved by the network.
         In that case, they will cancel each other out.
@@ -439,6 +475,10 @@ int64_t GetAverageVoteTime()
 
 void CleanTransactionLocksList()
 {
+
+    LogPrintf("*** RGP ProcessMessageInstantX::CleanTransactionLocksList  \n");
+
+
     if(pindexBest == NULL) return;
 
     std::map<uint256, CTransactionLock>::iterator it = mapTxLocks.begin();
@@ -470,12 +510,19 @@ void CleanTransactionLocksList()
 
 uint256 CConsensusVote::GetHash() const
 {
+
+    LogPrintf("*** RGP ProcessMessageInstantX::CConsensusVote::GetHash  \n");
+
+
     return vinMasternode.prevout.hash + vinMasternode.prevout.n + txHash;
 }
 
 
 bool CConsensusVote::SignatureValid()
 {
+    LogPrintf("*** RGP ProcessMessageInstantX::CConsensusVote::SignatureValid  \n");
+
+
     std::string errorMessage;
     std::string strMessage = txHash.ToString().c_str() + boost::lexical_cast<std::string>(nBlockHeight);
     //LogPrintf("verify strMessage %s \n", strMessage.c_str());
@@ -498,6 +545,10 @@ bool CConsensusVote::SignatureValid()
 
 bool CConsensusVote::Sign()
 {
+
+    LogPrintf("*** RGP ProcessMessageInstantX::CConsensusVote::Sign  \n");
+
+
     std::string errorMessage;
 
     CKey key2;
@@ -529,6 +580,9 @@ bool CConsensusVote::Sign()
 bool CTransactionLock::SignaturesValid()
 {
 
+    LogPrintf("*** RGP ProcessMessageInstantX::CConsensusVote::SignaturesValid \n");
+
+
     BOOST_FOREACH(CConsensusVote vote, vecConsensusVotes)
     {
         int n = mnodeman.GetMasternodeRank(vote.vinMasternode, vote.nBlockHeight, MIN_INSTANTX_PROTO_VERSION);
@@ -556,11 +610,15 @@ bool CTransactionLock::SignaturesValid()
 
 void CTransactionLock::AddSignature(CConsensusVote& cv)
 {
+    LogPrintf("*** RGP ProcessMessageInstantX:: CTransactionLock::AddSignature \n");
+
     vecConsensusVotes.push_back(cv);
 }
 
 int CTransactionLock::CountSignatures()
 {
+    LogPrintf("*** RGP ProcessMessageInstantX:: CTransactionLock::CountSignatures \n");
+
     /*
         Only count signatures where the BlockHeight matches the transaction's blockheight.
         The votes have no proof it's the correct blockheight

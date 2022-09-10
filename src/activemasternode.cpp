@@ -15,7 +15,8 @@ void CActiveMasternode::ManageStatus()
 {
     std::string errorMessage;
 
-    if (fDebug) LogPrintf("CActiveMasternode::ManageStatus() - Begin\n");
+    //if (fDebug)
+        LogPrintf("CActiveMasternode::ManageStatus() - Begin\n");
 
     if(!fMasterNode) return;
 
@@ -72,11 +73,13 @@ void CActiveMasternode::ManageStatus()
 
             // Choose coins to use
             CPubKey pubKeyCollateralAddress;
-            CKey keyCollateralAddress;
+            CKey keyCollateralAddress;            
 
-            if(GetMasterNodeVin(vin, pubKeyCollateralAddress, keyCollateralAddress)) {
+            if( GetMasterNodeVin(vin, pubKeyCollateralAddress, keyCollateralAddress) )
+            {
 
-                if(GetInputAge(vin) < MASTERNODE_MIN_CONFIRMATIONS){
+                if(GetInputAge(vin) < MASTERNODE_MIN_CONFIRMATIONS)
+                {
                     notCapableReason = "Input must have least " + boost::lexical_cast<string>(MASTERNODE_MIN_CONFIRMATIONS) +
                                        " confirmations - " + boost::lexical_cast<string>(GetInputAge(vin)) + " confirmations";
                     LogPrintf("CActiveMasternode::ManageStatus() - %s\n", notCapableReason.c_str());
@@ -95,7 +98,8 @@ void CActiveMasternode::ManageStatus()
                 CPubKey pubKeyMasternode;
                 CKey keyMasternode;
 
-                if(!darkSendSigner.SetKey(strMasterNodePrivKey, errorMessage, keyMasternode, pubKeyMasternode)){
+                if(!darkSendSigner.SetKey(strMasterNodePrivKey, errorMessage, keyMasternode, pubKeyMasternode))
+                {
                     LogPrintf("ActiveMasternode::Dseep() - Error upon calling SetKey: %s\n", errorMessage.c_str());
                     return;
                 }
@@ -104,13 +108,16 @@ void CActiveMasternode::ManageStatus()
                 CScript rewardAddress = CScript();
                 int rewardPercentage = 0;
 
-                if(!Register(vin, service, keyCollateralAddress, pubKeyCollateralAddress, keyMasternode, pubKeyMasternode, rewardAddress, rewardPercentage, errorMessage)) {
+                if(!Register(vin, service, keyCollateralAddress, pubKeyCollateralAddress, keyMasternode, pubKeyMasternode, rewardAddress, rewardPercentage, errorMessage))
+                {
                     LogPrintf("CActiveMasternode::ManageStatus() - Error on Register: %s\n", errorMessage.c_str());
                 }
 
                 return;
 
-             } else {
+             }
+             else
+             {
 
                     notCapableReason = "Could not find suitable coins!";
                     LogPrintf("CActiveMasternode::ManageStatus() - Could not find suitable coins!\n");
@@ -122,7 +129,8 @@ void CActiveMasternode::ManageStatus()
     }
 
     //send to all peers
-    if(!Dseep(errorMessage)) {
+    if(!Dseep(errorMessage))
+    {
         LogPrintf("CActiveMasternode::ManageStatus() - Error on Ping: %s\n", errorMessage.c_str());
     }
 }

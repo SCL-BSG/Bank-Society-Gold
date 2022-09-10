@@ -33,7 +33,8 @@ bool GetBlockHash(uint256& hash, int nBlockHeight)
     if(nBlockHeight == 0)
         nBlockHeight = pindexBest->nHeight;
 
-    if(mapCacheBlockHashes.count(nBlockHeight)){
+    if(mapCacheBlockHashes.count(nBlockHeight))
+    {
         hash = mapCacheBlockHashes[nBlockHeight];
         return true;
     }
@@ -52,6 +53,9 @@ bool GetBlockHash(uint256& hash, int nBlockHeight)
         if(n >= nBlocksAgo){
             hash = BlockReading->GetBlockHash();
             mapCacheBlockHashes[nBlockHeight] = hash;
+
+            LogPrintf("*** RGP GetBlockHash successful \n");
+
             return true;
         }
         n++;
@@ -59,6 +63,8 @@ bool GetBlockHash(uint256& hash, int nBlockHeight)
         if (BlockReading->pprev == NULL) { assert(BlockReading); break; }
         BlockReading = BlockReading->pprev;
     }
+
+    LogPrintf("*** RGP GetBlockHash FAILED \n");
 
     return false;
 }

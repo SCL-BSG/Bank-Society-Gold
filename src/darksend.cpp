@@ -47,17 +47,26 @@ int RequestedMasterNodeList = 0;
 
 void CDarksendPool::ProcessMessageDarksend(CNode* pfrom, std::string& strCommand, CDataStream& vRecv)
 {
+
+     LogPrintf("*** RGP ProcessMessageDarksend Start %s \n", pfrom->addr.ToString() );
+
     if(fLiteMode) return; //disable all darksend/Masternode related functionality
 
     if(!IsBlockchainSynced())
     {
-        //LogPrintf("*** RGP ProcessMessageDarksend BLOCK IS NOT SYNCHED. \n");
-        return;
+        LogPrintf("*** RGP ProcessMessageDarksend BLOCK IS NOT SYNCHED. \n");
+        /* RGP, if the block is unsynched then no Mastermodes are allowed,
+                which then stops staking, catch22 blockchain stops          */
+        //return;
     }
 
 
-    if (strCommand == "dsa") { //DarkSend Accept Into Pool
-        if (pfrom->nVersion < MIN_POOL_PEER_PROTO_VERSION) {
+    if (strCommand == "dsa")
+    { //DarkSend Accept Into Pool
+
+        LogPrintf("*** RGP ProcessMessageDarksend Start %s dsa \n", pfrom->addr.ToString() );
+        if (pfrom->nVersion < MIN_POOL_PEER_PROTO_VERSION)
+        {
             std::string strError = _("Incompatible version.");
             LogPrintf("dsa -- incompatible version! \n");
             pfrom->PushMessage("dssu", sessionID, GetState(), GetEntriesCount(), MASTERNODE_REJECTED, strError);
@@ -73,6 +82,8 @@ void CDarksendPool::ProcessMessageDarksend(CNode* pfrom, std::string& strCommand
             return;
         }
 
+        LogPrintf("*** RGP ProcessMessageDarksend Start %s dsa next \n", pfrom->addr.ToString() );
+
         int nDenom;
         CTransaction txCollateral;
         vRecv >> nDenom >> txCollateral;
@@ -81,14 +92,18 @@ void CDarksendPool::ProcessMessageDarksend(CNode* pfrom, std::string& strCommand
         CMasternode* pmn = mnodeman.Find(activeMasternode.vin);
         if(pmn == NULL)
         {
+            LogPrintf("*** RGP ProcessMessageDarksend Start not in Masternode list \n" );
+
             std::string strError = _("Not in the Masternode list.");
             pfrom->PushMessage("dssu", sessionID, GetState(), GetEntriesCount(), MASTERNODE_REJECTED, strError);
             return;
         }
 
-        if(sessionUsers == 0) {
-            if(pmn->nLastDsq != 0 &&
-                pmn->nLastDsq + mnodeman.CountMasternodesAboveProtocol(MIN_POOL_PEER_PROTO_VERSION)/5 > mnodeman.nDsqCount){
+        if(sessionUsers == 0)
+        {
+            if( pmn->nLastDsq != 0 &&
+                pmn->nLastDsq + mnodeman.CountMasternodesAboveProtocol(MIN_POOL_PEER_PROTO_VERSION)/5 > mnodeman.nDsqCount)
+            {
                 LogPrintf("dsa -- last dsq too recent, must wait. %s \n", pfrom->addr.ToString().c_str());
                 std::string strError = _("Last Darksend was too recent.");
                 pfrom->PushMessage("dssu", sessionID, GetState(), GetEntriesCount(), MASTERNODE_REJECTED, strError);
@@ -106,7 +121,11 @@ void CDarksendPool::ProcessMessageDarksend(CNode* pfrom, std::string& strCommand
             pfrom->PushMessage("dssu", sessionID, GetState(), GetEntriesCount(), MASTERNODE_ACCEPTED, error);
             return;
         }
-    } else if (strCommand == "dsq") { //Darksend Queue
+    } else if (strCommand == "dsq")
+    { //Darksend Queue
+
+         LogPrintf("*** RGP ProcessMessageDarksend dsq \n" );
+
         TRY_LOCK(cs_darksend, lockRecv);
         if(!lockRecv) return;
 
@@ -128,7 +147,10 @@ void CDarksendPool::ProcessMessageDarksend(CNode* pfrom, std::string& strCommand
         if(pmn == NULL) return;
 
         // if the queue is ready, submit if we can
-        if(dsq.ready) {
+        if(dsq.ready)
+        {
+             LogPrintf("*** RGP ProcessMessageDarksend Start not in Masternode list \n" );
+
             if(!pSubmittedToMasternode) return;
             if((CNetAddr)pSubmittedToMasternode->addr != (CNetAddr)addr){
                 LogPrintf("dsq - message doesn't match current Masternode - %s != %s\n", pSubmittedToMasternode->addr.ToString().c_str(), addr.ToString().c_str());
@@ -442,20 +464,32 @@ void CDarksendPool::UnlockCoins(){
 /// from masternode-sync.cpp
 bool CDarksendPool::IsBlockchainSynced()
 {
+
+    // LogPrintf("*** RGP CDarksendPool::IsBlockchainSynced \n");
+
     static bool fBlockchainSynced = false;
     static int64_t lastProcess = GetTime();
     static int64_t LastLook = GetTime();
     static int lastlook_counter = 0;
 
+
+    //LogPrintf("*** RGP CDarksendPool::IsBlockchainSynced Debug 1 \n");
+
     // if the last call to this function was more than 60 minutes ago (client was in sleep mode) reset the sync process
     if(GetTime() - lastProcess > 60*60)
     {
+        //LogPrintf("*** RGP CDarksendPool::IsBlockchainSynced Debug 2 \n");
         Reset();
         fBlockchainSynced = false;
     }
     lastProcess = GetTime();
 
+
+    //LogPrintf("*** RGP CDarksendPool::IsBlockchainSynced Debug 3 \n");
+
     if(fBlockchainSynced) return true;
+
+    //LogPrintf("*** RGP CDarksendPool::IsBlockchainSynced Debug 4 \n");
 
     if (fImporting || fReindex) return false;
 
@@ -474,27 +508,43 @@ bool CDarksendPool::IsBlockchainSynced()
         return false;
     }
 
+//LogPrintf("*** RGP CDarksendPool::IsBlockchainSynced Debug 5 \n");
 
     if( pindex->nTime + 60*60 < GetTime() )
     {
+
+ //       LogPrintf("*** RGP CDarksendPool::IsBlockchainSynced Debug 5a \n");
+
         /* Later add a block height equation in here */
-        if ( GetTime() - pindexBest->GetBlockTime() > 1000 )
+        if ( GetTime() - pindexBest->GetBlockTime() > 1000 )        
         {
-            if ( LastLook != GetTime() )
+
+ //           LogPrintf("*** RGP CDarksendPool::IsBlockchainSynced Debug 5b \n");
+
+            if ( LastLook != GetTime() )                               
             {                
+
+ //               LogPrintf("*** RGP CDarksendPool::IsBlockchainSynced Debug 5c \n");
+
                 /* Indicates that block is standing still, but clock is ticking */
                 LastLook = GetTime();
                 lastlook_counter++;
                 if ( lastlook_counter == 3 )
                 {                    
+//                    LogPrintf("*** RGP CDarksendPool::IsBlockchainSynced Debug d \n");
+
                     lastlook_counter = 0;
                     return true;
                 }
             }
         }
 
+ //       LogPrintf("*** RGP CDarksendPool::IsBlockchainSynced Debug 5d \n");
+
         return false;
     }
+
+//    LogPrintf("*** RGP CDarksendPool::IsBlockchainSynced Debug 6 \n");
 
     fBlockchainSynced = true;
 
@@ -2323,7 +2373,8 @@ void ThreadCheckDarkSendPool()
         //masternodeSync.Process();
 
 
-        if(darkSendPool.IsBlockchainSynced()) {
+        if(darkSendPool.IsBlockchainSynced())
+        {
 
             c++;
 
