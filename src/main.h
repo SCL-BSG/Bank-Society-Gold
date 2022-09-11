@@ -7,6 +7,7 @@
 #ifndef BITCOIN_MAIN_H
 #define BITCOIN_MAIN_H
 
+//#include "amount.h"
 #include "core.h"
 #include "bignum.h"
 #include "sync.h"
@@ -119,6 +120,14 @@ extern bool fReindex;
 struct COrphanBlock;
 extern std::map<uint256, COrphanBlock*> mapOrphanBlocks;
 extern bool fHaveGUI;
+
+/* ---------------------
+   -- RGP JIRA BSG-51 --
+   --------------------------------------
+   -- Added for new Explorer interface --
+   -------------------------------------- */
+
+//extern CFeeRate minRelayTxFee;
 
 // Settings
 extern bool fUseFastIndex;

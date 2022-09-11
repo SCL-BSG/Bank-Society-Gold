@@ -192,7 +192,16 @@ bool AddLocal(const CNetAddr& addr, int nScore = LOCAL_NONE);
 bool SeenLocal(const CService& addr);
 bool IsLocal(const CService& addr);
 bool GetLocal(CService &addr, const CNetAddr *paddrPeer = NULL);
+
+/* ---------------------
+   -- RGP JIRA BSG-51 --
+   ------------------------------------------------------------
+   -- added IsReachable() overloaded function for rpcnet.cpp --
+   ------------------------------------------------------------ */
+
+bool IsReachable(enum Network net);
 bool IsReachable(const CNetAddr &addr);
+
 void SetReachable(enum Network net, bool fFlag = true);
 CAddress GetLocalAddress(const CNetAddr *paddrPeer = NULL);
 

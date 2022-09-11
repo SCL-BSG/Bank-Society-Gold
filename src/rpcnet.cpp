@@ -5,8 +5,8 @@
 
 #include "rpcserver.h"
 
-
-#include "main.h"
+#include "clientversion.h"
+//#include "main.h"
 #include "alert.h"
 #include "main.h"
 #include "net.h"
@@ -15,6 +15,7 @@
 #include "sync.h"
 #include "ui_interface.h"
 #include "util.h"
+#include "version.h"
 
 #include <boost/foreach.hpp>
 #include "json/json_spirit_value.h"
@@ -256,6 +257,37 @@ Value getaddednodeinfo(const Array& params, bool fHelp)
    -- added getnetworkinfo() implementation to list of server commands --
    ---------------------------------------------------------------------- */
 
+static Value GetNetworksInfo()
+{
+    //Object networks;
+    Array ret;
+
+    for (int n = 0; n < NET_MAX; ++n) {
+        enum Network network = static_cast<enum Network>(n);
+        if (network == NET_UNROUTABLE)
+            continue;
+        proxyType proxy;
+        Object obj;
+        GetProxy(network, proxy);
+        obj.push_back(Pair("name", GetNetworkName(network)));
+        obj.push_back(Pair("limited", IsLimited(network)));
+        obj.push_back(Pair("reachable", IsReachable(network)));
+        obj.push_back(Pair("proxy", proxy.IsValid() ? proxy.proxy.ToStringIPPort() : string()));
+        obj.push_back(Pair("proxy_randomize_credentials", proxy.randomize_credentials));
+        ret.push_back(obj);
+    }
+    return ret;
+}
+
+
+/* ---------------------
+   -- RGP JIRA BSG-51 --
+   ----------------------------------------------------------------------
+   -- added getnetworkinfo() implementation to list of server commands --
+   ---------------------------------------------------------------------- */
+
+//extern json_spirit::Value getnetworkinfo(const json_spirit::Array& params, bool fHelp);
+
 Value getnetworkinfo(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 0)
@@ -295,34 +327,48 @@ Value getnetworkinfo(const Array& params, bool fHelp)
             HelpExampleCli("getnetworkinfo", "") + HelpExampleRpc("getnetworkinfo", ""));
 
     LOCK(cs_main);
-Object obj;
-    // UniValue obj(UniValue::VOBJ);
-    obj.push_back(Pair("version", CLIENT_VERSION));
-    obj.push_back(Pair("subversion",
-        FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, std::vector<string>())));
-    obj.push_back(Pair("protocolversion", PROTOCOL_VERSION));
-    obj.push_back(Pair("localservices", strprintf("%016x", nLocalServices)));
-    obj.push_back(Pair("timeoffset", GetTimeOffset()));
-    obj.push_back(Pair("connections", (int)vNodes.size()));
-    obj.push_back(Pair("networks", GetNetworksInfo()));
-    obj.push_back(Pair("relayfee", ValueFromAmount(::minRelayTxFee.GetFeePerK())));
 
-    UniValue localAddresses(UniValue::VARR);
-    {
-        LOCK(cs_mapLocalHost);
-        BOOST_FOREACH (const PAIRTYPE(CNetAddr, LocalServiceInfo) & item, mapLocalHost) {
-            //UniValue rec(UniValue::VOBJ);
-            Object rec;
-            rec.push_back(Pair("address", item.first.ToString()));
-            rec.push_back(Pair("port", item.second.nPort));
-            rec.push_back(Pair("score", item.second.nScore));
-            localAddresses.push_back(rec);
-        }
-    }
-    obj.push_back(Pair("localaddresses", localAddresses));
-    return obj;
+
+    Array ret;
+
+    vector<CNodeStats> vstats;
+    CopyNodeStats(vstats);
+
+    Object objects;
+
+    int version = 1006;
+
+    //objects.push_back (Pair("version", version ) );
+    objects.push_back(Pair("version", CLIENT_VERSION_RPC));
+    objects.push_back(Pair("subversion", FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, std::vector<string>())));
+    objects.push_back(Pair("protocolversion", PROTOCOL_VERSION));
+    objects.push_back(Pair("localservices", strprintf("%016x", nLocalServices)));
+    objects.push_back(Pair("timeoffset", GetTimeOffset()));
+    objects.push_back(Pair("connections", (int)vNodes.size()));
+    objects.push_back(Pair("networks", GetNetworksInfo()));
+    objects.push_back(Pair("relayfee", ValueFromAmount( 1000 ) ) );
+
+
+    //UniValue localAddresses(UniValue::VARR);
+//    Object localAddresses
+//    {
+//        LOCK(cs_mapLocalHost);
+//        BOOST_FOREACH (const PAIRTYPE(CNetAddr, LocalServiceInfo) & item, mapLocalHost) {
+//            //UniValue rec(UniValue::VOBJ);
+//            Object rec;
+//            rec.push_back(Pair("address", item.first.ToString()));
+//            rec.push_back(Pair("port", item.second.nPort));
+//            rec.push_back(Pair("score", item.second.nScore));
+//            localAddresses.push_back(rec);
+//        }
+//    }
+
+//    objects.push_back(Pair("localaddresses", localAddresses));
+
+
+
+    return ( objects );
 }
-
 
 
 

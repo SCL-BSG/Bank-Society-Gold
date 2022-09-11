@@ -168,23 +168,59 @@ class CService : public CNetAddr
             )
 };
 
-typedef std::pair<CService, int> proxyType;
+
+class proxyType
+{
+public:
+    proxyType(): randomize_credentials(false) {}
+    proxyType(const CService &proxy, bool randomize_credentials=false): proxy(proxy), randomize_credentials(randomize_credentials) {}
+
+    bool IsValid() const { return proxy.IsValid(); }
+
+    CService proxy;
+    bool randomize_credentials;
+};
+
+
+typedef std::pair<CService, int> proxyType_OLD;
 
 enum Network ParseNetwork(std::string net);
+
+/* ---------------------
+   -- RGP JIRA BSG-51 --
+   ----------------------------------------------------------------------
+   -- added GetNetworkName() implementation to list of server commands --
+   -- required by GetNetworksInfo() in rpsnet.cpp                      --
+   ---------------------------------------------------------------------- */
+std::string GetNetworkName(enum Network net);
+
 void SplitHostPort(std::string in, int &portOut, std::string &hostOut);
-bool SetProxy(enum Network net, CService addrProxy, int nSocksVersion = 5);
-bool GetProxy(enum Network net, proxyType &proxyInfoOut);
-bool IsProxy(const CNetAddr &addr);
-bool SetNameProxy(CService addrProxy, int nSocksVersion = 5);
+bool SetProxy_OLD(enum Network net, CService addrProxy, int nSocksVersion = 5);
+bool GetProxy_OLD(enum Network net, proxyType_OLD &proxyInfoOut);
+//bool IsProxy(const CNetAddr &addr);
+//bool SetNameProxy(CService addrProxy, int nSocksVersion = 5);
+//bool HaveNameProxy();
+
+bool SetProxy(enum Network net, const proxyType &addrProxy);
+bool GetProxy(enum Network net, proxyType& proxyInfoOut);
+bool IsProxy(const CNetAddr& addr);
+bool SetNameProxy(const proxyType &addrProxy);
 bool HaveNameProxy();
+
+
+
 bool LookupHost(const char *pszName, std::vector<CNetAddr>& vIP, unsigned int nMaxSolutions = 0, bool fAllowLookup = true);
 bool LookupHostNumeric(const char *pszName, std::vector<CNetAddr>& vIP, unsigned int nMaxSolutions = 0);
 bool Lookup(const char *pszName, CService& addr, int portDefault = 0, bool fAllowLookup = true);
 bool Lookup(const char *pszName, std::vector<CService>& vAddr, int portDefault = 0, bool fAllowLookup = true, unsigned int nMaxSolutions = 0);
 bool LookupNumeric(const char *pszName, CService& addr, int portDefault = 0);
-bool ConnectSocket(const CService &addr, SOCKET& hSocketRet, int nTimeout = nConnectTimeout);
-bool ConnectSocketByName(CService &addr, SOCKET& hSocketRet, const char *pszDest, int portDefault = 0, int nTimeout = nConnectTimeout);
+bool ConnectSocket(const CService &addr, SOCKET& hSocketRet, int nTimeout = nConnectTimeout, bool *outProxyConnectionFailed = NULL );
+bool ConnectSocketByName(CService &addr, SOCKET& hSocketRet, const char *pszDest, int portDefault = 0, int nTimeout = nConnectTimeout, bool* outProxyConnectionFailed = NULL );
 /** Return readable error string for a network error code */
 std::string NetworkErrorString(int err);
+
+//bool ConnectSocketByName(CService& addr, SOCKET& hSocketRet, const char* pszDest, int portDefault, int nTimeout, bool* outProxyConnectionFailed)
+//bool ConnectSocket(const CService &addrDest, SOCKET& hSocketRet, int nTimeout, bool *outProxyConnectionFailed)
+
 
 #endif

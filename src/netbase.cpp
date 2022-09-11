@@ -21,12 +21,41 @@
 #define MSG_NOSIGNAL 0
 #endif
 
+
+/**
+ * Seed insecure_rand using the random pool.
+ * @param Deterministic Use a deterministic seed
+ */
+// void seed_insecure_rand(bool fDeterministic = false);
+
+/**
+ * MWC RNG of George Marsaglia
+ * This is intended to be fast. It has a period of 2^59.3, though the
+ * least significant 16 bits only have a period of about 2^30.1.
+ *
+ * @return random value
+ */
+//uint32_t insecure_rand_Rz;
+//uint32_t insecure_rand_Rw;
+static inline uint32_t insecure_rand(void)
+{
+    insecure_rand_Rz = 36969 * (insecure_rand_Rz & 65535) + (insecure_rand_Rz >> 16);
+    insecure_rand_Rw = 18000 * (insecure_rand_Rw & 65535) + (insecure_rand_Rw >> 16);
+    return (insecure_rand_Rw << 16) + insecure_rand_Rz;
+}
+
 using namespace std;
 
 // Settings
+// Settings
 static proxyType proxyInfo[NET_MAX];
-static proxyType nameproxyInfo;
+static proxyType nameProxy;
 static CCriticalSection cs_proxyInfos;
+static const int SOCKS5_RECV_TIMEOUT = 20 * 1000;
+
+static proxyType_OLD proxyInfo_OLD[NET_MAX];
+static proxyType_OLD nameproxyInfo_OLD;
+static CCriticalSection cs_proxyInfos_OLD;
 int nConnectTimeout = 5000;
 bool fNameLookup = false;
 
@@ -40,6 +69,28 @@ enum Network ParseNetwork(std::string net) {
     if (net == "i2p")  return NET_I2P;
     return NET_UNROUTABLE;
 }
+/* ---------------------
+   -- RGP JIRA BSG-51 --
+   ----------------------------------------------------------------------
+   -- added GetNetworkName() implementation to list of server commands --
+   -- required by GetNetworksInfo() in rpsnet.cpp                      --
+   ---------------------------------------------------------------------- */
+
+std::string GetNetworkName(enum Network net)
+{
+    switch (net) {
+    case NET_IPV4:
+        return "ipv4";
+    case NET_IPV6:
+        return "ipv6";
+    case NET_TOR:
+        return "onion";
+    default:
+        return "";
+    }
+}
+
+
 
 bool CloseSocket(SOCKET& hSocket)
 {
@@ -268,109 +319,316 @@ bool static Socks4(const CService &addrDest, SOCKET& hSocket)
     return true;
 }
 
-bool static Socks5(string strDest, int port, SOCKET& hSocket)
+/**
+ * Read bytes from socket. This will either read the full number of bytes requested
+ * or return False on error or timeout.
+ * This function can be interrupted by boost thread interrupt.
+ *
+ * @param data Buffer to receive into
+ * @param len  Length of data to receive
+ * @param timeout  Timeout in milliseconds for receive operation
+ *
+ * @note This function requires that hSocket is in non-blocking mode.
+ */
+bool static InterruptibleRecv(char* data, size_t len, int timeout, SOCKET& hSocket)
+{
+    int64_t curTime = GetTimeMillis();
+    int64_t endTime = curTime + timeout;
+    // Maximum time to wait in one select call. It will take up until this time (in millis)
+    // to break off in case of an interruption.
+    const int64_t maxWait = 1000;
+    while (len > 0 && curTime < endTime) {
+        ssize_t ret = recv(hSocket, data, len, 0); // Optimistically try the recv first
+        if (ret > 0) {
+            len -= ret;
+            data += ret;
+        } else if (ret == 0) { // Unexpected disconnection
+            return false;
+        } else { // Other error or blocking
+            int nErr = WSAGetLastError();
+            if (nErr == WSAEINPROGRESS || nErr == WSAEWOULDBLOCK || nErr == WSAEINVAL) {
+                if (!IsSelectableSocket(hSocket)) {
+                    return false;
+                }
+                struct timeval tval = MillisToTimeval(std::min(endTime - curTime, maxWait));
+                fd_set fdset;
+                FD_ZERO(&fdset);
+                FD_SET(hSocket, &fdset);
+                int nRet = select(hSocket + 1, &fdset, NULL, NULL, &tval);
+                if (nRet == SOCKET_ERROR) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        boost::this_thread::interruption_point();
+        curTime = GetTimeMillis();
+    }
+    return len == 0;
+}
+
+
+
+struct ProxyCredentials
+{
+    std::string username;
+    std::string password;
+};
+
+/** Connect using SOCKS5 (as described in RFC1928) */
+bool static Socks5(string strDest, int port, const ProxyCredentials *auth, SOCKET& hSocket)
 {
     LogPrintf("SOCKS5 connecting %s\n", strDest);
-    if (strDest.size() > 255)
-    {
-        closesocket(hSocket);
+    if (strDest.size() > 255) {
+        CloseSocket(hSocket);
         return error("Hostname too long");
     }
-    char pszSocks5Init[] = "\5\1\0";
-    ssize_t nSize = sizeof(pszSocks5Init) - 1;
-
-    ssize_t ret = send(hSocket, pszSocks5Init, nSize, MSG_NOSIGNAL);
-    if (ret != nSize)
-    {
-        closesocket(hSocket);
+    // Accepted authentication methods
+    std::vector<uint8_t> vSocks5Init;
+    vSocks5Init.push_back(0x05);
+    if (auth) {
+        vSocks5Init.push_back(0x02); // # METHODS
+        vSocks5Init.push_back(0x00); // X'00' NO AUTHENTICATION REQUIRED
+        vSocks5Init.push_back(0x02); // X'02' USERNAME/PASSWORD (RFC1929)
+    } else {
+        vSocks5Init.push_back(0x01); // # METHODS
+        vSocks5Init.push_back(0x00); // X'00' NO AUTHENTICATION REQUIRED
+    }
+    ssize_t ret = send(hSocket, (const char*)begin_ptr(vSocks5Init), vSocks5Init.size(), MSG_NOSIGNAL);
+    if (ret != (ssize_t)vSocks5Init.size()) {
+        CloseSocket(hSocket);
         return error("Error sending to proxy");
     }
     char pchRet1[2];
-    if (recv(hSocket, pchRet1, 2, 0) != 2)
-    {
-        closesocket(hSocket);
+    if (!InterruptibleRecv(pchRet1, 2, SOCKS5_RECV_TIMEOUT, hSocket)) {
+        CloseSocket(hSocket);
         return error("Error reading proxy response");
     }
-    if (pchRet1[0] != 0x05 || pchRet1[1] != 0x00)
-    {
-        closesocket(hSocket);
+    if (pchRet1[0] != 0x05) {
+        CloseSocket(hSocket);
         return error("Proxy failed to initialize");
     }
-    string strSocks5("\5\1");
-    strSocks5 += '\000'; strSocks5 += '\003';
-    strSocks5 += static_cast<char>(std::min((int)strDest.size(), 255));
-    strSocks5 += strDest;
-    strSocks5 += static_cast<char>((port >> 8) & 0xFF);
-    strSocks5 += static_cast<char>((port >> 0) & 0xFF);
-    ret = send(hSocket, strSocks5.c_str(), strSocks5.size(), MSG_NOSIGNAL);
-    if (ret != (ssize_t)strSocks5.size())
-    {
-        closesocket(hSocket);
+    if (pchRet1[1] == 0x02 && auth) {
+        // Perform username/password authentication (as described in RFC1929)
+        std::vector<uint8_t> vAuth;
+        vAuth.push_back(0x01);
+        if (auth->username.size() > 255 || auth->password.size() > 255)
+            return error("Proxy username or password too long");
+        vAuth.push_back(auth->username.size());
+        vAuth.insert(vAuth.end(), auth->username.begin(), auth->username.end());
+        vAuth.push_back(auth->password.size());
+        vAuth.insert(vAuth.end(), auth->password.begin(), auth->password.end());
+        ret = send(hSocket, (const char*)begin_ptr(vAuth), vAuth.size(), MSG_NOSIGNAL);
+        if (ret != (ssize_t)vAuth.size()) {
+            CloseSocket(hSocket);
+            return error("Error sending authentication to proxy");
+        }
+        LogPrint("proxy", "SOCKS5 sending proxy authentication %s:%s\n", auth->username, auth->password);
+        char pchRetA[2];
+        if (!InterruptibleRecv(pchRetA, 2, SOCKS5_RECV_TIMEOUT, hSocket)) {
+            CloseSocket(hSocket);
+            return error("Error reading proxy authentication response");
+        }
+        if (pchRetA[0] != 0x01 || pchRetA[1] != 0x00) {
+            CloseSocket(hSocket);
+            return error("Proxy authentication unsuccesful");
+        }
+    } else if (pchRet1[1] == 0x00) {
+        // Perform no authentication
+    } else {
+        CloseSocket(hSocket);
+        return error("Proxy requested wrong authentication method %02x", pchRet1[1]);
+    }
+    std::vector<uint8_t> vSocks5;
+    vSocks5.push_back(0x05); // VER protocol version
+    vSocks5.push_back(0x01); // CMD CONNECT
+    vSocks5.push_back(0x00); // RSV Reserved
+    vSocks5.push_back(0x03); // ATYP DOMAINNAME
+    vSocks5.push_back(strDest.size()); // Length<=255 is checked at beginning of function
+    vSocks5.insert(vSocks5.end(), strDest.begin(), strDest.end());
+    vSocks5.push_back((port >> 8) & 0xFF);
+    vSocks5.push_back((port >> 0) & 0xFF);
+    ret = send(hSocket, (const char*)begin_ptr(vSocks5), vSocks5.size(), MSG_NOSIGNAL);
+    if (ret != (ssize_t)vSocks5.size()) {
+        CloseSocket(hSocket);
         return error("Error sending to proxy");
     }
     char pchRet2[4];
-    if (recv(hSocket, pchRet2, 4, 0) != 4)
-    {
-        closesocket(hSocket);
+    if (!InterruptibleRecv(pchRet2, 4, SOCKS5_RECV_TIMEOUT, hSocket)) {
+        CloseSocket(hSocket);
         return error("Error reading proxy response");
     }
-    if (pchRet2[0] != 0x05)
-    {
-        closesocket(hSocket);
+    if (pchRet2[0] != 0x05) {
+        CloseSocket(hSocket);
         return error("Proxy failed to accept request");
     }
-    if (pchRet2[1] != 0x00)
-    {
-        closesocket(hSocket);
-        switch (pchRet2[1])
-        {
-            case 0x01: return error("Proxy error: general failure");
-            case 0x02: return error("Proxy error: connection not allowed");
-            case 0x03: return error("Proxy error: network unreachable");
-            case 0x04: return error("Proxy error: host unreachable");
-            case 0x05: return error("Proxy error: connection refused");
-            case 0x06: return error("Proxy error: TTL expired");
-            case 0x07: return error("Proxy error: protocol error");
-            case 0x08: return error("Proxy error: address type not supported");
-            default:   return error("Proxy error: unknown");
+    if (pchRet2[1] != 0x00) {
+        CloseSocket(hSocket);
+        switch (pchRet2[1]) {
+        case 0x01:
+            return error("Proxy error: general failure");
+        case 0x02:
+            return error("Proxy error: connection not allowed");
+        case 0x03:
+            return error("Proxy error: network unreachable");
+        case 0x04:
+            return error("Proxy error: host unreachable");
+        case 0x05:
+            return error("Proxy error: connection refused");
+        case 0x06:
+            return error("Proxy error: TTL expired");
+        case 0x07:
+            return error("Proxy error: protocol error");
+        case 0x08:
+            return error("Proxy error: address type not supported");
+        default:
+            return error("Proxy error: unknown");
         }
     }
-    if (pchRet2[2] != 0x00)
-    {
-        closesocket(hSocket);
+    if (pchRet2[2] != 0x00) {
+        CloseSocket(hSocket);
         return error("Error: malformed proxy response");
     }
     char pchRet3[256];
-    switch (pchRet2[3])
-    {
-        case 0x01: ret = recv(hSocket, pchRet3, 4, 0) != 4; break;
-        case 0x04: ret = recv(hSocket, pchRet3, 16, 0) != 16; break;
-        case 0x03:
-        {
-            ret = recv(hSocket, pchRet3, 1, 0) != 1;
-            if (ret) {
-                closesocket(hSocket);
-                return error("Error reading from proxy");
-            }
-            int nRecv = pchRet3[0];
-            ret = recv(hSocket, pchRet3, nRecv, 0) != nRecv;
-            break;
+    switch (pchRet2[3]) {
+    case 0x01:
+        ret = InterruptibleRecv(pchRet3, 4, SOCKS5_RECV_TIMEOUT, hSocket);
+        break;
+    case 0x04:
+        ret = InterruptibleRecv(pchRet3, 16, SOCKS5_RECV_TIMEOUT, hSocket);
+        break;
+    case 0x03: {
+        ret = InterruptibleRecv(pchRet3, 1, SOCKS5_RECV_TIMEOUT, hSocket);
+        if (!ret) {
+            CloseSocket(hSocket);
+            return error("Error reading from proxy");
         }
-        default: closesocket(hSocket); return error("Error: malformed proxy response");
+        int nRecv = pchRet3[0];
+        ret = InterruptibleRecv(pchRet3, nRecv, SOCKS5_RECV_TIMEOUT, hSocket);
+        break;
     }
-    if (ret)
-    {
-        closesocket(hSocket);
+    default:
+        CloseSocket(hSocket);
+        return error("Error: malformed proxy response");
+    }
+    if (!ret) {
+        CloseSocket(hSocket);
         return error("Error reading from proxy");
     }
-    if (recv(hSocket, pchRet3, 2, 0) != 2)
-    {
-        closesocket(hSocket);
+    if (!InterruptibleRecv(pchRet3, 2, SOCKS5_RECV_TIMEOUT, hSocket)) {
+        CloseSocket(hSocket);
         return error("Error reading from proxy");
     }
     LogPrintf("SOCKS5 connected %s\n", strDest);
     return true;
 }
+
+
+
+//bool static Socks5(string strDest, int port, SOCKET& hSocket)
+//{
+//    LogPrintf("SOCKS5 connecting %s\n", strDest);
+//    if (strDest.size() > 255)
+//    {
+//        closesocket(hSocket);
+//        return error("Hostname too long");
+//    }
+//    char pszSocks5Init[] = "\5\1\0";
+//    ssize_t nSize = sizeof(pszSocks5Init) - 1;
+
+//    ssize_t ret = send(hSocket, pszSocks5Init, nSize, MSG_NOSIGNAL);
+//    if (ret != nSize)
+//    {
+//        closesocket(hSocket);
+//        return error("Error sending to proxy");
+//    }
+//    char pchRet1[2];
+//    if (recv(hSocket, pchRet1, 2, 0) != 2)
+//    {
+//        closesocket(hSocket);
+//        return error("Error reading proxy response");
+//    }
+//    if (pchRet1[0] != 0x05 || pchRet1[1] != 0x00)
+//    {
+//       closesocket(hSocket);
+//        return error("Proxy failed to initialize");
+//    }
+//    string strSocks5("\5\1");
+//    strSocks5 += '\000'; strSocks5 += '\003';
+//    strSocks5 += static_cast<char>(std::min((int)strDest.size(), 255));
+//    strSocks5 += strDest;
+//    strSocks5 += static_cast<char>((port >> 8) & 0xFF);
+//    strSocks5 += static_cast<char>((port >> 0) & 0xFF);
+//    ret = send(hSocket, strSocks5.c_str(), strSocks5.size(), MSG_NOSIGNAL);
+//    if (ret != (ssize_t)strSocks5.size())
+//    {
+//        closesocket(hSocket);
+//        return error("Error sending to proxy");
+//    }
+//    char pchRet2[4];
+//    if (recv(hSocket, pchRet2, 4, 0) != 4)
+//    {
+//        closesocket(hSocket);
+//        return error("Error reading proxy response");
+//    }
+//    if (pchRet2[0] != 0x05)
+//    {
+//        closesocket(hSocket);
+//        return error("Proxy failed to accept request");
+//    }
+//    if (pchRet2[1] != 0x00)
+//    {
+//        closesocket(hSocket);
+//        switch (pchRet2[1])
+//        {
+//            case 0x01: return error("Proxy error: general failure");
+//            case 0x02: return error("Proxy error: connection not allowed");
+//            case 0x03: return error("Proxy error: network unreachable");
+//            case 0x04: return error("Proxy error: host unreachable");
+//            case 0x05: return error("Proxy error: connection refused");
+//            case 0x06: return error("Proxy error: TTL expired");
+//            case 0x07: return error("Proxy error: protocol error");
+//            case 0x08: return error("Proxy error: address type not supported");
+//            default:   return error("Proxy error: unknown");
+//        }
+//    }
+//    if (pchRet2[2] != 0x00)
+//    {
+//        closesocket(hSocket);
+//        return error("Error: malformed proxy response");
+//    }
+//    char pchRet3[256];
+//    switch (pchRet2[3])
+//    {
+//        case 0x01: ret = recv(hSocket, pchRet3, 4, 0) != 4; break;
+//        case 0x04: ret = recv(hSocket, pchRet3, 16, 0) != 16; break;
+//        case 0x03:
+//        {
+//            ret = recv(hSocket, pchRet3, 1, 0) != 1;
+//            if (ret) {
+//                closesocket(hSocket);
+//                return error("Error reading from proxy");
+//            }
+//            int nRecv = pchRet3[0];
+//            ret = recv(hSocket, pchRet3, nRecv, 0) != nRecv;
+//            break;
+//        }
+//        default: closesocket(hSocket); return error("Error: malformed proxy response");
+//    }
+//    if (ret)
+//    {
+//        closesocket(hSocket);
+//        return error("Error reading from proxy");
+//    }
+//    if (recv(hSocket, pchRet3, 2, 0) != 2)
+//    {
+//        closesocket(hSocket);
+//        return error("Error reading from proxy");
+//    }
+//    LogPrintf("SOCKS5 connected %s\n", strDest);
+//    return true;
+//}
 
 bool static ConnectSocketDirectly(const CService &addrConnect, SOCKET& hSocketRet, int nTimeout)
 {
@@ -580,20 +838,45 @@ bool static ConnectSocketDirectly(const CService &addrConnect, SOCKET& hSocketRe
     return true;
 }
 
-bool SetProxy(enum Network net, CService addrProxy, int nSocksVersion) {
+//bool SetProxy(enum Network net, CService addrProxy, int nSocksVersion) {
+//    assert(net >= 0 && net < NET_MAX);
+//    if (nSocksVersion != 0 && nSocksVersion != 4 && nSocksVersion != 5)
+//        return false;
+//    if (nSocksVersion != 0 && !addrProxy.IsValid())
+//        return false;
+//    LOCK(cs_proxyInfos);
+//    proxyInfo[net] = std::make_pair(addrProxy, nSocksVersion);
+//    return true;
+//}
+
+/* ---------------------
+   -- RGP JIRA BSG-51 --
+   --------------------- */
+
+bool SetProxy(enum Network net, const proxyType &addrProxy)
+{
     assert(net >= 0 && net < NET_MAX);
-    if (nSocksVersion != 0 && nSocksVersion != 4 && nSocksVersion != 5)
-        return false;
-    if (nSocksVersion != 0 && !addrProxy.IsValid())
+    if (!addrProxy.IsValid())
         return false;
     LOCK(cs_proxyInfos);
-    proxyInfo[net] = std::make_pair(addrProxy, nSocksVersion);
+    proxyInfo[net] = addrProxy;
     return true;
 }
 
-bool GetProxy(enum Network net, proxyType &proxyInfoOut)
+bool GetProxy(enum Network net, proxyType& proxyInfoOut)
 {
-    //LogPrintf("*** RGP GetProxy() \n");
+    assert(net >= 0 && net < NET_MAX);
+    LOCK(cs_proxyInfos);
+    if (!proxyInfo[net].IsValid())
+        return false;
+    proxyInfoOut = proxyInfo[net];
+    return true;
+}
+
+
+bool GetProxy_OLD(enum Network net, proxyType_OLD &proxyInfoOut)
+{
+    //LogPrintf("*** RGP GetProxy_OLD() \n");
 
     switch ( net )
     {
@@ -622,94 +905,163 @@ bool GetProxy(enum Network net, proxyType &proxyInfoOut)
 
     }
 
+    if ( net >= 0 && net < NET_MAX )
+    {
+        LogPrintf("*** RGP GetProxy ERROR net is ZERO or NET_MAX reached \n");
+        assert(net >= 0 && net < NET_MAX);
+    }
 
+    //LOCK(cs_s);
 
-
-
-    //if ( net >= 0 && net < NET_MAX )
-    //{
-    //    LogPrintf("*** RGP GetProxy ERROR net is ZERO or NET_MAX reached \n");
-    //    assert(net >= 0 && net < NET_MAX);
-    //}
-
-    LOCK(cs_proxyInfos);
-
-    if (!proxyInfo[net].second)
+    if (!proxyInfo_OLD[net].second)
     {
         return false;
     }
-    proxyInfoOut = proxyInfo[net];
+    proxyInfoOut = proxyInfo_OLD[net];
     return true;
 }
 
-bool SetNameProxy(CService addrProxy, int nSocksVersion) {
-    if (nSocksVersion != 0 && nSocksVersion != 5)
-        return false;
-    if (nSocksVersion != 0 && !addrProxy.IsValid())
+bool SetNameProxy(const proxyType &addrProxy)
+{
+    if (!addrProxy.IsValid())
         return false;
     LOCK(cs_proxyInfos);
-    nameproxyInfo = std::make_pair(addrProxy, nSocksVersion);
+    nameProxy = addrProxy;
     return true;
 }
 
-bool GetNameProxy(proxyType &nameproxyInfoOut) {
+bool GetNameProxy(proxyType &nameProxyOut)
+{
     LOCK(cs_proxyInfos);
-    if (!nameproxyInfo.second)
+    if (!nameProxy.IsValid())
         return false;
-    nameproxyInfoOut = nameproxyInfo;
+    nameProxyOut = nameProxy;
     return true;
 }
 
-bool HaveNameProxy() {
+bool HaveNameProxy()
+{
     LOCK(cs_proxyInfos);
-    return nameproxyInfo.second != 0;
+    return nameProxy.IsValid();
 }
 
-bool IsProxy(const CNetAddr &addr) {
+bool IsProxy(const CNetAddr& addr)
+{
     LOCK(cs_proxyInfos);
     for (int i = 0; i < NET_MAX; i++) {
-        if (proxyInfo[i].second && (addr == (CNetAddr)proxyInfo[i].first))
+        if (addr == (CNetAddr)proxyInfo[i].proxy)
             return true;
     }
     return false;
 }
 
-bool ConnectSocket(const CService &addrDest, SOCKET& hSocketRet, int nTimeout)
+static bool ConnectThroughProxy(const proxyType &proxy, const std::string strDest, int port, SOCKET& hSocketRet, int nTimeout, bool *outProxyConnectionFailed)
+{
+    SOCKET hSocket = INVALID_SOCKET;
+    // first connect to proxy server
+    if (!ConnectSocketDirectly(proxy.proxy, hSocket, nTimeout)) {
+        if (outProxyConnectionFailed)
+            *outProxyConnectionFailed = true;
+        return false;
+    }
+    // do socks negotiation
+    if (proxy.randomize_credentials) {
+        ProxyCredentials random_auth;
+        random_auth.username = strprintf("%i", insecure_rand());
+        random_auth.password = strprintf("%i", insecure_rand());
+        if (!Socks5(strDest, (unsigned short)port, &random_auth, hSocket))
+            return false;
+    } else {
+        if (!Socks5(strDest, (unsigned short)port, 0, hSocket))
+            return false;
+    }
+
+    hSocketRet = hSocket;
+    return true;
+}
+
+
+//bool SetNameProxy(CService addrProxy, int nSocksVersion) {
+//    if (nSocksVersion != 0 && nSocksVersion != 5)
+//        return false;
+//    if (nSocksVersion != 0 && !addrProxy.IsValid())
+//        return false;
+//    LOCK(cs_proxyInfos);
+//    nameproxyInfo = std::make_pair(addrProxy, nSocksVersion);
+//    return true;
+//}
+
+//bool GetNameProxy(proxyType &nameproxyInfoOut) {
+//    LOCK(cs_proxyInfos);
+//    if (!nameproxyInfo.second)
+//        return false;
+//    nameproxyInfoOut = nameproxyInfo;
+//    return true;
+//}
+
+//bool HaveNameProxy() {
+//    LOCK(cs_proxyInfos);
+//    return nameproxyInfo.second != 0;
+//}
+
+//bool IsProxy(const CNetAddr &addr) {
+//    LOCK(cs_proxyInfos);
+//    for (int i = 0; i < NET_MAX; i++) {
+//        if (proxyInfo[i].second && (addr == (CNetAddr)proxyInfo[i].first))
+//            return true;
+//    }
+//    return false;
+//}
+
+bool ConnectSocket(const CService &addrDest, SOCKET& hSocketRet, int nTimeout, bool *outProxyConnectionFailed)
 {
     proxyType proxy;
-    enum Network network_type;
-    bool status;
+    if (outProxyConnectionFailed)
+        *outProxyConnectionFailed = false;
 
-    network_type = addrDest.GetNetwork();
-    switch ( network_type )
-    {
-        case NET_UNROUTABLE : LogPrintf("*** RGP NET_UNROUTABLE \n");
-                              break;
-        case NET_IPV4       : //LogPrintf("*** RGP NET_IPV4 \n");
-                              break;
-        case NET_TOR        : LogPrintf("*** RGP NET_TOR \n");
-                              break;
-        case NET_I2P        : LogPrintf("*** RGP NET_I2P \n");
-                              break;
+    if (GetProxy(addrDest.GetNetwork(), proxy))
+        return ConnectThroughProxy(proxy, addrDest.ToStringIP(), addrDest.GetPort(), hSocketRet, nTimeout, outProxyConnectionFailed);
+    else // no proxy needed (none set for target network)
+        return ConnectSocketDirectly(addrDest, hSocketRet, nTimeout);
+}
 
-        case NET_IPV6       : //LogPrintf("*** RGP NET_IPV6 \n");
-                              break;
 
-        case NET_MAX        : LogPrintf("*** RGP NET_MAX \n");
-                              break;
+//bool ConnectSocket(const CService &addrDest, SOCKET& hSocketRet, int nTimeout)
+//{
+//    proxyType proxy;
+//    enum Network network_type;
+//    bool status;
 
-        default             : LogPrintf("*** RGP not defined \n");
-
-    }
+//    network_type = addrDest.GetNetwork();
+//    switch ( network_type )
+//    {
+//        case NET_UNROUTABLE : LogPrintf("*** RGP NET_UNROUTABLE \n");
+//                              break;
+//        case NET_IPV4       : //LogPrintf("*** RGP NET_IPV4 \n");
+//                              break;
+//        case NET_TOR        : LogPrintf("*** RGP NET_TOR \n");
+//                              break;
+//        case NET_I2P        : LogPrintf("*** RGP NET_I2P \n");
+//                              break;
+//
+//        case NET_IPV6       : //LogPrintf("*** RGP NET_IPV6 \n");
+//                              break;
+//
+//        case NET_MAX        : LogPrintf("*** RGP NET_MAX \n");
+//                              break;
+//
+//        default             : LogPrintf("*** RGP not defined \n");
+//
+//    }
 
     // no proxy needed
-    if (!GetProxy(addrDest.GetNetwork(), proxy))
-    {
-
-        status = ConnectSocketDirectly(addrDest, hSocketRet, nTimeout);
-
-        return status;
-    }
+//    if (!GetProxy(addrDest.GetNetwork(), proxy))
+//    {
+//
+//        status = ConnectSocketDirectly(addrDest, hSocketRet, nTimeout);
+//
+//        return status;
+//    }
 
     //   if ( !ConnectSocketDirectly(addrDest, hSocketRet, nTimeout))
 //    {
@@ -717,86 +1069,58 @@ bool ConnectSocket(const CService &addrDest, SOCKET& hSocketRet, int nTimeout)
  //        return false;
 //    }
 
-    SOCKET hSocket = INVALID_SOCKET;
+//    SOCKET hSocket = INVALID_SOCKET;
 
     // first connect to proxy server
-    if (!ConnectSocketDirectly(proxy.first, hSocket, nTimeout))
-    {
-        return false;
-    }
+//    if (!ConnectSocketDirectly(proxy.first, hSocket, nTimeout))
+//    {
+//        return false;
+//    }
     // do socks negotiation
-    switch (proxy.second) {
-    case 4:
-        if (!Socks4(addrDest, hSocket))
-            return false;
-        break;
-    case 5:
-        if (!Socks5(addrDest.ToStringIP(), addrDest.GetPort(), hSocket))
-            return false;
-        break;
-    default:
-        closesocket(hSocket);
-        return false;
-    }
+//    switch (proxy.second) {
+//    case 4:
+//        if (!Socks4(addrDest, hSocket))
+//            return false;
+//        break;
+//    case 5:
+//        if (!Socks5(addrDest.ToStringIP(), addrDest.GetPort(), hSocket))
+//            return false;
+//        break;
+//    default:
+//        closesocket(hSocket);
+//        return false;
+//    }
 
-    hSocketRet = hSocket;
-    return true;
-}
+//    hSocketRet = hSocket;
+//    return true;
+//}
 
-bool ConnectSocketByName(CService &addr, SOCKET& hSocketRet, const char *pszDest, int portDefault, int nTimeout)
+bool ConnectSocketByName(CService& addr, SOCKET& hSocketRet, const char* pszDest, int portDefault, int nTimeout, bool* outProxyConnectionFailed)
 {
     string strDest;
     int port = portDefault;
+
+    if (outProxyConnectionFailed)
+        *outProxyConnectionFailed = false;
+
     SplitHostPort(string(pszDest), port, strDest);
 
-    LogPrintf("*** RGP ConnectSocketByName started \n");
+    proxyType nameProxy;
+    GetNameProxy(nameProxy);
 
-    SOCKET hSocket = INVALID_SOCKET;
-
-    proxyType nameproxy;
-    GetNameProxy(nameproxy);
-
-    CService addrResolved(CNetAddr(strDest, fNameLookup && !nameproxy.second), port);
-    if (addrResolved.IsValid())
-    {
-
-        LogPrintf("*** RGP ConnectSocketByName Service Valid \n");
-
+    CService addrResolved(CNetAddr(strDest, fNameLookup && !HaveNameProxy()), port);
+    if (addrResolved.IsValid()) {
         addr = addrResolved;
         return ConnectSocket(addr, hSocketRet, nTimeout);
     }
 
-    LogPrintf("*** RGP ConnectSocketByName service not valid \n");
-
-
     addr = CService("0.0.0.0:0");
-    if (!nameproxy.second)
+
+    if (!HaveNameProxy())
         return false;
-
-    LogPrintf("*** RGP ConnectSocketByName debug 001 \n");
-
-
-    if (!ConnectSocketDirectly(nameproxy.first, hSocket, nTimeout))
-        return false;
-
-    LogPrintf("*** RGP ConnectSocketByName debug 002 \n");
-
-
-    switch(nameproxy.second)
-    {
-        default:
-        case 4:
-            closesocket(hSocket);
-            return false;
-        case 5:
-            if (!Socks5(strDest, port, hSocket))
-                return false;
-            break;
-    }
-
-    hSocketRet = hSocket;
-    return true;
+    return ConnectThroughProxy(nameProxy, strDest, port, hSocketRet, nTimeout, outProxyConnectionFailed);
 }
+
 
 void CNetAddr::Init()
 {
