@@ -9,6 +9,7 @@
 #include "init.h"
 #include "main.h"
 #include "net.h"
+
 #ifdef ENABLE_WALLET
 #include "wallet.h"
 #include "walletdb.h"
@@ -333,26 +334,28 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
 }
 
 
-                                               bool OptionsModel::getProxySettings(QNetworkProxy& proxy) const
-                                               {
-                                                   // Directly query current base proxy, because
-                                                   // GUI settings can be overridden with -proxy.
-                                                   proxyType curProxy;
-                                                   if (GetProxy(NET_IPV4, curProxy)) {
-                                                       if (curProxy.second == 5) {
-                                                           proxy.setType(QNetworkProxy::Socks5Proxy);
-                                                           proxy.setHostName(QString::fromStdString(curProxy.first.ToStringIP()));
-                                                           proxy.setPort(curProxy.first.GetPort());
+bool OptionsModel::getProxySettings(QNetworkProxy& proxy) const
+{
+    // Directly query current base proxy, because
+    // GUI settings can be overridden with -proxy.
+    proxyType_OLD curProxy;
+    if ( GetProxy_OLD(NET_IPV4, curProxy))
+    {
+        if ( curProxy.second == 5)
+        {
+             proxy.setType(QNetworkProxy::Socks5Proxy);
+             proxy.setHostName(QString::fromStdString(curProxy.first.ToStringIP()));
+             proxy.setPort(curProxy.first.GetPort());
+             return true;
+        }
+        else
+           return false;
+    }
+    else
+        proxy.setType(QNetworkProxy::NoProxy);
+    return true;
+}
 
-                                                           return true;
-                                                       }
-                                                       else
-                                                           return false;
-                                                   }
-                                                   else
-                                                       proxy.setType(QNetworkProxy::NoProxy);
-                                                   return true;
-                                               }
 //bool OptionsModel::getProxySettings(QNetworkProxy& proxy) const
 //{
     // Directly query current base proxy, because

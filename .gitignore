@@ -2,3 +2,7 @@
 .vscode/targets.log
 .vscode/dryrun.log
 .vscode/configurationCache.log
+src/net.cppold
+src/net-bak.h
+src/netbasebak.cpp
+src/netbasebak.h
