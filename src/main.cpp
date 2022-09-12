@@ -3466,10 +3466,10 @@ bool PoS_Mining_Block;
     PoS_Mining_Block = false;
     if ( pfrom == NULL )
     {
-        if (fDebug )
-        {
+        //if (fDebug )
+        //{
             LogPrintf("*** ProcessBlock POS MINING BLOCK!!! \n");
-        }
+        //}
 
         PoS_Mining_Block = true;
     }
@@ -3484,7 +3484,7 @@ bool PoS_Mining_Block;
         //}
         //return error("ProcessBlock() : already have block %d %s", mapBlockIndex[hash]->nHeight, hash.ToString());
         MilliSleep(1);
-        return true;
+        return false;
     }
 
     if (mapOrphanBlocks.count(hash))

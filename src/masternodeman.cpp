@@ -1268,7 +1268,7 @@ void CMasternodeMan::RelayMasternodeEntryPing(const CTxIn vin, const std::vector
     BOOST_FOREACH(CNode* pnode, vNodes)
     {
         LogPrintf("*** RGP CMasternodeMan::RelayMasternodeEntryPing to node %s \n", pnode->addr.ToString().c_str() );
-        if ( pnode-> )
+        //if ( pnode-> )
         pnode->PushMessage("dseep", vin, vchSig, nNow, stop);
     }
 }

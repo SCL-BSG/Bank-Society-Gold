@@ -11,7 +11,7 @@
 #define CLIENT_VERSION_MAJOR       2
 #define CLIENT_VERSION_MINOR       0
 #define CLIENT_VERSION_REVISION    4
-#define CLIENT_VERSION_BUILD       3
+#define CLIENT_VERSION_BUILD       4
 
 
 static const int CLIENT_VERSION_RPC =
