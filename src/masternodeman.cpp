@@ -482,12 +482,14 @@ CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight,
         //}
 
         mn.Check();
+        LogPrintf("*** RGP RGP GetCurrentMasterNode %s \n",  mn.addr.ToString() );
         if(mn.protocolVersion < minProtocol || !mn.IsEnabled())
         {
             LogPrintf("*** RGP GetCurrentMasterNode Protocol failure %d \n", mn.protocolVersion  );
             continue;
 
         }
+
         // calculate the score for each masternode
         uint256 n = mn.CalculateScore(mod, nBlockHeight);
         unsigned int n2 = 0;
