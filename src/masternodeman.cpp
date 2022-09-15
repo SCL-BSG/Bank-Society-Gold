@@ -471,7 +471,7 @@ CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight,
            -- are not replying. Using GHaydons MN at the moment for the     --
            -- rewards fix.                                                  --
            ------------------------------------------------------------------- */
-        LogPrintf("*** RGP GetCurrentMasterNode loop MN addr \n" );
+        LogPrintf("*** RGP GetCurrentMasterNode loop MN addr %s \n", mn.addr.ToString() );
 
         //if ( mn.addr.ToString() == "143.198.227.129:23980" )
         //{
@@ -503,11 +503,14 @@ CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight,
         {
             score = n2;
             winner = &mn;
+
+            LogPrintf("*** RGP MasterNode Winner of Stake %s \n", winner->addr.ToString() );
+
         }
 
     }
 
-    LogPrintf("*** RGP GetCurrentMasterNode end winner node \n" );
+    LogPrintf("*** RGP GetCurrentMasterNode end winner node %s \n", winner->addr.ToString() );
 
     return winner;
 }

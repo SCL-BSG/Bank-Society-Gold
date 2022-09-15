@@ -1017,7 +1017,7 @@ bool status;
     processed_stakes++;
     last_time_staked = pblock->nTime;
 
-    LogPrintf("*** RGP ProcessBlockStake Created no stakes %d nTime %d time to process %d \n",processed_stakes, last_time_staked, GetTime() );
+    LogPrintf("*** RGP ProcessBlockStake Created number of processed stakes %d nTime %d time to process %d \n",processed_stakes, last_time_staked, GetTime() );
 
 
     return status;
