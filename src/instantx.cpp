@@ -38,7 +38,7 @@ void ProcessMessageInstantX(CNode* pfrom, std::string& strCommand, CDataStream& 
     if(!darkSendPool.IsBlockchainSynced()) return;
 
 
-    LogPrintf("*** RGP ProcessMessageInstantX Start node address \n" );
+    LogPrintf("*** RGP ProcessMessageInstantX Start MASTERNODE node address %s \n", pfrom->addr.ToString() );
 
     if (strCommand == "txlreq")
     {

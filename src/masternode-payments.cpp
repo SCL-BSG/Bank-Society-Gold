@@ -24,15 +24,12 @@ int CMasternodePayments::GetMinMasternodePaymentsProto() {
 
 void ProcessMessageMasternodePayments(CNode* pfrom, std::string& strCommand, CDataStream& vRecv)
 {
-    LogPrintf("*** RGP ProcessMessageMasternodePayments Start \n");
 
     if(!darkSendPool.IsBlockchainSynced())
     {
         LogPrintf("*** RGP ProcessMessageMasternodePayments darkSendPool IsBlockchainSynced Failed \n");
         //return;
     }
-
-    LogPrintf("*** RGP ProcessMessageMasternodePayments Debug 1 \n");
 
     if (strCommand == "mnget") { //Masternode Payments Request Sync
 
@@ -95,8 +92,6 @@ void ProcessMessageMasternodePayments(CNode* pfrom, std::string& strCommand, CDa
             masternodePayments.Relay(winner);
         }
     }
-
-    LogPrintf("*** RGP ProcessMessageMasternodePayments End \n");
 
 }
 
@@ -301,7 +296,7 @@ int nMinimumAge;
     CMasternode *pmn = mnodeman.FindOldestNotInVec(vecLastPayments, nMinimumAge);
     if(pmn != NULL)
     {
-        // LogPrintf(" Found by FindOldestNotInVec \n");
+        LogPrintf(" Found by FindOldestNotInVec node addr %s \n", pmn->addr.ToString() );
 
         newWinner.score = 0;
         newWinner.nBlockHeight = nBlockHeight;
@@ -323,9 +318,12 @@ int nMinimumAge;
 
         BOOST_REVERSE_FOREACH(CTxIn& vinLP, vecLastPayments)
         {
-            CMasternode* pmn = mnodeman.Find(vinLP);
+            CMasternode* pmn = mnodeman.Find(vinLP);            
             if(pmn != NULL)
             {
+
+                LogPrintf("*** RGP Payments Pick first Active %s \n",  pmn->addr.ToString()  );
+
                 pmn->Check();
                 if(!pmn->IsEnabled()) continue;
 
@@ -337,17 +335,20 @@ int nMinimumAge;
                 {
                     newWinner.payee = pmn->rewardAddress;
                 } else {
-                    newWinner.payee = GetScriptForDestination(pmn->pubkey.GetID());
+                    newWinner.payee = GetScriptForDestination( pmn->pubkey.GetID() );
                 }
 
                 payeeSource = GetScriptForDestination(pmn->pubkey.GetID());
 
                 break; // we found active MN
             }
+            else
+                LogPrintf("*** RGP, mno valid MN found Yet \n" );
         }
     }
 
-    if(newWinner.nBlockHeight == 0) return false;
+    if(newWinner.nBlockHeight == 0)
+        return false;
 
     CTxDestination address1;
     ExtractDestination(newWinner.payee, address1);
@@ -357,7 +358,7 @@ int nMinimumAge;
     ExtractDestination(payeeSource, address3);
     CSocietyGcoinAddress address4(address3);
 
-    // LogPrintf("Winner payee %s nHeight %d vin source %s. \n", address2.ToString().c_str(), newWinner.nBlockHeight, address4.ToString().c_str());
+    LogPrintf("Winner payee %s nHeight %d vin source %s. \n", address2.ToString().c_str(), newWinner.nBlockHeight, address4.ToString().c_str());
 
     if(Sign(newWinner))
     {
@@ -385,6 +386,7 @@ void CMasternodePayments::Relay(CMasternodePaymentWinner& winner)
     BOOST_FOREACH(CNode* pnode, vNodes)
     {
         pnode->PushMessage("inv", vInv);
+        LogPrintf("*** Relay to Nodes %s \n", pnode->addr.ToString() );
     }
 }
 

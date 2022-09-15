@@ -42,7 +42,7 @@ static const int INIT_PROTO_VERSION = 209;
    -- RGP, JIRA BSG-182 MIN_PEER_PROTO_VERSION = 10005 --
    ------------------------------------------------------ */
 // disconnect from peers older than this proto version
-static const int MIN_PEER_PROTO_VERSION = 10006;
+static const int MIN_PEER_PROTO_VERSION = 10007;
 
 /* -----------------------------------------------------------
    -- RGP, JIRA BSG-182 MIN_POOL_PEER_PROTO_VERSION = 10005 --

@@ -3478,12 +3478,12 @@ bool PoS_Mining_Block;
     hash = pblock->GetHash();
     if (mapBlockIndex.count(hash))
     {
-        //if ( fDebug )
-        //{
+        if ( fDebug )
+        {
             LogPrintf("*** ProcessBlock Already have the newly provide block HASH \n");
-        //}
-        //return error("ProcessBlock() : already have block %d %s", mapBlockIndex[hash]->nHeight, hash.ToString());
-        MilliSleep(1);
+        }
+
+        MilliSleep(5);
         return false;
     }
 
@@ -5806,26 +5806,18 @@ CInv Problem_Blocks_Inv;
 
     else
     {
-        LogPrintf("*** RGP UNKNOWN message debug 001 > %s \n", strCommand );
+        LogPrintf("*** RGP Other message debug 001 > %s \n", strCommand );
 
         if (fSecMsgEnabled)
             SecureMsgReceiveData(pfrom, strCommand, vRecv);
 
         darkSendPool.ProcessMessageDarksend(pfrom, strCommand, vRecv);
 
-        LogPrintf("*** RGP Before mnodeman.ProcessMessage   \n");
-
-        mnodeman.ProcessMessage(pfrom, strCommand, vRecv);
-
-        LogPrintf("*** RGP Before ProcessMessageMasternodePayments   \n");
+        mnodeman.ProcessMessage(pfrom, strCommand, vRecv);        
 
         ProcessMessageMasternodePayments(pfrom, strCommand, vRecv);
 
-        LogPrintf("*** RGP Before ProcessMessageInstantX   \n");
-
         ProcessMessageInstantX(pfrom, strCommand, vRecv);
-
-        LogPrintf("*** RGP Before ProcessSpork   \n");
 
         ProcessSpork(pfrom, strCommand, vRecv);
 

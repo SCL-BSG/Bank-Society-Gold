@@ -15,7 +15,7 @@ void CActiveMasternode::ManageStatus()
 {
     std::string errorMessage;
 
-    //if (fDebug)
+    if (fDebug)
         LogPrintf("CActiveMasternode::ManageStatus() - Begin\n");
 
     if(!fMasterNode) return;
@@ -25,7 +25,7 @@ void CActiveMasternode::ManageStatus()
 
     if(fIsInitialDownload) {
         status = MASTERNODE_SYNC_IN_PROCESS;
-        LogPrintf("CActiveMasternode::ManageStatus() - Sync in progress. Must wait until sync is complete to start masternode.\n");
+        //LogPrintf("CActiveMasternode::ManageStatus() - Sync in progress. Must wait until sync is complete to start masternode.\n");
         return;
     }
 
@@ -38,14 +38,14 @@ void CActiveMasternode::ManageStatus()
             if(!GetLocal(service)) {
                 notCapableReason = "Can't detect external address. Please use the masternodeaddr configuration option.";
                 status = MASTERNODE_NOT_CAPABLE;
-                LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason.c_str());
+               // LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason.c_str());
                 return;
             }
         } else {
         	service = CService(strMasterNodeAddr, true);
         }
 
-        LogPrintf("CActiveMasternode::ManageStatus() - Checking inbound connection to '%s'\n", service.ToString().c_str());
+        //LogPrintf("CActiveMasternode::ManageStatus() - Checking inbound connection to '%s'\n", service.ToString().c_str());
 
             /* SocietyG NOTE: There is no logical reason to restrict this to a specific port.  Its a peer, what difference does it make.
             if(!ConnectNode((CAddress)service, service.ToString().c_str())){
@@ -60,7 +60,7 @@ void CActiveMasternode::ManageStatus()
         if(pwalletMain->IsLocked()){
             notCapableReason = "Wallet is locked.";
             status = MASTERNODE_NOT_CAPABLE;
-            LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason.c_str());
+            //LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason.c_str());
             return;
         }
 
@@ -82,12 +82,12 @@ void CActiveMasternode::ManageStatus()
                 {
                     notCapableReason = "Input must have least " + boost::lexical_cast<string>(MASTERNODE_MIN_CONFIRMATIONS) +
                                        " confirmations - " + boost::lexical_cast<string>(GetInputAge(vin)) + " confirmations";
-                    LogPrintf("CActiveMasternode::ManageStatus() - %s\n", notCapableReason.c_str());
+                    //LogPrintf("CActiveMasternode::ManageStatus() - %s\n", notCapableReason.c_str());
                     status = MASTERNODE_INPUT_TOO_NEW;
                     return;
                 }
 
-                LogPrintf("CActiveMasternode::ManageStatus() - Is capable master node!\n");
+                //LogPrintf("CActiveMasternode::ManageStatus() - Is capable master node!\n");
 
                 status = MASTERNODE_IS_CAPABLE;
                 notCapableReason = "";
@@ -110,7 +110,7 @@ void CActiveMasternode::ManageStatus()
 
                 if(!Register(vin, service, keyCollateralAddress, pubKeyCollateralAddress, keyMasternode, pubKeyMasternode, rewardAddress, rewardPercentage, errorMessage))
                 {
-                    LogPrintf("CActiveMasternode::ManageStatus() - Error on Register: %s\n", errorMessage.c_str());
+                   LogPrintf("CActiveMasternode::ManageStatus() - Error on Register: %s\n", errorMessage.c_str());
                 }
 
                 return;

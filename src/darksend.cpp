@@ -48,18 +48,15 @@ int RequestedMasterNodeList = 0;
 void CDarksendPool::ProcessMessageDarksend(CNode* pfrom, std::string& strCommand, CDataStream& vRecv)
 {
 
-     LogPrintf("*** RGP ProcessMessageDarksend Start %s \n", pfrom->addr.ToString() );
-
     if(fLiteMode) return; //disable all darksend/Masternode related functionality
 
     if(!IsBlockchainSynced())
     {
         LogPrintf("*** RGP ProcessMessageDarksend BLOCK IS NOT SYNCHED. \n");
-        /* RGP, if the block is unsynched then no Mastermodes are allowed,
+        /* RGP, if the block is unsynched then no Masternodes are allowed,
                 which then stops staking, catch22 blockchain stops          */
         //return;
     }
-
 
     if (strCommand == "dsa")
     { //DarkSend Accept Into Pool

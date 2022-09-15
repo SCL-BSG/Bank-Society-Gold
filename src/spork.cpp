@@ -31,9 +31,6 @@ void ProcessSpork(CNode* pfrom, std::string& strCommand, CDataStream& vRecv)
 {
     if(fLiteMode) return; //disable all darksend/masternode related functionality
 
-    LogPrintf("*** RGP ProcessSpork Start %s \n", pfrom->addr.ToString().c_str() );
-
-
     if (strCommand == "spork")
     {
         //LogPrintf("ProcessSpork::spork\n");

@@ -202,9 +202,12 @@ bool CMasternodeMan::Add(CMasternode &mn)
 
     CMasternode *pmn = Find(mn.vin);
 
+    /* ------------------------------------------------
+       -- RGP, if pwn is NULL, it's a new Masternode --
+       ------------------------------------------------ */
+
     if (pmn == NULL)
-    {
-        LogPrintf("masternode, CMasternodeMan: Adding new masternode %s - %i now\n", mn.addr.ToString().c_str(), size() + 1);
+    {        
         vMasternodes.push_back(mn);
         return true;
     }
@@ -238,7 +241,7 @@ void CMasternodeMan::Check()
 
     BOOST_FOREACH(CMasternode& mn, vMasternodes)
     {
-        //LogPrintf("*** RGP CMasterNodeMan::Check loop \n");
+        LogPrintf("*** RGP CMasterNodeMan::Check loop address \n");
         mn.Check();
     }
 
@@ -637,18 +640,17 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
 {
 
     //Normally would disable functionality, NEED this enabled for staking.
-    //if(fLiteMode) return;
+    if(fLiteMode) return;
 
-    LogPrintf("*** RGP  CMasternodeMan::ProcessMessage Start \n");
-
+    /* -------------------------------------------------------------------------
+       -- RGP, had to disable this as staking was not allowed, as Masternodes --
+       --      were not available. THis will be resolved later                --
+       ------------------------------------------------------------------------- */
     if(!darkSendPool.IsBlockchainSynced() )
     {
-        LogPrintf("*** RGP CMasternodeMan::ProcessMessage After Darksend IsBlockSynched FAILED!! \n");
+
         //return;
     }
-
-    LogPrintf("*** RGP CMasternodeMan::ProcessMessage After Darksend IsBlockSynched \n");
-
 
     LOCK(cs_process_message);
 
@@ -1129,9 +1131,7 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
                 }
             }
             return;
-        }
-
-        LogPrintf("masternode, dseep - Couldn't find masternode entry %s\n", vin.ToString().c_str());
+        }       
 
         std::map<COutPoint, int64_t>::iterator i = mWeAskedForMasternodeListEntry.find(vin.prevout);
         if (i != mWeAskedForMasternodeListEntry.end())
