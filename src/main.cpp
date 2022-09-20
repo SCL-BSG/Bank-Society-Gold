@@ -3519,7 +3519,7 @@ bool PoS_Mining_Block;
         }
         else
         {
-             LogPrintf("*** RGP ProcessBlock SUCCESS \n");
+            // LogPrintf("*** RGP ProcessBlock SUCCESS \n");
 
             if(!IsInitialBlockDownload()){
 

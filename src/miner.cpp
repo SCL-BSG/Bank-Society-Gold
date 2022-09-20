@@ -1110,7 +1110,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
         while ( vNodes.size() < Nodes_for_Staking )
         {
 
-            LogPrintf("*** RGP Miner 2 Stake nodes waiting \n" );
+            //LogPrintf("*** RGP Miner 2 Stake nodes waiting \n" );
             MilliSleep(5000);
 
             if ( fRequestShutdown == true )
