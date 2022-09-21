@@ -1,26 +1,21 @@
 ﻿
-Bank Society Gold Coin Masternode Install Guide - Setup Guide (Single VPS/IP)
-=============================================================================
+Bank Society Gold Masternode Install Guide - Setup Guide (Single VPS/IP)
+========================================================================
 
 Important : Never try to setup a Masternode on the same domain as your wallet, as this will
-            never work. THe Masternode concept requires a UNIQUE node IP and PORT. Therefore, a VPS
-            (Virtual Private Server) or Cloud Host is the cheapest way to implement a Masternode.
-            Hardware Requirements : 1 Virtual CPU, 1 GByte RAM, 25GByte or more Hard Disk or SSD
+            never work. THe Masternode concept requires a UNIQUE node IP. THerefore, a VPS
+            (Virtual Private Server) is the cheapest way to implement a Masternode. 
+
 
 Masternode Rewards Information
 ------------------------------
 
-To setup a masternode you will first need 150,000 SOCG, a Virtual Private Server and a SocietyG-qt (GUI Wallet). 
-A small amount of technical knowledge is required to follow the setup guide below.
-A masternode is a combination of two seperate wallets. 
-A Controller and slave wallet setup ensures secure storage of your collateral. 
-A VPS (slave) wallet will be configured to allow your GUI controller wallet to communicate and exchange information. 
-The controller wallet must remain unlocked and connected through the Bank Society Gold network to your slave (VPS) at all 
-times for active status. 
-It's recommended to setup your controller wallet on a computer that only you have physical access to, behind a firewall, running linux or Windows with a good anti-virus.
+To setup a masternode you will first need 150,000 SOCG, a Virtual Private Server and a SocietyG-qt (GUI Wallet). A small amount of technical knowledge is required to follow the setup guide below.
 
-A VPS wallet will be configured to allow your GUI controller wallet to communicate and exchange information. 
-The controller wallet must remain connected through the Bank Society Gold network to your VPS at all times for active status.
+A masternode is a combination of two seperate wallets. A Controller and slave wallet setup ensures secure storage of your collateral. A VPS (slave) wallet will be configured to allow your GUI controller wallet to communicate and exchange information. The controller wallet must remain unlocked and connected through the Society network to your slave (VPS) at all times for active status. It's recommended to setup your controller wallet on a computer that only you have physical access to, behind a firewall, running linux or Windows with a good anti-virus.
+The Masternode or Slave VPS wallet (node) confirms all other wallet stakes and receives 40% of the reward.
+
+A VPS wallet will be configured to allow your GUI controller wallet to communicate and exchange information. The controller wallet must remain connected through the Society network to your VPS at all times for active status. However, if you shutdown your controller wallet, the Masternode will continue, until you reconnect again later.
 
 This means that the master wallet must be open and connected to receive Masternode rewards.
 
@@ -30,24 +25,28 @@ This means that the master wallet must be open and connected to receive Masterno
 ============
 
 Setup your controller wallet - this will keep your coins safe.
-Install SocietyG-qt on Windows or Linux from the official releases. [ https://github.com/SCL-BSG/Bank-Society-Gold.git ]
+Install SocietyQ-qt on Windows or Linux or MAC from the official releases. 
 
 Load your SocietyG-qt wallet and sync.
 Shut-down SocietyG-qt
-Find your societyG.conf file Help - Debug - Information - Click societyG.conf button under 
-Troubleshooting or browse c:\Users\username\AppData\LocalRoaming\SocietyG  (windows) or home/username/.SocietyG/ (Linux)
-Edit societyG.conf with notepad or gedit/nano
+Find your societyG.conf file Help - Debug - Information - Click society.conf button under Troubleshooting or browse c:\Users\username\AppData\LocalRoaming\SocietyQ  (windows) or home/username/.SocietyQ/ (Linux)
+Edit societyQ.conf with notepad or gedit/nano
 
 
 Add the following line:
 
-addnode=your_VPS_server_IP ( IP Address )
+addnode=your_VPS_server_IP
 
 Save and exit
 
 Load SocietyG-qt wallet and sync.
 
 Backup your private keys and wallet file!
+=========================================
+Your PRIVATE KEY refers to your wallet lock private key. Ideally, this key should be 
+not on a connected computer, even better a paper copy is best. It's used to lock your wallet and unlock your wallet.
+It's also used to just unlock for Staking. DO NOT GIVE YOUR PRIVATE KEY TO ANYONE OR MAKE IT PUBLIC.
+Your Private key is protecting your coins from being hacked.
 
 ============
 == STEP 2 ==
@@ -56,7 +55,7 @@ Backup your private keys and wallet file!
 Create your Masternode Collateral.
 
 Click "Receive" and generate a new address with the label "Masternode 1"
-Send exactly 150 000 Bank Society Gold Coin to this address and wait for confirmations.
+Send exactly 150 000 Society Gold Coin to this address and wait for confirmations.
 
 ============
 == STEP 3 ==
@@ -99,10 +98,12 @@ Configure your controller wallet (masternode.conf - recommended):
 Open masternode.conf in Notepad or Gedit/Nano
 
 Add the following information:
-alias your_VPS_server_IP:23960 PRIVATEKEY TXT_HASH TXT_INDEX
+alias your_VPS_server_IP:23980 PRIVATEKEY TXT_HASH TXT_INDEX
 
 An example:
-mn1 your_VPS_server_IP:23960 05040h0f9fdju3n9g9dsnwpx9g3nasz9dgnas 29a839eca6be6f1f0656cb23ed04f824ddb72f19bf9168a0c5b5243eae34d765 0
+mn1 your_VPS_server_IP:23980 05040h0f9fdju3n9g9dsnwpx9g3nasz9dgnas 29a839eca6be6f1f0656cb23ed04f824ddb72f19bf9168a0c5b5243eae34d765 0
+
+# Save the masternode.conf file now.
 
 Configure your controller wallet (GUI):
 
@@ -110,9 +111,10 @@ On the Menu bar click "Masternodes"
 Click the Tab "My Masternodes"
 Click the "Create" button
 Alias: MN1
-Address: your_VPS_server_IP:23960
+Address: your_VPS_server_IP:23980
 PrivKey: 05040h0f9fdju3n9g9dsnwpx9g3nasz9dgnas
-TxHash: 29a839eca6be6f1f0656cb23ed04f824ddb72f19bf9168a0c5b5243eae34d765
+TxHash: 97896110ee23955473e551205579adad0620962d9cb9b6ecfbf687dddfeb0963
+Reward Address: Sc2JDHFRGzAfvijnsF3yciw9GK8wD8nKzi
 Output: 0
 
 Click "OK" now open up an SSH client Putty
@@ -169,6 +171,7 @@ cd db-4.8.30.NC/build_unix/
 #################################################################################################################
 ## RGP : Error found during configure in dbinc/atomic_h                                                        ##
 ## Line 147, replace __atomic_compare_exchange((p), (o), (n)) with __atomic_compare_exchange_db((p), (o), (n)) ##
+## Also Line 179 __atomic_compare_exchange to __atomic_compare_exchange_db
 #################################################################################################################
 
 make install
@@ -200,8 +203,8 @@ If you get an error: "operation not permitted" please see here for a possible fi
 
 Build & compile the slave wallet binary:
 
-git clone https://github.com/SCL-BSG/Bank-Society-Gold.git
-cd Bank-Society-Gold-main/src
+git clone https://github.com/SCL-BSG/Bank-Society-Gold
+cd Bank-Society-Gold/src
 make -f makefile.unix
 cp societyGd /usr/bin
 cd ..
@@ -247,15 +250,16 @@ Press: Y then ENTER to overwrite.
 
 Start your slave wallet:
 
-./societyGd
+societyGd
 
 If it looks like it's just sitting there idle on the last step try using:
 
 societyGd getinfo
 
-Wait until full sync - try the above commands periodically to view the progress:
+# Note : The Masternode will need to load the full blockchain, this will take some time.
+#        Wait until full sync - try the above commands periodically to view the progress:
 
-If you close Putty and societyGd exits too: Install screen (apt-get install screen) and run it using: screen societyGd
+If you close Putty and societyd exits too: Install screen (apt-get install screen) and run it using: screen societyd
 
 =============
 == STEP 12 == [VPS/Putty]
@@ -283,7 +287,7 @@ If you see your masternode slave-wallet VPS IP - excellent!
 Then click "Start All"
 Once again "Update"
 You should see "Masternode is running..."
-Over a short-period of time it will show up in the Bank Society Gold network tab
+Over a short-period of time it will show up in the Society network tab
 
 Step #14:
 
