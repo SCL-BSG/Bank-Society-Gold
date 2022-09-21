@@ -191,6 +191,7 @@ enum Network ParseNetwork(std::string net);
    ----------------------------------------------------------------------
    -- added GetNetworkName() implementation to list of server commands --
    -- required by GetNetworksInfo() in rpsnet.cpp                      --
+   --                                                                  --
    ---------------------------------------------------------------------- */
 std::string GetNetworkName(enum Network net);
 
