@@ -9,13 +9,13 @@
 #include "clientversion.h"
 
 //
-// Bootup the masternode, look for a 10000 SocietyG input and register on the network
+// Bootup the masternode, look for a 150 000 SocietyG input and register on the network
 //
 void CActiveMasternode::ManageStatus()
 {
     std::string errorMessage;
 
-    if (fDebug)
+    //if (fDebug)
         LogPrintf("CActiveMasternode::ManageStatus() - Begin\n");
 
     if(!fMasterNode) return;
@@ -29,23 +29,26 @@ void CActiveMasternode::ManageStatus()
         return;
     }
 
-    if(status == MASTERNODE_INPUT_TOO_NEW || status == MASTERNODE_NOT_CAPABLE || status == MASTERNODE_SYNC_IN_PROCESS){
+    if(status == MASTERNODE_INPUT_TOO_NEW || status == MASTERNODE_NOT_CAPABLE || status == MASTERNODE_SYNC_IN_PROCESS)
+    {
         status = MASTERNODE_NOT_PROCESSED;
     }
 
-    if(status == MASTERNODE_NOT_PROCESSED) {
+    if( status == MASTERNODE_NOT_PROCESSED )
+    {
         if(strMasterNodeAddr.empty()) {
             if(!GetLocal(service)) {
                 notCapableReason = "Can't detect external address. Please use the masternodeaddr configuration option.";
                 status = MASTERNODE_NOT_CAPABLE;
-               // LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason.c_str());
+                LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason.c_str());
                 return;
             }
-        } else {
+        } else
+        {
         	service = CService(strMasterNodeAddr, true);
         }
 
-        //LogPrintf("CActiveMasternode::ManageStatus() - Checking inbound connection to '%s'\n", service.ToString().c_str());
+        LogPrintf("CActiveMasternode::ManageStatus() - Checking inbound connection to '%s'\n", service.ToString().c_str());
 
             /* SocietyG NOTE: There is no logical reason to restrict this to a specific port.  Its a peer, what difference does it make.
             if(!ConnectNode((CAddress)service, service.ToString().c_str())){
@@ -82,12 +85,12 @@ void CActiveMasternode::ManageStatus()
                 {
                     notCapableReason = "Input must have least " + boost::lexical_cast<string>(MASTERNODE_MIN_CONFIRMATIONS) +
                                        " confirmations - " + boost::lexical_cast<string>(GetInputAge(vin)) + " confirmations";
-                    //LogPrintf("CActiveMasternode::ManageStatus() - %s\n", notCapableReason.c_str());
+                    LogPrintf("CActiveMasternode::ManageStatus() - %s\n", notCapableReason.c_str());
                     status = MASTERNODE_INPUT_TOO_NEW;
                     return;
                 }
 
-                //LogPrintf("CActiveMasternode::ManageStatus() - Is capable master node!\n");
+                LogPrintf("CActiveMasternode::ManageStatus() - Is capable master node!\n");
 
                 status = MASTERNODE_IS_CAPABLE;
                 notCapableReason = "";
@@ -97,6 +100,8 @@ void CActiveMasternode::ManageStatus()
                 // send to all nodes
                 CPubKey pubKeyMasternode;
                 CKey keyMasternode;
+
+                LogPrintf("*** RGPC ActiveMasternode::ManageStatus %s \n", strMasterNodePrivKey );
 
                 if(!darkSendSigner.SetKey(strMasterNodePrivKey, errorMessage, keyMasternode, pubKeyMasternode))
                 {
@@ -108,10 +113,11 @@ void CActiveMasternode::ManageStatus()
                 CScript rewardAddress = CScript();
                 int rewardPercentage = 0;
 
-                if(!Register(vin, service, keyCollateralAddress, pubKeyCollateralAddress, keyMasternode, pubKeyMasternode, rewardAddress, rewardPercentage, errorMessage))
+                if(!Register(vin, service, keyCollateralAddress, pubKeyCollateralAddress, keyMasternode, pubKeyMasternode, rewardAddress, rewardPercentage, errorMessage, strMasterNodePrivKey))
                 {
                    LogPrintf("CActiveMasternode::ManageStatus() - Error on Register: %s\n", errorMessage.c_str());
                 }
+
 
                 return;
 
@@ -238,7 +244,7 @@ bool CActiveMasternode::Dseep(CTxIn vin, CService service, CKey keyMasternode, C
     }
 
     //send to all peers
-    LogPrintf("CActiveMasternode::Dseep() - RelayMasternodeEntryPing vin = %s\n", vin.ToString().c_str());
+    //LogPrintf("CActiveMasternode::Dseep() - RelayMasternodeEntryPing vin = %s\n", vin.ToString().c_str());
     mnodeman.RelayMasternodeEntryPing(vin, vchMasterNodeSignature, masterNodeSignatureTime, stop);
 
     return true;
@@ -253,26 +259,48 @@ bool CActiveMasternode::Register(std::string strService, std::string strKeyMaste
     CScript rewardAddress = CScript();
     int rewardPercentage = 0;
 
+
+    LogPrintf("*** RGP CActiveMasternode::Register 1 Start \n" );
+
+
+
+
+    LogPrintf("*** RGP CActiveMasternode::Register strKeyMasternode %s txHash %s strOutputIndex %s strRewardAddress %s strRewardPercentage %s \n", strKeyMasternode, txHash, strOutputIndex, strRewardAddress, strRewardPercentage );
+
+
     if(!darkSendSigner.SetKey(strKeyMasternode, errorMessage, keyMasternode, pubKeyMasternode))
     {
+
+        LogPrintf("*** RGP CActiveMasternode::Register Debug 1 \n" );
+
+
         LogPrintf("CActiveMasternode::Register() - Error upon calling SetKey: %s\n", errorMessage.c_str());
         return false;
     }
+
+    LogPrintf("*** RGP CActiveMasternode::Register Debug 2 \n" );
 
     if(!GetMasterNodeVin(vin, pubKeyCollateralAddress, keyCollateralAddress, txHash, strOutputIndex)) {
         errorMessage = "could not allocate vin";
         LogPrintf("CActiveMasternode::Register() - Error: %s\n", errorMessage.c_str());
         return false;
     }
+
+    LogPrintf("*** RGP CActiveMasternode::Register Debug 3 \n" );
+
     CSocietyGcoinAddress address;
     if (strRewardAddress != "")
     {
+        LogPrintf("*** RGP CActiveMasternode::Register Debug 4 \n" );
+
         if(!address.SetString(strRewardAddress))
         {
             LogPrintf("ActiveMasternode::Register - Invalid Reward Address\n");
             return false;
         }
         rewardAddress.SetDestination(address.Get());
+
+        LogPrintf("*** RGP CActiveMasternode::Register Debug 5 \n" );
 
         try {
             rewardPercentage = boost::lexical_cast<int>( strRewardPercentage );
@@ -281,17 +309,44 @@ bool CActiveMasternode::Register(std::string strService, std::string strKeyMaste
             return false;
         }
 
+        LogPrintf("*** RGP CActiveMasternode::Register Debug 6 \n" );
+
         if(rewardPercentage < 0 || rewardPercentage > 100)
         {
             LogPrintf("ActiveMasternode::Register - Reward Percentage Out Of Range\n");
             return false;
         }
+
+        LogPrintf("*** RGP CActiveMasternode::Register Debug 7 \n" );
+
     }
 
-	return Register(vin, CService(strService, true), keyCollateralAddress, pubKeyCollateralAddress, keyMasternode, pubKeyMasternode, rewardAddress, rewardPercentage, errorMessage);
+    LogPrintf("*** RGP CActiveMasternode::Register Debug 8 \n" );
+
+
+    /* RGP, check the secret to see if it's been set or not */
+    CMasternode* pmn = mnodeman.Find(vin);
+    if(pmn != NULL)
+    {
+        if ( strlen ( &pmn->strKeyMasternode[0] ) == 0 )
+        {
+            LogPrintf("*** RGP updating masternode secret %s \n", strKeyMasternode );
+
+            pmn->strKeyMasternode = strKeyMasternode;
+
+
+        }
+
+
+
+    }
+
+
+    return Register(vin, CService(strService, true), keyCollateralAddress, pubKeyCollateralAddress, keyMasternode, pubKeyMasternode, rewardAddress, rewardPercentage, errorMessage, strKeyMasternode );
+
 }
 
-bool CActiveMasternode::Register(CTxIn vin, CService service, CKey keyCollateralAddress, CPubKey pubKeyCollateralAddress, CKey keyMasternode, CPubKey pubKeyMasternode, CScript rewardAddress, int rewardPercentage, std::string &retErrorMessage) {
+bool CActiveMasternode::Register(CTxIn vin, CService service, CKey keyCollateralAddress, CPubKey pubKeyCollateralAddress, CKey keyMasternode, CPubKey pubKeyMasternode, CScript rewardAddress, int rewardPercentage, std::string &retErrorMessage, std::string strKeyMasternode ) {
     std::string errorMessage;
     std::vector<unsigned char> vchMasterNodeSignature;
     std::string strMasterNodeSignMessage;
@@ -301,6 +356,10 @@ bool CActiveMasternode::Register(CTxIn vin, CService service, CKey keyCollateral
     std::string vchPubKey2(pubKeyMasternode.begin(), pubKeyMasternode.end());
 
     std::string strMessage = service.ToString() + boost::lexical_cast<std::string>(masterNodeSignatureTime) + vchPubKey + vchPubKey2 + boost::lexical_cast<std::string>(PROTOCOL_VERSION) + rewardAddress.ToString() + boost::lexical_cast<std::string>(rewardPercentage);
+
+    LogPrintf("*** RGP CActiveMasternode::Register 2 start \n");
+
+    //LogPrintf("*** RGP data is vchPubKey %s vchPubKey2 %s strMessage \n", vchPubKey, vchPubKey2, strMessage  );
 
     if(!darkSendSigner.SignMessage(strMessage, errorMessage, vchMasterNodeSignature, keyCollateralAddress)) {
 		retErrorMessage = "sign message failed: " + errorMessage;
@@ -318,9 +377,11 @@ bool CActiveMasternode::Register(CTxIn vin, CService service, CKey keyCollateral
     if(pmn == NULL)
     {
         LogPrintf("CActiveMasternode::Register() - Adding to masternode list service: %s - vin: %s\n", service.ToString().c_str(), vin.ToString().c_str());
-        CMasternode mn(service, vin, pubKeyCollateralAddress, vchMasterNodeSignature, masterNodeSignatureTime, pubKeyMasternode, PROTOCOL_VERSION, rewardAddress, rewardPercentage); 
+
+        CMasternode mn(service, vin, pubKeyCollateralAddress, vchMasterNodeSignature, masterNodeSignatureTime, pubKeyMasternode, PROTOCOL_VERSION, rewardAddress, rewardPercentage);
         mn.ChangeNodeStatus(false);
         mn.UpdateLastSeen(masterNodeSignatureTime);
+        mn.strKeyMasternode = strKeyMasternode;
         mnodeman.Add(mn);
     }
 

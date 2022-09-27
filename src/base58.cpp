@@ -196,8 +196,13 @@ void CBase58Data::SetData(const std::vector<unsigned char> &vchVersionIn, const 
     SetData(vchVersionIn, (void*)pbegin, pend - pbegin);
 }
 
-bool CBase58Data::SetString(const char* psz, unsigned int nVersionBytes) {
+bool CBase58Data::SetString(const char* psz, unsigned int nVersionBytes)
+{
     std::vector<unsigned char> vchTemp;
+
+    //LogPrintf("*** RGP, CBase58Data::SetString Start 1 \n");
+
+
     bool rc58 = DecodeBase58Check(psz, vchTemp);
     if ((!rc58) || (vchTemp.size() < nVersionBytes)) {
         vchData.clear();
@@ -212,7 +217,11 @@ bool CBase58Data::SetString(const char* psz, unsigned int nVersionBytes) {
     return true;
 }
 
-bool CBase58Data::SetString(const std::string& str) {
+bool CBase58Data::SetString(const std::string& str)
+{
+
+    //LogPrintf("*** RGP, CBase58Data::SetString Start 2 \n");
+
     return SetString(str.c_str());
 }
 
@@ -321,7 +330,13 @@ bool CSocietyGcoinSecret::IsValid() const {
     return fExpectedFormat && fCorrectVersion;
 }
 
-bool CSocietyGcoinSecret::SetString(const char* pszSecret) {
+bool CSocietyGcoinSecret::SetString(const char* pszSecret)
+{
+
+    LogPrintf("*** RGP CSocietyGcoinSecret::SetString Start \n");
+
+
+
     return CBase58Data::SetString(pszSecret) && IsValid();
 }
 
@@ -351,10 +366,20 @@ bool CBitcoinAddress::Set(const CTxDestination &dest) {
     return boost::apply_visitor(CBitcoinAddressVisitor(this), dest);
 }
 
-bool CBitcoinAddress::IsValid() const {
+bool CBitcoinAddress::IsValid() const
+{
+
     bool fCorrectSize = vchData.size() == 20;
     bool fKnownVersion = vchVersion == Params().Base58Prefix(pubkey_address) ||
                          vchVersion == Params().Base58Prefix(script_address);
+
+    LogPrintf("*** RGP CBitcoinAddress::IsValid()  \n");
+    if ( !fCorrectSize)
+        LogPrintf("*** RGP CBitcoinAddress::IsValid() not correct size 20  \n");
+
+    if ( !fKnownVersion )
+        LogPrintf("*** RGP CBitcoinAddress::IsValid() not Valid  \n");
+
     return fCorrectSize && fKnownVersion;
 }
 

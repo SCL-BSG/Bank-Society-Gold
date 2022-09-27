@@ -57,6 +57,9 @@ void CDarksendPool::ProcessMessageDarksend(CNode* pfrom, std::string& strCommand
                 which then stops staking, catch22 blockchain stops          */
         //return;
     }
+    else
+        LogPrintf("*** RGP ProcessMessageDarksend BLOCK SYNCHED. \n");
+
 
     if (strCommand == "dsa")
     { //DarkSend Accept Into Pool
@@ -2203,9 +2206,14 @@ bool CDarkSendSigner::IsVinAssociatedWithPubkey(CTxIn& vin, CPubKey& pubkey){
     return false;
 }
 
-bool CDarkSendSigner::SetKey(std::string strSecret, std::string& errorMessage, CKey& key, CPubKey& pubkey){
+bool CDarkSendSigner::SetKey(std::string strSecret, std::string& errorMessage, CKey& key, CPubKey& pubkey)
+{
     CSocietyGcoinSecret vchSecret;
     bool fGood = vchSecret.SetString(strSecret);
+
+
+    LogPrintf("*** RGP CDarkSendSigner::SetKey Secret key %s \n", strSecret );
+
 
     if (!fGood) {
         errorMessage = _("Invalid private key.");

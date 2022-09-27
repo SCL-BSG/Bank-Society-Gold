@@ -54,8 +54,6 @@ bool GetBlockHash(uint256& hash, int nBlockHeight)
             hash = BlockReading->GetBlockHash();
             mapCacheBlockHashes[nBlockHeight] = hash;
 
-            LogPrintf("*** RGP GetBlockHash successful \n");
-
             return true;
         }
         n++;

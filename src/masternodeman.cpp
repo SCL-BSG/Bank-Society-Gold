@@ -241,7 +241,6 @@ void CMasternodeMan::Check()
 
     BOOST_FOREACH(CMasternode& mn, vMasternodes)
     {
-        LogPrintf("*** RGP CMasterNodeMan::Check loop address \n");
         mn.Check();
     }
 
@@ -708,6 +707,8 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
         std::string vchPubKey2(pubkey2.begin(), pubkey2.end());
 
         strMessage = addr.ToString() + boost::lexical_cast<std::string>(sigTime) + vchPubKey + vchPubKey2 + boost::lexical_cast<std::string>(protocolVersion);    
+
+        LogPrintf("*** RGP, CMasternodeMan::ProcessMessage strMessage %s \n", strMessage );
 
         if(protocolVersion < MIN_POOL_PEER_PROTO_VERSION)
         {

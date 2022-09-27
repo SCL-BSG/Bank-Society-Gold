@@ -3317,7 +3317,7 @@ uint256 hash;
        ------------------------- */
     if (mapBlockIndex.count(hash))
     {
-        LogPrintf("*** RGP JIRA 177 check four exit \n");
+        LogPrintf("*** RGP JIRA 177 check for exit \n");
         return false;
     }
 
@@ -3345,7 +3345,10 @@ uint256 hash;
     if (!WriteToDisk(nFile, nBlockPos))
         return error("AcceptBlock() : WriteToDisk failed");
     if (!AddToBlockIndex(nFile, nBlockPos, hashProof))
+    {
+        LogPrintf("*** RGP Acceptblock, Invalid block from wallet node %s \n", From_Node->addr.ToString());
         return error("AcceptBlock() : AddToBlockIndex failed");
+    }
 
     // Relay inventory, but don't relay old inventory during initial block download
     int nBlockEstimate = Checkpoints::GetTotalBlocksEstimate();
@@ -3518,8 +3521,7 @@ bool PoS_Mining_Block;
             return false; /* return false, as (ProcessMessage will then clear ask for list for this orphan */
         }
         else
-        {
-            // LogPrintf("*** RGP ProcessBlock SUCCESS \n");
+        {           
 
             if(!IsInitialBlockDownload()){
 
@@ -3589,8 +3591,6 @@ bool PoS_Mining_Block;
             }
         }
 
-
-        //LogPrintf("*** RGP ProcessBlock, DEBUG Special 001 \n");
 
     // ppcoin: check proof-of-stake
     // Limited duplicity on stake: prevents block flood attack

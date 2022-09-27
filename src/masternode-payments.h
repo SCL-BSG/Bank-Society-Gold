@@ -35,7 +35,11 @@ public:
     std::vector<unsigned char> vchSig;
     uint64_t score;
 
-    CMasternodePaymentWinner() {
+
+
+
+    CMasternodePaymentWinner()
+    {
         nBlockHeight = 0;
         score = 0;
         vin = CTxIn();

@@ -30,6 +30,8 @@ void ProcessMessageMasternodePayments(CNode* pfrom, std::string& strCommand, CDa
         LogPrintf("*** RGP ProcessMessageMasternodePayments darkSendPool IsBlockchainSynced Failed \n");
         //return;
     }
+    else
+        LogPrintf("*** RGP ProcessMessageMasternodePayments darkSendPool IsBlockchainSynced SUCCESS \n");
 
     if (strCommand == "mnget") { //Masternode Payments Request Sync
 
@@ -100,8 +102,12 @@ bool CMasternodePayments::CheckSignature(CMasternodePaymentWinner& winner)
 {
     //note: need to investigate why this is failing
     std::string strMessage = winner.vin.ToString().c_str() + boost::lexical_cast<std::string>(winner.nBlockHeight) + winner.payee.ToString();
+
     std::string strPubKey = strMainPubKey ;
     CPubKey pubkey(ParseHex(strPubKey));
+
+    LogPrintf("*** RGP CMasternodePayments::CheckSignature strPubkey %s \n", strPubKey );
+
 
     std::string errorMessage = "";
     if(!darkSendSigner.VerifyMessage(pubkey, winner.vchSig, strMessage, errorMessage)){
@@ -113,17 +119,30 @@ bool CMasternodePayments::CheckSignature(CMasternodePaymentWinner& winner)
 
 bool CMasternodePayments::Sign(CMasternodePaymentWinner& winner)
 {
+    //CMasternode* Related_MN = this->Find(winner.vin);
+
+
+
+
     std::string strMessage = winner.vin.ToString().c_str() + boost::lexical_cast<std::string>(winner.nBlockHeight) + winner.payee.ToString();
 
     CKey key2;
     CPubKey pubkey2;
     std::string errorMessage = "";
 
+    std::string debug_Message = winner.vin.ToString().c_str();    
+
+    LogPrintf("*** RGP CMasternodePayments::Sign winner vin  %s \n", debug_Message );
+    LogPrintf("*** RGP CMasternodePayments::Sign Private Key <%s>  \n", strMasterPrivKey );
+
     if(!darkSendSigner.SetKey(strMasterPrivKey, errorMessage, key2, pubkey2))
     {
         LogPrintf("CMasternodePayments::Sign - ERROR: Invalid Masternodeprivkey: '%s'\n", errorMessage.c_str());
-        return false;
+        LogPrintf("*** RGP darkSendSigner.SetKey PrivKey %s  \n", strMasterPrivKey );
+        //return false;
     }
+    else
+        LogPrintf("CMasternodePayments::Sign SUCCESS \n");
 
     if(!darkSendSigner.SignMessage(strMessage, errorMessage, winner.vchSig, key2)) {
         LogPrintf("CMasternodePayments::Sign - Sign message failed");
@@ -240,9 +259,11 @@ void CMasternodePayments::CleanPaymentList()
 
 bool CMasternodePayments::ProcessBlock(int nBlockHeight)
 {
-uint256 hash;
-unsigned int nHash;
-int nMinimumAge;
+    bool key_status;
+    uint256 hash;
+    unsigned int nHash;
+    int nMinimumAge;
+
 
     LogPrintf("*** RGP CMasternodePayments::ProcessBlock Start \n");
 
@@ -256,20 +277,25 @@ int nMinimumAge;
 
     if ( nBlockHeight <= nLastBlockHeight )
     {
-        LogPrintf("*** RGP CMasternodePayments::ProcessBlock nBlockHeight %d nLastBlockHeight %d \n", nBlockHeight, nLastBlockHeight );
         return false;
     }
 
+    LogPrintf("*** RGP CMasternodePayments::ProcessBlock nBlockHeight %d nLastBlockHeight %d \n", nBlockHeight, nLastBlockHeight );
+
+    /* RGP enabled is ALWAYS FALSE, this needs investigating */
     if ( !enabled )
     {
-        LogPrintf("*** RGP CMasternodePayments::ProcessBlock NOT ENABLED!!! \n" );
-        return false;
+        LogPrintf("*** RGP CMasternodePayments::ProcessBlock NOT ENABLED!!! by default \n" );
+        /* RGP this is only set in CMasternodePayments::SetPrivKey() if the MN is a default winner
+               seems strange and I need to look at this behaviour.                                  */
+        enabled = true;
+        //return false;
     }
 
     CMasternodePaymentWinner newWinner;
     nMinimumAge = mnodeman.CountEnabled();
-    CScript payeeSource;
 
+    CScript payeeSource;
 
     if( !GetBlockHash(hash, nBlockHeight-10))
     {
@@ -279,28 +305,68 @@ int nMinimumAge;
 
     memcpy(&nHash, &hash, 2);
 
-    //LogPrintf("*** RGP ProcessBlock Start nHeight %d vin %s. \n", nBlockHeight, activeMasternode.vin.ToString().c_str() );
+    LogPrintf("*** RGP ProcessBlock Start nHeight %d vin %s. \n", nBlockHeight, activeMasternode.vin.ToString().c_str() );
 
     std::vector<CTxIn> vecLastPayments;
     BOOST_REVERSE_FOREACH(CMasternodePaymentWinner& winner, vWinning)
     {
 
-        LogPrintf("*** RGP, Looking for last winner %d \n, winner.vin ");
+        LogPrintf("*** RGP, Looking for last winner %s \n, winner.vin ");
+
+
 
         //if we already have the same vin - we have one full payment cycle, break
         if(vecLastPayments.size() > (unsigned int)nMinimumAge) break;
         vecLastPayments.push_back(winner.vin);
+
+
+
     }
 
     // pay to the oldest MN that still had no payment but its input is old enough and it was active long enough
     CMasternode *pmn = mnodeman.FindOldestNotInVec(vecLastPayments, nMinimumAge);
     if(pmn != NULL)
     {
+
+        LogPrintf("*** RGP Generating Test_Pubkey \n");
+        //std::string Test_PubKey(pmn->pubkey.begin(), pmn->pubkey.end() );
+        //std::string Test_PubKey2(pmn->pubkey2.begin(), pmn->pubkey2.end() );
+
+
         LogPrintf(" Found by FindOldestNotInVec node addr %s \n", pmn->addr.ToString() );
+
+
+        //LogPrintf("*** RGP Payments Pick Pubkey %s \n", Test_PubKey  );
+        //LogPrintf("*** RGP Payments Pick Pubkey2 %s \n", Test_PubKey2  );
+
+        //LogPrintf("*** RGP copying MN Sig to winner vchSig \n");
+
+        //newWinner.vchSig = pmn->sig;
+
+        //std:string Secret ( pmn->sig.(begin), pmn->sig.(end) );
+
+        //LogPrintf("*** RGP winner Secret %s \n", Secret  );
+
+        //string Secret;
+
+        //for (unsigned i = 0 ; i < pmn->sig.size(); ++i)
+        //{
+        //    LogPrintf("%c",pmn->sig[i] );
+        //    Secret[i] = pmn->sig[i];
+//
+//        }
+//        LogPrintf(" > end Sig \n" );
+
+        //Secret[pmn->sig.size() + 1 ] =0;
+
+        // Secret key 66imWKG7FLPFVcdKM1jNefLqD3y7xJNRvQ9zdsvLxR9Qu6dhpXk for my MN -> RGP
+
+        LogPrintf("*** RGP secret key <%s> ", pmn->strKeyMasternode );
 
         newWinner.score = 0;
         newWinner.nBlockHeight = nBlockHeight;
         newWinner.vin = pmn->vin;
+
 
         if(pmn->rewardPercentage > 0 && (nHash % 100) <= (unsigned int)pmn->rewardPercentage) {
             newWinner.payee = pmn->rewardAddress;
@@ -308,7 +374,12 @@ int nMinimumAge;
             newWinner.payee = GetScriptForDestination(pmn->pubkey.GetID());
         }
 
+        key_status =  CMasternodePayments::SetPrivKey( pmn->strKeyMasternode );
+
         payeeSource = GetScriptForDestination(pmn->pubkey.GetID());
+
+        LogPrintf("*** RGP End of logic \n");
+
     }
 
     //if we can't find new MN to get paid, pick first active MN counting back from the end of vecLastPayments list
@@ -322,10 +393,25 @@ int nMinimumAge;
             if(pmn != NULL)
             {
 
-                LogPrintf("*** RGP Payments Pick first Active %s \n",  pmn->addr.ToString()  );
+                //Test_PubKey (pmn->pubkey.begin(), pmn->pubkey.end() );
+
+                //LogPrintf("*** RGP Payments Pick first Active %s Pubkey %s \n",  pmn->addr.ToString(), Test_PubKey  );
 
                 pmn->Check();
-                if(!pmn->IsEnabled()) continue;
+                if ( !pmn->IsEnabled() )
+                    continue;
+
+                //key_status =  CMasternodePayments::SetPrivKey( Test_PubKey );
+
+                std::string vchPubKey(pmn->pubkey.begin(), pmn->pubkey.end());
+
+
+                /*
+                if ( CMasternodePayments::SetPrivKey( std::string Test_PubKey ) )
+                    LogPrintf("*** RGP SetPrivKey success \n");
+                else
+                    LogPrintf("*** RGP SetPrivKey failure \n");
+*/
 
                 newWinner.score = 0;
                 newWinner.nBlockHeight = nBlockHeight;
@@ -347,8 +433,11 @@ int nMinimumAge;
         }
     }
 
+
     if(newWinner.nBlockHeight == 0)
         return false;
+
+
 
     CTxDestination address1;
     ExtractDestination(newWinner.payee, address1);
@@ -411,6 +500,8 @@ bool CMasternodePayments::SetPrivKey(std::string strPrivKey)
     CMasternodePaymentWinner winner;
 
     // Test signing successful, proceed
+    LogPrintf("*** RGP, CMasternodePayments::SetPrivKey of MN %s  \n", strPrivKey );
+
     strMasterPrivKey = strPrivKey;
 
     Sign(winner);

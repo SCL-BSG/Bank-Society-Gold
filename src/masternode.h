@@ -87,6 +87,9 @@ public:
     bool isPortOpen;
     bool isOldNode;
 
+    /* RGP Added this to the Masternode structure, as it seems missing for Masternodes_payments.cpp */
+    std::string strKeyMasternode;
+
     CMasternode();
     CMasternode(const CMasternode& other);
     CMasternode(CService newAddr, CTxIn newVin, CPubKey newPubkey, std::vector<unsigned char> newSig, int64_t newSigTime, CPubKey newPubkey2, int protocolVersionIn, CScript rewardAddress, int rewardPercentage);

@@ -793,7 +793,7 @@ bool static ConnectSocketDirectly(const CService &addrConnect, SOCKET& hSocketRe
 
 
 
-                LogPrintf("connect() to %s failed after select(): %s\n", addrConnect.ToString(), strerror(nRet));
+                LogPrintf("connect() to %s failed after select(): %s \n", addrConnect.ToString(), strerror(nRet));
                 closesocket(hSocket);
                 return false;
             }
@@ -808,7 +808,7 @@ bool static ConnectSocketDirectly(const CService &addrConnect, SOCKET& hSocketRe
 
 
              LogPrintf("*** RGP ConnectSocketDirectly Debug 5 connect failed timeout %d \n", nTimeout);
-            LogPrintf("connect() to %s failed: %i\n", addrConnect.ToString(), WSAGetLastError());
+            LogPrintf("connect() to %s failed: %i \n", addrConnect.ToString(), WSAGetLastError());
             closesocket(hSocket);
             return false;
         }

@@ -1684,7 +1684,7 @@ unsigned int connecting_port;
     }
     else
     {
-        LogPrintf("*** RGP IP FAILED PORT incorrect %d \n", addrConnect.GetPort());
+        LogPrintf("*** RGP IP FAILED PORT incorrect [IGNORED] %d \n", addrConnect.GetPort());
         //return NULL;
     }
 
@@ -1758,7 +1758,7 @@ unsigned int connecting_port;
     }
     else if (!proxyConnectionFailed)
     {
-        LogPrintf("*** RGP IP to connect FAILED %s debug 1 ", addrConnect.ToString() );
+        LogPrintf("*** RGP IP to connect FAILED %s debug 1 \n", addrConnect.ToString() );
 
         // If connecting to the node failed, and failure is not caused by a problem connecting to
         // the proxy, mark this as an attempt.

@@ -672,10 +672,7 @@ bool AppInit2(boost::thread_group& threadGroup)
                             LogPrintf("Failed to delete backup %s\n", error.what());
                         }
 
-                        LogPrintf("RGP Debug 001a \n");
                     }
-
-                    LogPrintf("RGP Debug 001x \n");
                 }
             }
         }
@@ -702,14 +699,14 @@ LogPrintf("RGP Debug 002 \n");
                 return InitError(msg);
             }
         }
-LogPrintf("RGP Debug 003 \n");
+
         if (GetBoolArg("-salvagewallet", false))
         {
             // Recover readable keypairs:
             if (!CWalletDB::Recover(bitdb, strWalletFileName, true))
                 return false;
         }
-LogPrintf("RGP Debug 004 \n");
+
         if (filesystem::exists(GetDataDir() / strWalletFileName))
         {
             CDBEnv::VerifyResult r = bitdb.Verify(strWalletFileName, CWalletDB::Recover);
@@ -902,8 +899,6 @@ LogPrintf("RGP Debug 004 \n");
         pwalletMain = NULL;
         LogPrintf("Wallet disabled!\n");
     } else {
-
-        LogPrintf("*** RGP*** APInit2 Loading wallet Debug 1\n" );
 
         uiInterface.InitMessage(_("Loading wallet..."));
 
