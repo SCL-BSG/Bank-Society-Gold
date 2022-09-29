@@ -28,6 +28,9 @@ struct CompareValueOnly
 //Get the last hash that matches the modulus given. Processed in reverse order
 bool GetBlockHash(uint256& hash, int nBlockHeight)
 {
+
+    LogPrintf("*** RGP Masternode::GetBlockHash Start \n");
+
     if (pindexBest == NULL) return false;
 
     if(nBlockHeight == 0)
@@ -95,6 +98,7 @@ CMasternode::CMasternode()
     nLastPaid = GetAdjustedTime();
     isPortOpen = true;
     isOldNode = true;
+    strKeyMasternode = "00000000000000000000000000000000000000000000000000000000000000000000";
 }
 
 CMasternode::CMasternode(const CMasternode& other)
@@ -125,6 +129,7 @@ CMasternode::CMasternode(const CMasternode& other)
     nLastPaid = GetAdjustedTime();
     isPortOpen = other.isPortOpen;
     isOldNode = other.isOldNode;
+    strKeyMasternode = "00000000000000000000000000000000000000000000000000000000000000000000";
 }
 
 CMasternode::CMasternode(CService newAddr, CTxIn newVin, CPubKey newPubkey, std::vector<unsigned char> newSig, int64_t newSigTime, CPubKey newPubkey2, int protocolVersionIn, CScript newRewardAddress, int newRewardPercentage)
@@ -153,6 +158,7 @@ CMasternode::CMasternode(CService newAddr, CTxIn newVin, CPubKey newPubkey, std:
     nLastScanningErrorBlockHeight = 0;
     isPortOpen = true;
     isOldNode = true;
+    strKeyMasternode = "00000000000000000000000000000000000000000000000000000000000000000000";
 }
 
 //

@@ -1499,8 +1499,8 @@ MilliSleep( GetRandInt( 24 ) * 1000 );
                         after_stake_success_timeout = ( ( ( 12 * 60 ) + GetRandInt( 100 ) ) * 1000 ) ;
                         LogPrintf("*** RGP new Mint stake delay after success timeout %d \n", after_stake_success_timeout);
 //after_stake_success_timeout = 120000;
-                        MilliSleep( after_stake_success_timeout );
-                        //MilliSleep( 30000 );
+                        //MilliSleep( after_stake_success_timeout );
+                        MilliSleep( 20000 );
 
                  }
                  else

@@ -43,6 +43,7 @@ void ProcessMessageInstantX(CNode* pfrom, std::string& strCommand, CDataStream& 
     if (strCommand == "txlreq")
     {
         LogPrintf("ProcessMessageInstantX::txlreq command \n");
+
         CDataStream vMsg(vRecv);
         CTransaction tx;
         vRecv >> tx;
@@ -186,6 +187,9 @@ void ProcessMessageInstantX(CNode* pfrom, std::string& strCommand, CDataStream& 
 
         return;
     }
+
+     LogPrintf("ProcessMessageInstantX END \n");
+
 }
 
 bool IsIXTXValid(const CTransaction& txCollateral)

@@ -15,6 +15,8 @@ void CActiveMasternode::ManageStatus()
 {
     std::string errorMessage;
 
+    LogPrintf("*** RGP CActiveMasternode::ManageStatus Start \n");
+
     //if (fDebug)
         LogPrintf("CActiveMasternode::ManageStatus() - Begin\n");
 
@@ -147,6 +149,8 @@ bool CActiveMasternode::StopMasterNode(std::string strService, std::string strKe
     CKey keyMasternode;
     CPubKey pubKeyMasternode;
 
+     LogPrintf("*** RGP CActiveMasternode::StopMasternode Start 1 \n");
+
     if(!darkSendSigner.SetKey(strKeyMasternode, errorMessage, keyMasternode, pubKeyMasternode)) {
     	LogPrintf("CActiveMasternode::StopMasterNode() - Error: %s\n", errorMessage.c_str());
 		return false;
@@ -160,8 +164,11 @@ bool CActiveMasternode::StopMasterNode(std::string strService, std::string strKe
 }
 
 // Send stop dseep to network for main masternode
-bool CActiveMasternode::StopMasterNode(std::string& errorMessage) {
-	if(status != MASTERNODE_IS_CAPABLE && status != MASTERNODE_REMOTELY_ENABLED) {
+bool CActiveMasternode::StopMasterNode(std::string& errorMessage)
+{
+        LogPrintf("*** RGP CActiveMasternode::StopMasternode Start 2 \n");
+
+        if(status != MASTERNODE_IS_CAPABLE && status != MASTERNODE_REMOTELY_ENABLED) {
 		errorMessage = "masternode is not in a running status";
         LogPrintf("CActiveMasternode::StopMasterNode() - Error: %s\n", errorMessage.c_str());
 		return false;
@@ -182,8 +189,11 @@ bool CActiveMasternode::StopMasterNode(std::string& errorMessage) {
 }
 
 // Send stop dseep to network for any masternode
-bool CActiveMasternode::StopMasterNode(CTxIn vin, CService service, CKey keyMasternode, CPubKey pubKeyMasternode, std::string& errorMessage) {
-   	pwalletMain->UnlockCoin(vin.prevout);
+bool CActiveMasternode::StopMasterNode(CTxIn vin, CService service, CKey keyMasternode, CPubKey pubKeyMasternode, std::string& errorMessage)
+{
+LogPrintf("*** RGP CActiveMasternode::StopMasternode Start 3 \n");
+
+        pwalletMain->UnlockCoin(vin.prevout);
 	return Dseep(vin, service, keyMasternode, pubKeyMasternode, errorMessage, true);
 }
 
@@ -206,13 +216,17 @@ bool CActiveMasternode::Dseep(std::string& errorMessage) {
 	return Dseep(vin, service, keyMasternode, pubKeyMasternode, errorMessage, false);
 }
 
-bool CActiveMasternode::Dseep(CTxIn vin, CService service, CKey keyMasternode, CPubKey pubKeyMasternode, std::string &retErrorMessage, bool stop) {
+bool CActiveMasternode::Dseep(CTxIn vin, CService service, CKey keyMasternode, CPubKey pubKeyMasternode, std::string &retErrorMessage, bool stop)
+{
     std::string errorMessage;
     std::vector<unsigned char> vchMasterNodeSignature;
     std::string strMasterNodeSignMessage;
     int64_t masterNodeSignatureTime = GetAdjustedTime();
 
     std::string strMessage = service.ToString() + boost::lexical_cast<std::string>(masterNodeSignatureTime) + boost::lexical_cast<std::string>(stop);
+
+
+    LogPrintf("*** RGP CActiveMasternode::dsEEP Start 2 \n");
 
     if(!darkSendSigner.SignMessage(strMessage, errorMessage, vchMasterNodeSignature, keyMasternode)) {
     	retErrorMessage = "sign message failed: " + errorMessage;
@@ -272,8 +286,6 @@ bool CActiveMasternode::Register(std::string strService, std::string strKeyMaste
     {
 
         LogPrintf("*** RGP CActiveMasternode::Register Debug 1 \n" );
-
-
         LogPrintf("CActiveMasternode::Register() - Error upon calling SetKey: %s\n", errorMessage.c_str());
         return false;
     }
@@ -346,7 +358,8 @@ bool CActiveMasternode::Register(std::string strService, std::string strKeyMaste
 
 }
 
-bool CActiveMasternode::Register(CTxIn vin, CService service, CKey keyCollateralAddress, CPubKey pubKeyCollateralAddress, CKey keyMasternode, CPubKey pubKeyMasternode, CScript rewardAddress, int rewardPercentage, std::string &retErrorMessage, std::string strKeyMasternode ) {
+bool CActiveMasternode::Register(CTxIn vin, CService service, CKey keyCollateralAddress, CPubKey pubKeyCollateralAddress, CKey keyMasternode, CPubKey pubKeyMasternode, CScript rewardAddress, int rewardPercentage, std::string &retErrorMessage, std::string strKeyMasternode )
+{
     std::string errorMessage;
     std::vector<unsigned char> vchMasterNodeSignature;
     std::string strMasterNodeSignMessage;
@@ -373,21 +386,44 @@ bool CActiveMasternode::Register(CTxIn vin, CService service, CKey keyCollateral
 		return false;
 	}
 
+
+    LogPrintf("*** RGP CActiveMasternode::Register calling mnodeman.FIND \n");
+
+
     CMasternode* pmn = mnodeman.Find(vin);
+
+     LogPrintf("*** RGP CActiveMasternode::Register calling mnodeman.FIND returned \n");
+
     if(pmn == NULL)
     {
+         LogPrintf("*** RGP CActiveMasternode::Register Debug 1 \n");
         LogPrintf("CActiveMasternode::Register() - Adding to masternode list service: %s - vin: %s\n", service.ToString().c_str(), vin.ToString().c_str());
 
+        LogPrintf("*** RGP CActiveMasternode::Register Debug 2 \n");
+
         CMasternode mn(service, vin, pubKeyCollateralAddress, vchMasterNodeSignature, masterNodeSignatureTime, pubKeyMasternode, PROTOCOL_VERSION, rewardAddress, rewardPercentage);
+
+        LogPrintf("*** RGP CActiveMasternode::Register Debug 3 \n");
+
         mn.ChangeNodeStatus(false);
         mn.UpdateLastSeen(masterNodeSignatureTime);
+
+        LogPrintf("*** RGP CActiveMasternode::Register Debug 4 \n");
+
         mn.strKeyMasternode = strKeyMasternode;
+
         mnodeman.Add(mn);
+
+        LogPrintf("*** RGP CActiveMasternode::Register Debug 5 \n");
     }
 
+     LogPrintf("*** RGP CActiveMasternode::Register calling RelayMasternodeEntry \n");
+
     //send to all peers
-    LogPrintf("CActiveMasternode::Register() - RelayElectionEntry vin = %s\n", vin.ToString().c_str());
-    mnodeman.RelayMasternodeEntry(vin, service, vchMasterNodeSignature, masterNodeSignatureTime, pubKeyCollateralAddress, pubKeyMasternode, -1, -1, masterNodeSignatureTime, PROTOCOL_VERSION, rewardAddress, rewardPercentage);
+    LogPrintf("CActiveMasternode::Register() - RelayElectionEntry vin = %s key %s \n", vin.ToString().c_str(), strKeyMasternode   );
+    mnodeman.RelayMasternodeEntry(vin, service, vchMasterNodeSignature, masterNodeSignatureTime, pubKeyCollateralAddress,
+                                  pubKeyMasternode, -1, -1, masterNodeSignatureTime,
+                                  PROTOCOL_VERSION, rewardAddress, rewardPercentage, strKeyMasternode );
 
     return true;
 }

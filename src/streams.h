@@ -215,7 +215,8 @@ public:
     {
         // Read from the beginning of the buffer
         unsigned int nReadPosNext = nReadPos + nSize;
-        if (nReadPosNext >= vch.size()) {
+        if (nReadPosNext >= vch.size())
+        {
             if (nReadPosNext > vch.size()) {
                 throw std::ios_base::failure("CDataStream::read() : end of data");
             }

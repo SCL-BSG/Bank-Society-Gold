@@ -3525,10 +3525,10 @@ bool PoS_Mining_Block;
 
             if(!IsInitialBlockDownload()){
 
-                //if ( fDebug )
-                //{
+                if ( fDebug )
+                {
                     LogPrintf("*** RGP ProcessBlock, Masternode payment section and no IsInialBlockDownload \n");
-                //}
+                }
 
                 CScript payee;
                 CTxIn vin;
@@ -3536,7 +3536,7 @@ bool PoS_Mining_Block;
                 // If we're in LiteMode disable darksend features without disabling masternodes
                 if (!fLiteMode && !fImporting && !fReindex && pindexBest->nHeight > Checkpoints::GetTotalBlocksEstimate()){
 
-                  LogPrintf("*** RGP ProcessBlock not light mode \n");
+                  //LogPrintf("*** RGP ProcessBlock not light mode \n");
 
                   if(masternodePayments.GetBlockPayee(pindexBest->nHeight, payee, vin))
                   {
@@ -3551,7 +3551,7 @@ bool PoS_Mining_Block;
                        LogPrintf("ProcessBlock() : Update Masternode Last Paid Time - %d\n", pindexBest->nHeight);
                   }
                   else
-                      LogPrintf("*** RGP ProcessBlock not light mode, fell out 1 \n");
+                      //LogPrintf("*** RGP ProcessBlock not light mode, fell out 1 \n");
 
 
 

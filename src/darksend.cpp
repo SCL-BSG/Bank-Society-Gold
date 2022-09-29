@@ -1480,6 +1480,8 @@ void CDarksendPool::ClearLastMessage()
 bool CDarksendPool::DoAutomaticDenominating(bool fDryRun)
 {
 
+    LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating \n");
+
     if(!fEnableDarksend) return false;
 
     if(fMasterNode) return false;

@@ -46,6 +46,8 @@ CMasternodeDB::CMasternodeDB()
 
 bool CMasternodeDB::Write(const CMasternodeMan& mnodemanToSave)
 {
+    LogPrintf("*** RGP CMasternodeDB::Write Start \n");
+
     int64_t nStart = GetTimeMillis();
 
     // serialize addresses, checksum data up to that point, then append csum
@@ -80,6 +82,9 @@ bool CMasternodeDB::Write(const CMasternodeMan& mnodemanToSave)
 
 CMasternodeDB::ReadResult CMasternodeDB::Read(CMasternodeMan& mnodemanToLoad)
 {
+
+    LogPrintf("*** RGP CMasternodeDB::Read Start \n");
+
     int64_t nStart = GetTimeMillis();
     // open input file, and associate with CAutoFile
     FILE *file = fopen(pathMN.string().c_str(), "rb");
@@ -165,6 +170,8 @@ void DumpMasternodes()
 {
     int64_t nStart = GetTimeMillis();
 
+    LogPrintf("*** RGP DumpMasternodes Start \n");
+
     CMasternodeDB mndb;
     CMasternodeMan tempMnodeman;
 
@@ -198,25 +205,36 @@ bool CMasternodeMan::Add(CMasternode &mn)
 {
     LOCK(cs);
 
-    //LogPrintf("*** RGP CMasternodeMan::Add Debug 001\n");
+    //CMasternode testmn;
 
-    CMasternode *pmn = Find(mn.vin);
+    LogPrintf("*** RGP CMasternodeMan::Add Debug MN node %s 001\n", mn.addr.ToString() );
+
+    //CMasternode testmn = Find( mn.vin );
+
+    LogPrintf("*** RGP CMasternodeMan::Add Debug after Find \n");
 
     /* ------------------------------------------------
        -- RGP, if pwn is NULL, it's a new Masternode --
        ------------------------------------------------ */
 
-    if (pmn == NULL)
+    if ( Find( mn.vin ) )
     {        
+        LogPrintf("*** RGP CMasternodeMan::Add Debug MN node %s 001\n", mn.strKeyMasternode );
+
         vMasternodes.push_back(mn);
         return true;
     }
+
+    LogPrintf("*** RGP CMasternodeMan::Add Debug END \n" );
 
     return false;
 }
 
 void CMasternodeMan::AskForMN(CNode* pnode, CTxIn &vin)
 {
+
+    LogPrintf("*** RGP CMasternodeMan::AskForMN Start \n");
+
     std::map<COutPoint, int64_t>::iterator i = mWeAskedForMasternodeListEntry.find(vin.prevout);
     if (i != mWeAskedForMasternodeListEntry.end())
     {
@@ -237,11 +255,14 @@ void CMasternodeMan::Check()
 
     LOCK(cs);
 
-    //LogPrintf("*** RGP CMasterNodeMan::Check start \n");
+    LogPrintf("*** RGP CMasterNodeMan::Check start \n");
 
     BOOST_FOREACH(CMasternode& mn, vMasternodes)
     {
         mn.Check();
+
+        LogPrintf("*** RGP CMasternodeMan::Check secretkey %s \n", mn.strKeyMasternode );
+
     }
 
 
@@ -250,6 +271,8 @@ void CMasternodeMan::Check()
 void CMasternodeMan::CheckAndRemove()
 {
     LOCK(cs);
+
+    LogPrintf("*** RGP CMasternodeMan::ChckAndRemove Start \n");
 
     Check();
 
@@ -299,6 +322,9 @@ void CMasternodeMan::CheckAndRemove()
 void CMasternodeMan::Clear()
 {
     LOCK(cs);
+
+    LogPrintf("*** RGP CMasternodeMan::Clear Start \n");
+
     vMasternodes.clear();
     mAskedUsForMasternodeList.clear();
     mWeAskedForMasternodeList.clear();
@@ -310,6 +336,8 @@ int CMasternodeMan::CountEnabled(int protocolVersion)
 {
     int i = 0;
     protocolVersion = protocolVersion == -1 ? masternodePayments.GetMinMasternodePaymentsProto() : protocolVersion;
+
+    LogPrintf("*** RGP CMasternodeMan::CountEnabled Start \n");
 
     BOOST_FOREACH(CMasternode& mn, vMasternodes) {
         mn.Check();
@@ -323,6 +351,8 @@ int CMasternodeMan::CountEnabled(int protocolVersion)
 int CMasternodeMan::CountMasternodesAboveProtocol(int protocolVersion)
 {
     int i = 0;
+
+    LogPrintf("*** RGP CMasternodeMan::CountMasternodesAboveProtocol Start \n");
 
     BOOST_FOREACH(CMasternode& mn, vMasternodes)
     {
@@ -338,6 +368,8 @@ void CMasternodeMan::DsegUpdate(CNode* pnode)
 {
     LOCK(cs);
 
+    LogPrintf("*** RGP CMasternodeMan::DsegUpdate Start \n");
+
     std::map<CNetAddr, int64_t>::iterator it = mWeAskedForMasternodeList.find(pnode->addr);
     if (it != mWeAskedForMasternodeList.end())
     {
@@ -352,15 +384,43 @@ void CMasternodeMan::DsegUpdate(CNode* pnode)
     mWeAskedForMasternodeList[pnode->addr] = askAgain;
 }
 
-CMasternode *CMasternodeMan::Find(const CTxIn &vin)
+bool CMasternodeMan::FindNull(const CTxIn &vin)
 {
     LOCK(cs);
 
+    LogPrintf("*** RGP CMasternodeMan::Find bool Start \n");
+
     BOOST_FOREACH(CMasternode& mn, vMasternodes)
     {
+        LogPrintf("*** RGP CMasternodeMan::Find Debug 1 \n");
+
+        if(mn.vin.prevout == vin.prevout)
+            return true;
+    }
+
+    LogPrintf("*** RGP CMasternodeMan::Find Debug 2 \n");
+
+    return false;
+}
+
+
+CMasternode *CMasternodeMan::Find(const CTxIn &vin)
+{
+
+    LOCK(cs);
+
+    LogPrintf("*** RGP CMasternodeMan::Find Start \n");
+
+    BOOST_FOREACH(CMasternode& mn, vMasternodes)
+    {
+        LogPrintf("*** RGP CMasternodeMan::Find Debug 1 \n");
+
         if(mn.vin.prevout == vin.prevout)
             return &mn;
     }
+
+    LogPrintf("*** RGP CMasternodeMan::Find Debug 2 \n");
+
     return NULL;
 }
 
@@ -369,6 +429,8 @@ CMasternode* CMasternodeMan::FindOldestNotInVec(const std::vector<CTxIn> &vVins,
     LOCK(cs);
 
     CMasternode *pOldestMasternode = NULL;
+
+    LogPrintf("*** RGP CMasternodeMan::FindOldestNotInVec Start \n");
 
     BOOST_FOREACH(CMasternode &mn, vMasternodes)
     {   
@@ -379,11 +441,16 @@ CMasternode* CMasternodeMan::FindOldestNotInVec(const std::vector<CTxIn> &vVins,
 
         bool found = false;
         BOOST_FOREACH(const CTxIn& vin, vVins)
+        {
+
+            LogPrintf("*** RGP CMasternodeMan::FindOldestNotInVec mn private key %s \n", mn.strKeyMasternode   );
+
             if(mn.vin.prevout == vin.prevout)
             {   
                 found = true;
                 break;
             }
+        }
         if(found) continue;
 
         if(pOldestMasternode == NULL || pOldestMasternode->SecondsSincePayment() < mn.SecondsSincePayment())
@@ -399,6 +466,8 @@ CMasternode *CMasternodeMan::FindRandom()
 {
     LOCK(cs);
 
+    LogPrintf("*** RGP CMasternodeMan::FindRandom Start \n");
+
     if(size() == 0) return NULL;
 
     return &vMasternodes[GetRandInt(vMasternodes.size())];
@@ -407,6 +476,8 @@ CMasternode *CMasternodeMan::FindRandom()
 CMasternode *CMasternodeMan::Find(const CPubKey &pubKeyMasternode)
 {
     LOCK(cs);
+
+    LogPrintf("*** RGP CMasternodeMan::Find Start \n");
 
     BOOST_FOREACH(CMasternode& mn, vMasternodes)
     {
@@ -421,6 +492,8 @@ CMasternode *CMasternodeMan::FindRandomNotInVec(std::vector<CTxIn> &vecToExclude
     LOCK(cs);
 
     protocolVersion = protocolVersion == -1 ? masternodePayments.GetMinMasternodePaymentsProto() : protocolVersion;
+
+     LogPrintf("*** RGP CMasternodeMan::FindRandomNotInVec Start \n");
 
     int nCountEnabled = CountEnabled(protocolVersion);
     LogPrintf("CMasternodeMan::FindRandomNotInVec - nCountEnabled - vecToExclude.size() %d\n", nCountEnabled - vecToExclude.size());
@@ -452,6 +525,8 @@ CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight,
 {
     unsigned int score = 0;
     CMasternode* winner = NULL;
+
+
 
     LogPrintf("*** RGP GetCurrentMasterNode start /n");
 
@@ -517,6 +592,8 @@ CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight,
 int CMasternodeMan::GetMasternodeRank(const CTxIn& vin, int64_t nBlockHeight, int minProtocol, bool fOnlyActive)
 {
     std::vector<pair<unsigned int, CTxIn> > vecMasternodeScores;
+
+     LogPrintf("*** RGP CMasternodeMan::GetMasternodeRank Start \n");
 
     //make sure we know about this block
     uint256 hash = 0;
@@ -644,6 +721,8 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
     //Normally would disable functionality, NEED this enabled for staking.
     if(fLiteMode) return;
 
+    LogPrintf("*** RGP CMasternodeMan::ProcessMessage Start \n");
+
     /* -------------------------------------------------------------------------
        -- RGP, had to disable this as staking was not allowed, as Masternodes --
        --      were not available. THis will be resolved later                --
@@ -674,9 +753,14 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
         std::string strMessage;
         CScript rewardAddress = CScript();
         int rewardPercentage = 0;
-        
+        std::string strKeyMasternode;
+
+        LogPrintf("*** RGP CMasternodeMan::ProcessMessage Debug 1 \n");
+
         // 70047 and greater
-        vRecv >> vin >> addr >> vchSig >> sigTime >> pubkey >> pubkey2 >> count >> current >> lastUpdated >> protocolVersion;
+        vRecv >> vin >> addr >> vchSig >> sigTime >> pubkey >> pubkey2 >> count >> current >> lastUpdated >> protocolVersion >> strKeyMasternode;
+
+        LogPrintf("*** RGP CMasternodeMan::ProcessMessage Debug 2 \n");
 
         //Invalid nodes check
         if (sigTime < 1511159400) {
@@ -684,6 +768,9 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
             return;
         }
         
+        LogPrintf("*** RGP CMasternodeMan::ProcessMessage Debug 3 \n");
+
+
         if (sigTime > lastUpdated) {
             LogPrintf("dsee - Bad node entry\n");
             return;
@@ -699,6 +786,8 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
             LogPrintf("dsee - Signature rejected, too far into the future %s\n", vin.ToString().c_str());
             return;
         }
+
+        LogPrintf("*** RGP CMasternodeMan::ProcessMessage Debug 3 \n");
 
         bool isLocal = addr.IsRFC1918() || addr.IsLocal();
         //if(RegTest()) isLocal = false;
@@ -725,6 +814,8 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
             return;
         }
 
+        LogPrintf("*** RGP CMasternodeMan::ProcessMessage Debug 4 \n");
+
         CScript pubkeyScript2;
         pubkeyScript2.SetDestination(pubkey2.GetID());
 
@@ -734,10 +825,14 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
             return;
         }
 
+        LogPrintf("*** RGP CMasternodeMan::ProcessMessage Debug 5 \n");
+
         if(!vin.scriptSig.empty()) {
             LogPrintf("dsee - Ignore Not Empty ScriptSig %s\n",vin.ToString().c_str());
             return;
         }
+
+        LogPrintf("*** RGP CMasternodeMan::ProcessMessage Debug 6 \n");
 
         std::string errorMessage = "";
         if(!darkSendSigner.VerifyMessage(pubkey, vchSig, strMessage, errorMessage)){
@@ -745,6 +840,8 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
             Misbehaving(pfrom->GetId(), 100);
             return;
         }
+
+        LogPrintf("*** RGP CMasternodeMan::ProcessMessage Debug 7 \n");
 
         //search existing masternode list, this is where we update existing masternodes with new dsee broadcasts
         CMasternode* pmn = this->Find(vin);
@@ -779,6 +876,8 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
 
             return;
         }
+
+        LogPrintf("*** RGP CMasternodeMan::ProcessMessage Debug 8 \n");
 
         // make sure the vout that was signed is related to the transaction that spawned the masternode
         //  - this is expensive, so it's only done once per masternode
@@ -880,9 +979,14 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
         CScript rewardAddress;
         int rewardPercentage;
         std::string strMessage;
+        std::string strKeyMasternode;
+
+        LogPrintf("*** RGP Process Message DSee+ from %s \n", pfrom->addr.ToString() );
 
         // 70047 and greater
-        vRecv >> vin >> addr >> vchSig >> sigTime >> pubkey >> pubkey2 >> count >> current >> lastUpdated >> protocolVersion >> rewardAddress >> rewardPercentage;
+        vRecv >> vin >> addr >> vchSig >> sigTime >> pubkey >> pubkey2 >> count >> current >> lastUpdated >> protocolVersion >> rewardAddress >> rewardPercentage >> strKeyMasternode;
+
+        LogPrintf("*** RGP Process Message DSee+ from %s  Validity Checks \n", pfrom->addr.ToString() );
 
         //Invalid nodes check
         if (sigTime < 1511159400) {
@@ -914,6 +1018,10 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
 
         strMessage = addr.ToString() + boost::lexical_cast<std::string>(sigTime) + vchPubKey + vchPubKey2 + boost::lexical_cast<std::string>(protocolVersion)  + rewardAddress.ToString() + boost::lexical_cast<std::string>(rewardPercentage);
         
+        LogPrintf("*** RGP Process Message DSee+ from %s  Validity Checks strMessage %s \n", pfrom->addr.ToString(), strMessage );
+
+        LogPrintf("*** RGP Process Message DSee+ from %s  Validity Checks strKeyMasterNode %s \n", pfrom->addr.ToString(), strKeyMasternode );
+
         if(rewardPercentage < 0 || rewardPercentage > 100){
             LogPrintf("dsee+ - reward percentage out of range %d\n", rewardPercentage);
             return;
@@ -982,8 +1090,11 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
                     pmn->rewardPercentage = rewardPercentage;                    
                     pmn->Check();
                     pmn->isOldNode = false;
+                    pmn->strKeyMasternode = strKeyMasternode;
                     if(pmn->IsEnabled())
-                        mnodeman.RelayMasternodeEntry(vin, addr, vchSig, sigTime, pubkey, pubkey2, count, current, lastUpdated, protocolVersion, rewardAddress, rewardPercentage);
+                    {
+                        mnodeman.RelayMasternodeEntry(vin, addr, vchSig, sigTime, pubkey, pubkey2, count, current, lastUpdated, protocolVersion, rewardAddress, rewardPercentage, strKeyMasternode );
+                    }
                 }
             }
 
@@ -1061,14 +1172,22 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
             this->Add(mn);
             
             // if it matches our masternodeprivkey, then we've been remotely activated
-            if(pubkey2 == activeMasternode.pubKeyMasternode && protocolVersion == PROTOCOL_VERSION){
+            if(pubkey2 == activeMasternode.pubKeyMasternode && protocolVersion == PROTOCOL_VERSION)
+            {
                 activeMasternode.EnableHotColdMasterNode(vin, addr);
-                }
+            }
 
             if(count == -1 && !isLocal)
-                mnodeman.RelayMasternodeEntry(vin, addr, vchSig, sigTime, pubkey, pubkey2, count, current, lastUpdated, protocolVersion, rewardAddress, rewardPercentage);
+            {
 
-        } else {
+                LogPrintf("*** RGP Process Message DSee+ from %s  Validity Checks strKeyMasterNode %s \n", pfrom->addr.ToString(), strKeyMasternode );
+                mnodeman.RelayMasternodeEntry(vin, addr, vchSig, sigTime, pubkey, pubkey2, count, current, lastUpdated, protocolVersion, rewardAddress, rewardPercentage, strKeyMasternode );
+
+             }
+
+        }
+        else
+        {
             LogPrintf("dsee+ - Rejected masternode entry %s\n", addr.ToString().c_str());
 
             int nDoS = 0;
@@ -1247,6 +1366,9 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
 void CMasternodeMan::RelayOldMasternodeEntry(const CTxIn vin, const CService addr, const std::vector<unsigned char> vchSig, const int64_t nNow, const CPubKey pubkey, const CPubKey pubkey2, const int count, const int current, const int64_t lastUpdated, const int protocolVersion)
 {
     LOCK(cs_vNodes);
+
+    LogPrintf("*** RGP CMasternodeMan::RelayOldMasternodeEntry Start \n") ;
+
     BOOST_FOREACH(CNode* pnode, vNodes)
     {
         LogPrintf("*** RGP CMasternodeMan::RelayOldMasternodeEntry to node \n" );
@@ -1256,15 +1378,62 @@ void CMasternodeMan::RelayOldMasternodeEntry(const CTxIn vin, const CService add
     }
 }
 
-void CMasternodeMan::RelayMasternodeEntry(const CTxIn vin, const CService addr, const std::vector<unsigned char> vchSig, const int64_t nNow, const CPubKey pubkey, const CPubKey pubkey2, const int count, const int current, const int64_t lastUpdated, const int protocolVersion, CScript rewardAddress, int rewardPercentage)
+void CMasternodeMan::RelayMasternodeEntry(const CTxIn vin, const CService addr, const std::vector<unsigned char> vchSig,
+                                          const int64_t nNow, const CPubKey pubkey, const CPubKey pubkey2, const int count,
+                                          const int current, const int64_t lastUpdated, const int protocolVersion,
+                                          CScript rewardAddress, int rewardPercentage,  const std::string strKeyMasternode )
 {
     LOCK(cs_vNodes);
+
+    /*CTxIn vin;
+    CService addr;
+    CPubKey pubkey;
+    CPubKey pubkey2;
+    std::vector<unsigned char> sig;
+    int activeState;
+    int64_t sigTime; //dsee message times
+    int64_t lastDseep;
+    int64_t lastTimeSeen;
+    int cacheInputAge;
+    int cacheInputAgeBlock;
+    bool unitTest;
+    bool allowFreeTx;
+    int protocolVersion;
+    int64_t nLastDsq; //the dsq count from the last dsq broadcast of this node
+    CScript rewardAddress;
+    int rewardPercentage;
+    int nVote;
+    int64_t lastVote;
+    int nScanningErrorCount;
+    int nLastScanningErrorBlockHeight;
+    int64_t nLastPaid;
+    bool isPortOpen;
+    bool isOldNode;
+    std::string strKeyMasternode;
+    */
+
+
+    LogPrintf("*** RGP CMasternodeMan::RelayMasternodeEntry Start \n") ;
+
     BOOST_FOREACH(CNode* pnode, vNodes)
     {
 
         LogPrintf("*** RGP CMasternodeMan::RelayMasternodeEntry to node %s \n", pnode->addr.ToString().c_str()  );
 
-        pnode->PushMessage("dsee+", vin, addr, vchSig, nNow, pubkey, pubkey2, count, current, lastUpdated, protocolVersion, rewardAddress, rewardPercentage);
+        pnode->PushMessage("dsee+",
+                               vin,
+                              addr,
+                            vchSig,
+                              nNow,
+                            pubkey,
+                           pubkey2,
+                             count,
+                           current,
+                       lastUpdated,
+                   protocolVersion,
+                     rewardAddress,
+                  rewardPercentage,
+                  strKeyMasternode );
     }
 }
 
