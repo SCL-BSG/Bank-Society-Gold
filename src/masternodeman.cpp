@@ -526,15 +526,17 @@ CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight,
     unsigned int score = 0;
     CMasternode* winner = NULL;
 
-
-
-    LogPrintf("*** RGP GetCurrentMasterNode start /n");
+    LogPrintf("*** RGP GetCurrentMasterNode start \n");
 
     /* RGP : 13th April 2021 update this line to build vMasternodes */
     std::vector<CMasternode> vMasternodes = mnodeman.GetFullMasternodeVector();
 
     if ( vMasternodes.empty() )
-        LogPrintf("*** RGP vMasternodes empty \n");
+    {
+
+        LogPrintf("*** RGP vMasternodes empty returning null winner \n");
+        return winner;
+    }
 
     // scan for winner
     BOOST_FOREACH(CMasternode& mn, vMasternodes)
