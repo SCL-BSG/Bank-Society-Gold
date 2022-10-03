@@ -115,7 +115,7 @@ void CActiveMasternode::ManageStatus()
                 CScript rewardAddress = CScript();
                 int rewardPercentage = 0;
 
-                if(!Register(vin, service, keyCollateralAddress, pubKeyCollateralAddress, keyMasternode, pubKeyMasternode, rewardAddress, rewardPercentage, errorMessage, strMasterNodePrivKey))
+                if(!Register(vin, service, keyCollateralAddress, pubKeyCollateralAddress, keyMasternode, pubKeyMasternode, rewardAddress, rewardPercentage, errorMessage ))
                 {
                    LogPrintf("CActiveMasternode::ManageStatus() - Error on Register: %s\n", errorMessage.c_str());
                 }
@@ -354,11 +354,11 @@ bool CActiveMasternode::Register(std::string strService, std::string strKeyMaste
     }
 
 
-    return Register(vin, CService(strService, true), keyCollateralAddress, pubKeyCollateralAddress, keyMasternode, pubKeyMasternode, rewardAddress, rewardPercentage, errorMessage, strKeyMasternode );
+    return Register(vin, CService(strService, true), keyCollateralAddress, pubKeyCollateralAddress, keyMasternode, pubKeyMasternode, rewardAddress, rewardPercentage, errorMessage );
 
 }
 
-bool CActiveMasternode::Register(CTxIn vin, CService service, CKey keyCollateralAddress, CPubKey pubKeyCollateralAddress, CKey keyMasternode, CPubKey pubKeyMasternode, CScript rewardAddress, int rewardPercentage, std::string &retErrorMessage, std::string strKeyMasternode )
+bool CActiveMasternode::Register(CTxIn vin, CService service, CKey keyCollateralAddress, CPubKey pubKeyCollateralAddress, CKey keyMasternode, CPubKey pubKeyMasternode, CScript rewardAddress, int rewardPercentage, std::string &retErrorMessage )
 {
     std::string errorMessage;
     std::vector<unsigned char> vchMasterNodeSignature;
@@ -410,7 +410,7 @@ bool CActiveMasternode::Register(CTxIn vin, CService service, CKey keyCollateral
 
         LogPrintf("*** RGP CActiveMasternode::Register Debug 4 \n");
 
-        mn.strKeyMasternode = strKeyMasternode;
+
 
         mnodeman.Add(mn);
 
@@ -420,10 +420,10 @@ bool CActiveMasternode::Register(CTxIn vin, CService service, CKey keyCollateral
      LogPrintf("*** RGP CActiveMasternode::Register calling RelayMasternodeEntry \n");
 
     //send to all peers
-    LogPrintf("CActiveMasternode::Register() - RelayElectionEntry vin = %s key %s \n", vin.ToString().c_str(), strKeyMasternode   );
+    LogPrintf("CActiveMasternode::Register() - RelayElectionEntry vin = %s  \n", vin.ToString().c_str()  );
     mnodeman.RelayMasternodeEntry(vin, service, vchMasterNodeSignature, masterNodeSignatureTime, pubKeyCollateralAddress,
                                   pubKeyMasternode, -1, -1, masterNodeSignatureTime,
-                                  PROTOCOL_VERSION, rewardAddress, rewardPercentage, strKeyMasternode );
+                                  PROTOCOL_VERSION, rewardAddress, rewardPercentage );
 
     return true;
 }

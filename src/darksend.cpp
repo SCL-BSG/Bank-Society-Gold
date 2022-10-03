@@ -1520,6 +1520,9 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun)
         return false;
     }
 
+
+    LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating Debug 1 \n");
+
     // ** find the coins we'll use
     std::vector<CTxIn> vCoins;
     CAmount nValueMin = CENT;
@@ -1544,6 +1547,8 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun)
     // if balanceNeedsAnonymized is more than non-anonymized, take non-anonymized
     CAmount nAnonymizableBalance = pwalletMain->GetAnonymizableBalance();
     if(nBalanceNeedsAnonymized > nAnonymizableBalance) nBalanceNeedsAnonymized = nAnonymizableBalance;
+
+     LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating Debug 2 \n");
 
     if(nBalanceNeedsAnonymized < nLowestDenom)
     {
@@ -1587,6 +1592,9 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun)
 
     if(fDryRun) return true;
 
+     LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating Debug 3 \n");
+
+
     nOnlyDenominatedBalance = pwalletMain->GetDenominatedBalance(true) + pwalletMain->GetDenominatedBalance() - pwalletMain->GetAnonymizedBalance();
     nBalanceNeedsDenominated = nBalanceNeedsAnonymized - nOnlyDenominatedBalance;
 
@@ -1597,6 +1605,8 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun)
     if(!pwalletMain->HasCollateralInputs()) return !pwalletMain->HasCollateralInputs(false) && MakeCollateralAmounts();
 
     std::vector<CTxOut> vOut;
+
+     LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating Debug 4 \n");
 
     // initial phase, find a Masternode
     if(!sessionFoundMasternode){
@@ -1629,6 +1639,8 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun)
             }
         }
 
+         LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating Debug 6 \n");
+
         //if we've used 90% of the Masternode list then drop all the oldest first
         int nThreshold = (int)(mnodeman.CountEnabled(MIN_POOL_PEER_PROTO_VERSION) * 0.9);
         LogPrint("darksend", "Checking vecMasternodesUsed size %d threshold %d\n", (int)vecMasternodesUsed.size(), nThreshold);
@@ -1636,6 +1648,8 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun)
             vecMasternodesUsed.erase(vecMasternodesUsed.begin());
             LogPrint("darksend", "  vecMasternodesUsed size %d threshold %d\n", (int)vecMasternodesUsed.size(), nThreshold);
         }
+
+         LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating Debug 7 \n");
 
         //don't use the queues all of the time for mixing
         if(nUseQueue > 33){
@@ -1700,6 +1714,8 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun)
                 }
             }
         }
+
+         LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating Debug 9 \n");
 
         // do not initiate queue if we are a liquidity proveder to avoid useless inter-mixing
         if(nLiquidityProvider) return false;
@@ -2246,10 +2262,13 @@ bool CDarkSendSigner::VerifyMessage(CPubKey pubkey, vector<unsigned char>& vchSi
 {
     CHashWriter ss(SER_GETHASH, 0);
     ss << strMessageMagic;
-    ss << strMessage;
-
+    ss << strMessage;   
     CPubKey pubkey2;
-    if (!pubkey2.RecoverCompact(ss.GetHash(), vchSig)) {
+
+    LogPrintf("*** RGP VerifyMessage Start ");
+
+    if (!pubkey2.RecoverCompact(ss.GetHash(), vchSig))
+    {
         errorMessage = _("Error recovering public key.");
         return false;
     }

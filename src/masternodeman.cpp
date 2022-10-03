@@ -261,7 +261,7 @@ void CMasternodeMan::Check()
     {
         mn.Check();
 
-        LogPrintf("*** RGP CMasternodeMan::Check secretkey %s \n", mn.strKeyMasternode );
+        LogPrintf("*** RGP CMasternodeMan::Check secretkey %s \n", mn.addr.ToString() );
 
     }
 
@@ -335,13 +335,19 @@ void CMasternodeMan::Clear()
 int CMasternodeMan::CountEnabled(int protocolVersion)
 {
     int i = 0;
-    protocolVersion = protocolVersion == -1 ? masternodePayments.GetMinMasternodePaymentsProto() : protocolVersion;
+    protocolVersion = protocolVersion == -1 ? masternodePayments.GetMinMasternodePaymentsProto() : protocolVersion;    
 
-    LogPrintf("*** RGP CMasternodeMan::CountEnabled Start \n");
-
-    BOOST_FOREACH(CMasternode& mn, vMasternodes) {
+    BOOST_FOREACH(CMasternode& mn, vMasternodes)
+    {
         mn.Check();
-        if(mn.protocolVersion < protocolVersion || !mn.IsEnabled()) continue;
+        if ( mn.protocolVersion < protocolVersion || !mn.IsEnabled() )
+        {
+            LogPrintf("*** RGP CMasternodeMan::CountEnabled mn.addr.ToString() \n");
+            continue;
+        }
+        else
+            LogPrintf("*** RGP CMasternodeMan::CountEnabled protocol bad mn.addr.ToString() \n");
+
         i++;
     }
 
@@ -704,10 +710,19 @@ void CMasternodeMan::ProcessMasternodeConnections()
 {
     LOCK(cs_vNodes);
 
-    if(!darkSendPool.pSubmittedToMasternode) return;
+
+    LogPrintf("*** RGP CMasternodeMan::ProcessMasternodeConnections Start \n");
+
+    if(!darkSendPool.pSubmittedToMasternode)
+    {
+        LogPrintf("*** RGP CMasternodeMan::ProcessMasternodeConnections Darksend submit failed \n");
+        return;
+    }
     
     BOOST_FOREACH(CNode* pnode, vNodes)
     {
+        LogPrintf("*** RGP CMasternodeMan::ProcessMasternodeConnections Masternodes %s \n", pnode->addr.ToString() );
+
         if(darkSendPool.pSubmittedToMasternode->addr == pnode->addr) continue;
 
         if(pnode->fDarkSendMaster){
@@ -760,7 +775,7 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
         LogPrintf("*** RGP CMasternodeMan::ProcessMessage Debug 1 \n");
 
         // 70047 and greater
-        vRecv >> vin >> addr >> vchSig >> sigTime >> pubkey >> pubkey2 >> count >> current >> lastUpdated >> protocolVersion >> strKeyMasternode;
+        vRecv >> vin >> addr >> vchSig >> sigTime >> pubkey >> pubkey2 >> count >> current >> lastUpdated >> protocolVersion;
 
         LogPrintf("*** RGP CMasternodeMan::ProcessMessage Debug 2 \n");
 
@@ -983,10 +998,10 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
         std::string strMessage;
         std::string strKeyMasternode;
 
-        LogPrintf("*** RGP Process Message DSee+ from %s \n", pfrom->addr.ToString() );
+        LogPrintf("*** RGP Process Message MasternodeMan DSee+ from %s \n", pfrom->addr.ToString() );
 
         // 70047 and greater
-        vRecv >> vin >> addr >> vchSig >> sigTime >> pubkey >> pubkey2 >> count >> current >> lastUpdated >> protocolVersion >> rewardAddress >> rewardPercentage >> strKeyMasternode;
+        vRecv >> vin >> addr >> vchSig >> sigTime >> pubkey >> pubkey2 >> count >> current >> lastUpdated >> protocolVersion >> rewardAddress >> rewardPercentage;
 
         LogPrintf("*** RGP Process Message DSee+ from %s  Validity Checks \n", pfrom->addr.ToString() );
 
@@ -1020,9 +1035,9 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
 
         strMessage = addr.ToString() + boost::lexical_cast<std::string>(sigTime) + vchPubKey + vchPubKey2 + boost::lexical_cast<std::string>(protocolVersion)  + rewardAddress.ToString() + boost::lexical_cast<std::string>(rewardPercentage);
         
-        LogPrintf("*** RGP Process Message DSee+ from %s  Validity Checks strMessage %s \n", pfrom->addr.ToString(), strMessage );
+        //LogPrintf("*** RGP Process Message DSee+ from %s  Validity Checks strMessage %s \n", pfrom->addr.ToString(), strMessage );
 
-        LogPrintf("*** RGP Process Message DSee+ from %s  Validity Checks strKeyMasterNode %s \n", pfrom->addr.ToString(), strKeyMasternode );
+        //LogPrintf("*** RGP Process Message DSee+ from %s  Validity Checks strKeyMasterNode %s \n", pfrom->addr.ToString(), strKeyMasternode );
 
         if(rewardPercentage < 0 || rewardPercentage > 100){
             LogPrintf("dsee+ - reward percentage out of range %d\n", rewardPercentage);
@@ -1057,11 +1072,14 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
         }
 
         std::string errorMessage = "";
-        if(!darkSendSigner.VerifyMessage(pubkey, vchSig, strMessage, errorMessage)){
+        if(!darkSendSigner.VerifyMessage(pubkey, vchSig, strMessage, errorMessage))
+        {
             LogPrintf("dsee+ - Got bad masternode address signature\n");
             Misbehaving(pfrom->GetId(), 100);
             return;
         }
+
+        LogPrintf("dsee+ - Passed initial Validation \n");
 
         //search existing masternode list, this is where we update existing masternodes with new dsee broadcasts
         CMasternode* pmn = this->Find(vin);
@@ -1095,8 +1113,11 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
                     pmn->strKeyMasternode = strKeyMasternode;
                     if(pmn->IsEnabled())
                     {
-                        mnodeman.RelayMasternodeEntry(vin, addr, vchSig, sigTime, pubkey, pubkey2, count, current, lastUpdated, protocolVersion, rewardAddress, rewardPercentage, strKeyMasternode );
+                        LogPrintf("dsee+ - pmn is  enabled, RelayMasternodeEntry  \n");
+                        mnodeman.RelayMasternodeEntry(vin, addr, vchSig, sigTime, pubkey, pubkey2, count, current, lastUpdated, protocolVersion, rewardAddress, rewardPercentage );
                     }
+                    else
+                         LogPrintf("dsee+ - pmn is not enabled \n");
                 }
             }
 
@@ -1183,7 +1204,7 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
             {
 
                 LogPrintf("*** RGP Process Message DSee+ from %s  Validity Checks strKeyMasterNode %s \n", pfrom->addr.ToString(), strKeyMasternode );
-                mnodeman.RelayMasternodeEntry(vin, addr, vchSig, sigTime, pubkey, pubkey2, count, current, lastUpdated, protocolVersion, rewardAddress, rewardPercentage, strKeyMasternode );
+                mnodeman.RelayMasternodeEntry(vin, addr, vchSig, sigTime, pubkey, pubkey2, count, current, lastUpdated, protocolVersion, rewardAddress, rewardPercentage );
 
              }
 
@@ -1383,7 +1404,7 @@ void CMasternodeMan::RelayOldMasternodeEntry(const CTxIn vin, const CService add
 void CMasternodeMan::RelayMasternodeEntry(const CTxIn vin, const CService addr, const std::vector<unsigned char> vchSig,
                                           const int64_t nNow, const CPubKey pubkey, const CPubKey pubkey2, const int count,
                                           const int current, const int64_t lastUpdated, const int protocolVersion,
-                                          CScript rewardAddress, int rewardPercentage,  const std::string strKeyMasternode )
+                                          CScript rewardAddress, int rewardPercentage )
 {
     LOCK(cs_vNodes);
 
@@ -1434,8 +1455,7 @@ void CMasternodeMan::RelayMasternodeEntry(const CTxIn vin, const CService addr, 
                        lastUpdated,
                    protocolVersion,
                      rewardAddress,
-                  rewardPercentage,
-                  strKeyMasternode );
+                  rewardPercentage );
     }
 }
 
