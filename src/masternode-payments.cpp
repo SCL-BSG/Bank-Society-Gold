@@ -27,17 +27,16 @@ void ProcessMessageMasternodePayments(CNode* pfrom, std::string& strCommand, CDa
 
     if(!darkSendPool.IsBlockchainSynced())
     {
-        LogPrintf("*** RGP ProcessMessageMasternodePayments darkSendPool IsBlockchainSynced Failed \n");
-        //return;
+        //LogPrintf("*** RGP ProcessMessageMasternodePayments darkSendPool IsBlockchainSynced Failed \n");
+        return;
     }
-    else
-        LogPrintf("*** RGP ProcessMessageMasternodePayments darkSendPool IsBlockchainSynced SUCCESS \n");
 
     if (strCommand == "mnget") { //Masternode Payments Request Sync
 
         LogPrintf("*** RGP ProcessMessageMasternodePayments mnget \n");
 
-        if(pfrom->HasFulfilledRequest("mnget")) {
+        if(pfrom->HasFulfilledRequest("mnget"))
+        {
             LogPrintf("mnget - peer already asked me for the list\n");
             Misbehaving(pfrom->GetId(), 20);
             return;
@@ -47,7 +46,8 @@ void ProcessMessageMasternodePayments(CNode* pfrom, std::string& strCommand, CDa
         masternodePayments.Sync(pfrom);
         LogPrintf("mnget - Sent Masternode winners to %s\n", pfrom->addr.ToString().c_str());
     }
-    else if (strCommand == "mnw") { //Masternode Payments Declare Winner
+    else if (strCommand == "mnw")
+    { //Masternode Payments Declare Winner
 
         LogPrintf("*** RGP ProcessMessageMasternodePayments mnw \n");
 
@@ -122,8 +122,6 @@ bool CMasternodePayments::Sign(CMasternodePaymentWinner& winner)
     //CMasternode* Related_MN = this->Find(winner.vin);
 
 
-
-
     std::string strMessage = winner.vin.ToString().c_str() + boost::lexical_cast<std::string>(winner.nBlockHeight) + winner.payee.ToString();
 
     CKey key2;
@@ -133,13 +131,13 @@ bool CMasternodePayments::Sign(CMasternodePaymentWinner& winner)
     std::string debug_Message = winner.vin.ToString().c_str();    
 
     LogPrintf("*** RGP CMasternodePayments::Sign winner vin  %s \n", debug_Message );
-    LogPrintf("*** RGP CMasternodePayments::Sign Private Key <%s>  \n", strMasterPrivKey );
+    LogPrintf("*** RGP CMasternodePayments::Sign Private Key <%s>  \n", strMessage );
 
     if(!darkSendSigner.SetKey(strMasterPrivKey, errorMessage, key2, pubkey2))
     {
         LogPrintf("CMasternodePayments::Sign - ERROR: Invalid Masternodeprivkey: '%s'\n", errorMessage.c_str());
-        LogPrintf("*** RGP darkSendSigner.SetKey PrivKey %s  \n", strMasterPrivKey );
-        //return false;
+        LogPrintf("*** RGP darkSendSigner.SetKey PrivKey %s  \n", strMessage );
+        return false;
     }
     else
         LogPrintf("CMasternodePayments::Sign SUCCESS \n");
@@ -311,7 +309,7 @@ bool CMasternodePayments::ProcessBlock(int nBlockHeight)
     BOOST_REVERSE_FOREACH(CMasternodePaymentWinner& winner, vWinning)
     {
 
-        LogPrintf("*** RGP, Looking for last winner %s \n, winner.vin ");
+        //LogPrintf("*** RGP, Looking for last winner %s \n, winner.vin ");
 
 
 
@@ -323,46 +321,12 @@ bool CMasternodePayments::ProcessBlock(int nBlockHeight)
 
     }
 
+
+
     // pay to the oldest MN that still had no payment but its input is old enough and it was active long enough
     CMasternode *pmn = mnodeman.FindOldestNotInVec(vecLastPayments, nMinimumAge);
     if(pmn != NULL)
     {
-
-        LogPrintf("*** RGP Generating Test_Pubkey \n");
-        //std::string Test_PubKey(pmn->pubkey.begin(), pmn->pubkey.end() );
-        //std::string Test_PubKey2(pmn->pubkey2.begin(), pmn->pubkey2.end() );
-
-
-        LogPrintf(" Found by FindOldestNotInVec node addr %s \n", pmn->addr.ToString() );
-
-
-        //LogPrintf("*** RGP Payments Pick Pubkey %s \n", Test_PubKey  );
-        //LogPrintf("*** RGP Payments Pick Pubkey2 %s \n", Test_PubKey2  );
-
-        //LogPrintf("*** RGP copying MN Sig to winner vchSig \n");
-
-        //newWinner.vchSig = pmn->sig;
-
-        //std:string Secret ( pmn->sig.(begin), pmn->sig.(end) );
-
-        //LogPrintf("*** RGP winner Secret %s \n", Secret  );
-
-        //string Secret;
-
-        //for (unsigned i = 0 ; i < pmn->sig.size(); ++i)
-        //{
-        //    LogPrintf("%c",pmn->sig[i] );
-        //    Secret[i] = pmn->sig[i];
-//
-//        }
-//        LogPrintf(" > end Sig \n" );
-
-        //Secret[pmn->sig.size() + 1 ] =0;
-
-        // Secret key 66imWKG7FLPFVcdKM1jNefLqD3y7xJNRvQ9zdsvLxR9Qu6dhpXk for my MN -> RGP
-
-        LogPrintf("*** RGP secret key <%s> ", pmn->strKeyMasternode );
-
         newWinner.score = 0;
         newWinner.nBlockHeight = nBlockHeight;
         newWinner.vin = pmn->vin;
@@ -374,13 +338,12 @@ bool CMasternodePayments::ProcessBlock(int nBlockHeight)
             newWinner.payee = GetScriptForDestination(pmn->pubkey.GetID());
         }
 
-        key_status =  CMasternodePayments::SetPrivKey( pmn->strKeyMasternode );
+        //key_status =  CMasternodePayments::SetPrivKey( pmn->strKeyMasternode );
 
-        payeeSource = GetScriptForDestination(pmn->pubkey.GetID());
-
-        LogPrintf("*** RGP End of logic \n");
+        payeeSource = GetScriptForDestination(pmn->pubkey.GetID());       
 
     }
+
 
     //if we can't find new MN to get paid, pick first active MN counting back from the end of vecLastPayments list
     if(newWinner.nBlockHeight == 0 && nMinimumAge > 0)
@@ -400,18 +363,6 @@ bool CMasternodePayments::ProcessBlock(int nBlockHeight)
                 pmn->Check();
                 if ( !pmn->IsEnabled() )
                     continue;
-
-                //key_status =  CMasternodePayments::SetPrivKey( Test_PubKey );
-
-                std::string vchPubKey(pmn->pubkey.begin(), pmn->pubkey.end());
-
-
-                /*
-                if ( CMasternodePayments::SetPrivKey( std::string Test_PubKey ) )
-                    LogPrintf("*** RGP SetPrivKey success \n");
-                else
-                    LogPrintf("*** RGP SetPrivKey failure \n");
-*/
 
                 newWinner.score = 0;
                 newWinner.nBlockHeight = nBlockHeight;
@@ -433,11 +384,8 @@ bool CMasternodePayments::ProcessBlock(int nBlockHeight)
         }
     }
 
-
     if(newWinner.nBlockHeight == 0)
         return false;
-
-
 
     CTxDestination address1;
     ExtractDestination(newWinner.payee, address1);

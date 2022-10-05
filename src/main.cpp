@@ -1262,18 +1262,32 @@ int GetInputAge(CTxIn& vin)
     const uint256& prevHash = vin.prevout.hash;
     CTransaction tx;
     uint256 hashBlock;
+
+    LogPrintf("*** RGP GetInputAge Start \n ");
+
     bool fFound = GetTransaction(prevHash, tx, hashBlock);
-    if(fFound)
+    if ( fFound )
     {
-    if(mapBlockIndex.find(hashBlock) != mapBlockIndex.end())
-    {
-        return pindexBest->nHeight - mapBlockIndex[hashBlock]->nHeight;
+        LogPrintf("*** RGP GetInputAge Found \n ");
+
+        if ( mapBlockIndex.find(hashBlock) != mapBlockIndex.end())
+        {
+
+           LogPrintf("*** RGP GetInputAge best height and index end are good  \n" );
+
+           return pindexBest->nHeight - mapBlockIndex[hashBlock]->nHeight;
+        }
+        else
+        {
+           LogPrintf("*** RGP GetInputAge NOT Found blockindex mismatch \n ");
+           return 0;
+        }
     }
     else
+    {
+        LogPrintf("*** RGP GetInputAge NOT Found \n ");
         return 0;
     }
-    else
-        return 0;
 }
 
 
@@ -5806,7 +5820,7 @@ CInv Problem_Blocks_Inv;
 
     else
     {
-        LogPrintf("*** RGP Other message debug 001 > %s \n", strCommand );
+        //LogPrintf("*** RGP Other message debug 001 > %s \n", strCommand );
 
         if (fSecMsgEnabled)
             SecureMsgReceiveData(pfrom, strCommand, vRecv);
@@ -5856,13 +5870,13 @@ string strCommand;
 
 
 
-    if (fDebug)
-    {
-        if ( pfrom->vRecvMsg.size() != 0 )
-        {
+    //if (fDebug)
+    //{
+    //    if ( pfrom->vRecvMsg.size() != 0 )
+    //    {
             LogPrintf("ProcessMessages(%zu messages)\n", pfrom->vRecvMsg.size());
-        }
-    }
+    //    }
+    //}
 
     //
     // Message format

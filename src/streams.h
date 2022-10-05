@@ -217,8 +217,11 @@ public:
         unsigned int nReadPosNext = nReadPos + nSize;
         if (nReadPosNext >= vch.size())
         {
-            if (nReadPosNext > vch.size()) {
-                throw std::ios_base::failure("CDataStream::read() : end of data");
+            if (nReadPosNext > vch.size())
+            {
+                /* do nothing for now */
+                LogPrintf("***RGPRead error\n");
+                // throw std::ios_base::failure("CDataStream::read() : end of data");
             }
             memcpy(pch, &vch[nReadPos], nSize);
             nReadPos = 0;

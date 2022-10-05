@@ -1260,7 +1260,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
         while ( fTryToSync == false  && fRequestShutdown == false && ignore_check == false  )
         {
 
-            // LogPrintf("*** RGP MIner 3 loop \n" );
+            LogPrintf("*** RGP MIner 3 loop \n" );
 
             // RGP Get current height and test against last Checkpoint
             SYNCH_Override = false;
@@ -1274,7 +1274,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
 
                 //ms_timeout = ( STAKE_BLOCK_TIME - Time_to_Last_block  ) * 1000;
 
-                // LogPrintf("*** RGP Miner 3 loop timeout is %d Time_to_Last_block %d \n", ms_timeout, Time_to_Last_block );
+                LogPrintf("*** RGP Miner 3 loop timeout is %d Time_to_Last_block %d \n", ms_timeout, Time_to_Last_block );
 
                 if ( Time_to_Last_block > 220 && Time_to_Last_block < 240 )
                     ms_timeout = 100;
@@ -1283,7 +1283,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
 
                 MilliSleep(ms_timeout);
 
-                // LogPrintf("*** RGP MIner 3 continue \n" );
+                LogPrintf("*** RGP MIner 3 continue \n" );
 
                 /* If synch is in progress it could take a long time */
 
@@ -1373,7 +1373,8 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                 if ( time_to_sleep  == 0 )
                 {
                     LogPrintf("*** RGP time to sleep %d %d %d  \n", time_to_sleep, STAKE_BLOCK_TIME, Time_in_since_Last_Block  );
-                    MilliSleep( GetRandInt(20000) );
+                    // RGP MilliSleep( GetRandInt(20000) );
+                    MilliSleep( GetRandInt(5000) );
                     wait_for_best_time = false;
                     continue;
                 }
@@ -1438,7 +1439,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                         last_block_stake_check = 0;
                         while (  pindexBest->GetBlockTime() == last_recorded_block_time )
                         {
-                            //LogPrintf("*** Wait for next block pindexBest->GetBlockTime %d and last_recorded_block_time %d \n", pindexBest->GetBlockTime(), last_recorded_block_time );
+                            LogPrintf("*** Wait for next block pindexBest->GetBlockTime %d and last_recorded_block_time %d \n", pindexBest->GetBlockTime(), last_recorded_block_time );
 
                             //MilliSleep( GetRandInt( 240 ) * 1000 );
 MilliSleep( GetRandInt( 24 ) * 1000 );
@@ -1477,7 +1478,7 @@ MilliSleep( GetRandInt( 24 ) * 1000 );
                 continue;
             }
 
-            //LogPrintf(" Next call Signblock!! \n");
+            LogPrintf(" Next call Signblock!! \n");
 
             // Trying to sign a block
             if (pblock->SignBlock(*pwallet, nFees))
@@ -1499,8 +1500,8 @@ MilliSleep( GetRandInt( 24 ) * 1000 );
                         after_stake_success_timeout = ( ( ( 12 * 60 ) + GetRandInt( 100 ) ) * 1000 ) ;
                         LogPrintf("*** RGP new Mint stake delay after success timeout %d \n", after_stake_success_timeout);
 //after_stake_success_timeout = 120000;
-                        //MilliSleep( after_stake_success_timeout );
-                        MilliSleep( 20000 );
+                        MilliSleep( after_stake_success_timeout );
+                        //MilliSleep( 20000 );
 
                  }
                  else

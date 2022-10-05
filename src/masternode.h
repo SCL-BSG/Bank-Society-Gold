@@ -88,7 +88,7 @@ public:
     bool isOldNode;
 
     /* RGP Added this to the Masternode structure, as it seems missing for Masternodes_payments.cpp */
-    std::string strKeyMasternode;
+    //std::string strKeyMasternode;
 
     CMasternode();
     CMasternode(const CMasternode& other);

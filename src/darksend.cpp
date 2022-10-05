@@ -52,13 +52,12 @@ void CDarksendPool::ProcessMessageDarksend(CNode* pfrom, std::string& strCommand
 
     if(!IsBlockchainSynced())
     {
-        LogPrintf("*** RGP ProcessMessageDarksend BLOCK IS NOT SYNCHED. \n");
+        //LogPrintf("*** RGP ProcessMessageDarksend BLOCK IS NOT SYNCHED. \n");
         /* RGP, if the block is unsynched then no Masternodes are allowed,
                 which then stops staking, catch22 blockchain stops          */
-        //return;
+        return;
     }
-    else
-        LogPrintf("*** RGP ProcessMessageDarksend BLOCK SYNCHED. \n");
+
 
 
     if (strCommand == "dsa")
@@ -1480,9 +1479,13 @@ void CDarksendPool::ClearLastMessage()
 bool CDarksendPool::DoAutomaticDenominating(bool fDryRun)
 {
 
-    LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating \n");
+    //LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating \n");
 
-    if(!fEnableDarksend) return false;
+    if(!fEnableDarksend)
+    {
+        //LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating fEnableDarksend is not enabled  \n");
+        return false;
+    }
 
     if(fMasterNode) return false;
     if(state == POOL_STATUS_ERROR || state == POOL_STATUS_SUCCESS) return false;
@@ -1609,7 +1612,8 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun)
      LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating Debug 4 \n");
 
     // initial phase, find a Masternode
-    if(!sessionFoundMasternode){
+    if(!sessionFoundMasternode)
+    {
         // Clean if there is anything left from previous session
         UnlockCoins();
         SetNull();
@@ -1642,7 +1646,10 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun)
          LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating Debug 6 \n");
 
         //if we've used 90% of the Masternode list then drop all the oldest first
+
         int nThreshold = (int)(mnodeman.CountEnabled(MIN_POOL_PEER_PROTO_VERSION) * 0.9);
+
+
         LogPrint("darksend", "Checking vecMasternodesUsed size %d threshold %d\n", (int)vecMasternodesUsed.size(), nThreshold);
         while((int)vecMasternodesUsed.size() > nThreshold){
             vecMasternodesUsed.erase(vecMasternodesUsed.begin());
@@ -1652,7 +1659,8 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun)
          LogPrintf("*** RGP CDarksendPool::DoAutomaticDenominating Debug 7 \n");
 
         //don't use the queues all of the time for mixing
-        if(nUseQueue > 33){
+        if( nUseQueue > 33 )
+        {
 
             // Look through the queues and see if anything matches
             BOOST_FOREACH(CDarksendQueue& dsq, vecDarksendQueue){
@@ -2230,11 +2238,13 @@ bool CDarkSendSigner::SetKey(std::string strSecret, std::string& errorMessage, C
     bool fGood = vchSecret.SetString(strSecret);
 
 
-    LogPrintf("*** RGP CDarkSendSigner::SetKey Secret key %s \n", strSecret );
+    LogPrintf("*** RGP CDarkSendSigner::SetKey Secret key <%s> \n", strSecret );
 
 
-    if (!fGood) {
+    if (!fGood)
+    {
         errorMessage = _("Invalid private key.");
+        /* RGP ignoring for now, as this is always failing */
         return false;
     }
 
@@ -2264,8 +2274,6 @@ bool CDarkSendSigner::VerifyMessage(CPubKey pubkey, vector<unsigned char>& vchSi
     ss << strMessageMagic;
     ss << strMessage;   
     CPubKey pubkey2;
-
-    LogPrintf("*** RGP VerifyMessage Start ");
 
     if (!pubkey2.RecoverCompact(ss.GetHash(), vchSig))
     {

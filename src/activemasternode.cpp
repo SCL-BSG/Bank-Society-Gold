@@ -276,21 +276,13 @@ bool CActiveMasternode::Register(std::string strService, std::string strKeyMaste
 
     LogPrintf("*** RGP CActiveMasternode::Register 1 Start \n" );
 
-
-
-
-    LogPrintf("*** RGP CActiveMasternode::Register strKeyMasternode %s txHash %s strOutputIndex %s strRewardAddress %s strRewardPercentage %s \n", strKeyMasternode, txHash, strOutputIndex, strRewardAddress, strRewardPercentage );
-
-
     if(!darkSendSigner.SetKey(strKeyMasternode, errorMessage, keyMasternode, pubKeyMasternode))
     {
-
         LogPrintf("*** RGP CActiveMasternode::Register Debug 1 \n" );
         LogPrintf("CActiveMasternode::Register() - Error upon calling SetKey: %s\n", errorMessage.c_str());
         return false;
     }
 
-    LogPrintf("*** RGP CActiveMasternode::Register Debug 2 \n" );
 
     if(!GetMasterNodeVin(vin, pubKeyCollateralAddress, keyCollateralAddress, txHash, strOutputIndex)) {
         errorMessage = "could not allocate vin";
@@ -337,21 +329,19 @@ bool CActiveMasternode::Register(std::string strService, std::string strKeyMaste
 
 
     /* RGP, check the secret to see if it's been set or not */
-    CMasternode* pmn = mnodeman.Find(vin);
-    if(pmn != NULL)
-    {
-        if ( strlen ( &pmn->strKeyMasternode[0] ) == 0 )
-        {
-            LogPrintf("*** RGP updating masternode secret %s \n", strKeyMasternode );
-
-            pmn->strKeyMasternode = strKeyMasternode;
-
-
-        }
-
-
-
-    }
+//    CMasternode* pmn = mnodeman.Find(vin);
+//    if(pmn != NULL)
+//    {
+//        if ( strlen ( &pmn->strKeyMasternode[0] ) == 0 )
+//        {
+//            LogPrintf("*** RGP updating masternode secret %s \n", strKeyMasternode );
+//
+//            pmn->strKeyMasternode = strKeyMasternode;
+//
+//
+//        }
+//
+//    }
 
 
     return Register(vin, CService(strService, true), keyCollateralAddress, pubKeyCollateralAddress, keyMasternode, pubKeyMasternode, rewardAddress, rewardPercentage, errorMessage );
@@ -405,7 +395,7 @@ bool CActiveMasternode::Register(CTxIn vin, CService service, CKey keyCollateral
 
         LogPrintf("*** RGP CActiveMasternode::Register Debug 3 \n");
 
-        mn.ChangeNodeStatus(false);
+        mn.ChangeNodeStatus(true); /* RGP */
         mn.UpdateLastSeen(masterNodeSignatureTime);
 
         LogPrintf("*** RGP CActiveMasternode::Register Debug 4 \n");
@@ -588,7 +578,13 @@ vector<COutput> CActiveMasternode::SelectCoinsMasternodeForPubKey(std::string co
 // when starting a masternode, this can enable to run as a hot wallet with no funds
 bool CActiveMasternode::EnableHotColdMasterNode(CTxIn& newVin, CService& newService)
 {
-    if(!fMasterNode) return false;
+    LogPrintf("CActiveMasternode::EnableHotColdMasterNode() Start \n");
+
+    if(!fMasterNode)
+    {
+        LogPrintf("CActiveMasternode::EnableHotColdMasterNode() fMasterNode is false!!! \n");
+        return false;
+    }
 
     status = MASTERNODE_REMOTELY_ENABLED;
     notCapableReason = "";
