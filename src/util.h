@@ -475,7 +475,8 @@ bool SoftSetBoolArg(const std::string& strArg, bool fValue);
  */
 extern uint32_t insecure_rand_Rz;
 extern uint32_t insecure_rand_Rw;
-extern uint32_t insecure_rand(void);
+/* RGP, Removed reference to extern, as netbase.cpp included util.h before the actual declaration */
+//extern uint32_t insecure_rand(void);
 
 //static inline uint32_t insecure_rand(void)
 //{
