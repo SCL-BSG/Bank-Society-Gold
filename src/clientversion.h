@@ -3,15 +3,20 @@
 
 /* RGP : Changed on 7th Sep 2022 */
 
-//
-// client versioning
-//
+/* -------------------------------------------------------------
+   -- client versioning V2.0.5.3 --                           --
+   -----------------------                                    --
+   -- This release includes fixes for wallet crash during     --
+   -- stakes, POW miner delays to meet 240sec block spacing   --
+   -- and issues with stake delays using embedded random      --
+   -- function calls in MilliSecond().                        --
+   ------------------------------------------------------------- */
  
 // These need to be macros, as version.cpp's and bitcoin-qt.rc's voodoo requires it
 #define CLIENT_VERSION_MAJOR       2
 #define CLIENT_VERSION_MINOR       0
 #define CLIENT_VERSION_REVISION    5
-#define CLIENT_VERSION_BUILD       2
+#define CLIENT_VERSION_BUILD       3
 
 
 static const int CLIENT_VERSION_RPC =

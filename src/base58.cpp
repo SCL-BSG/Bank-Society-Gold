@@ -332,11 +332,6 @@ bool CSocietyGcoinSecret::IsValid() const {
 
 bool CSocietyGcoinSecret::SetString(const char* pszSecret)
 {
-
-    LogPrintf("*** RGP CSocietyGcoinSecret::SetString Start \n");
-
-
-
     return CBase58Data::SetString(pszSecret) && IsValid();
 }
 

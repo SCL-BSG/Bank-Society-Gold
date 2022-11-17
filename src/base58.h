@@ -127,7 +127,11 @@ public:
     bool SetString(const char* pszSecret);
     bool SetString(const std::string& strSecret);
 
-    CSocietyGcoinSecret(const CKey& vchSecret) { SetKey(vchSecret); }
+    CSocietyGcoinSecret(const CKey& vchSecret)
+    {
+        SetKey(vchSecret);
+    }
+
     CSocietyGcoinSecret() {}
 };
 

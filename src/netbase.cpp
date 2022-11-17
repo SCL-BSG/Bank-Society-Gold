@@ -762,14 +762,14 @@ bool static ConnectSocketDirectly(const CService &addrConnect, SOCKET& hSocketRe
             if (nRet == 0)
             {
 
-                LogPrintf("net, connection to %s timeout\n", addrConnect.ToString());
+                //LogPrintf("net, connection to %s timeout\n", addrConnect.ToString());
                 closesocket(hSocket);
                 return false;
             }
             if (nRet == SOCKET_ERROR)
             {
 
-                LogPrintf("select() for %s failed: %i\n", addrConnect.ToString(), WSAGetLastError());
+                //LogPrintf("select() for %s failed: %i\n", addrConnect.ToString(), WSAGetLastError());
                 closesocket(hSocket);
                 return false;
             }
@@ -780,20 +780,20 @@ bool static ConnectSocketDirectly(const CService &addrConnect, SOCKET& hSocketRe
             if (getsockopt(hSocket, SOL_SOCKET, SO_ERROR, &nRet, &nRetSize) == SOCKET_ERROR)
 #endif
             {
-                LogPrintf("*** RGP ConnectSocketDirectly Debug 11c timeout %d \n", nTimeout);
+                //LogPrintf("*** RGP ConnectSocketDirectly Debug 11c timeout %d \n", nTimeout);
 
 
-                LogPrintf("getsockopt() for %s failed: %i\n", addrConnect.ToString(), WSAGetLastError());
+                //LogPrintf("getsockopt() for %s failed: %i\n", addrConnect.ToString(), WSAGetLastError());
                 closesocket(hSocket);
                 return false;
             }
             if (nRet != 0)
             {
-                LogPrintf("*** RGP ConnectSocketDirectly Debug 11d timeout %d \n", nTimeout);
+                //LogPrintf("*** RGP ConnectSocketDirectly Debug 11d timeout %d \n", nTimeout);
 
 
 
-                LogPrintf("connect() to %s failed after select(): %s \n", addrConnect.ToString(), strerror(nRet));
+                //LogPrintf("connect() to %s failed after select(): %s \n", addrConnect.ToString(), strerror(nRet));
                 closesocket(hSocket);
                 return false;
             }
@@ -807,8 +807,8 @@ bool static ConnectSocketDirectly(const CService &addrConnect, SOCKET& hSocketRe
         {
 
 
-             LogPrintf("*** RGP ConnectSocketDirectly Debug 5 connect failed timeout %d \n", nTimeout);
-            LogPrintf("connect() to %s failed: %i \n", addrConnect.ToString(), WSAGetLastError());
+            // LogPrintf("*** RGP ConnectSocketDirectly Debug 5 connect failed timeout %d \n", nTimeout);
+            //LogPrintf("connect() to %s failed: %i \n", addrConnect.ToString(), WSAGetLastError());
             closesocket(hSocket);
             return false;
         }

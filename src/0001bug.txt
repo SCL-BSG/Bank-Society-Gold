@@ -1,0 +1,34 @@
+*** RGP ProcessBlockStake started at time  1666185287 
+2022-10-19 13:14:47 coinstake, ProcessBlockStake : new proof-of-stake block found  
+  hash: 44f077a021acc2448c891e0cff0767e1383c9217149f548b977481fa5a67ec2e 
+proofhash: 08508f466ed77dd8588f32f18c761c61d8b3a3c58f1bf82cac47b982c8f87056  
+target: befaf1c8f9590000000000000000000000000000000000000000000000000000
+2022-10-19 13:14:47 coinstake, ProcessBlockStake : CBlock(hash=44f077a021acc2448c891e0cff0767e1383c9217149f548b977481fa5a67ec2e, ver=7, hashPrevBlock=b700923b525840fe893b1c02ef0a3284111363e2b3f341bac319743cf0ea95b9, hashMerkleRoot=af8c775ffde8d5c08c2a6fc7901293eeb3cec31f2a8b6f05bb31e6315a41ea4b, nTime=1666185280, nBits=1d30d3a5, nNonce=0, vtx=2, vchBlockSig=3045022100a49104eaffaaef6f34ee5015eb125342beeb390c281b33a31ca81f94c32864a802203bab57b6b541dd8923763e5f89402bef29270a8d4faf08469644b848468482f4)
+  Coinbase(hash=70356c5b85d82147729ce910dece2ea353c80ce5ee884829355d9a92687eb2c6, nTime=1666185280, ver=1, vin.size=1, vout.size=1, nLockTime=0)
+    CTxIn(COutPoint(0000000000, 4294967295), coinbase 0354c704)
+    CTxOut(empty)
+
+  Coinstake(hash=518e2d2716ccb6619099ce97befc044096513acbf2b6491fd2455b2ffac25c3d, nTime=1666185280, ver=1, vin.size=10, vout.size=3, nLockTime=0)
+    CTxIn(COutPoint(551551ba3e, 3), scriptSig=304402204b1703da3062bff0)
+    CTxIn(COutPoint(55d8429ce5, 3), scriptSig=3045022100bbf2f30dcc09da)
+    CTxIn(COutPoint(6b65126a7d, 2), scriptSig=3045022100e6e1431612f1a3)
+    CTxIn(COutPoint(6b65126a7d, 3), scriptSig=304402200a9827b380e0e5c7)
+    CTxIn(COutPoint(643974489b, 2), scriptSig=3045022100a3b3ddeaf46920)
+    CTxIn(COutPoint(643974489b, 3), scriptSig=30450221008ac76b1b335c71)
+    CTxIn(COutPoint(e5cda8b062, 2), scriptSig=3044022060db5af10e66bc26)
+    CTxIn(COutPoint(e5cda8b062, 3), scriptSig=3044022013b5d80664a38bf6)
+    CTxIn(COutPoint(1e18b984a0, 3), scriptSig=3045022100d559a64101a8c3)
+    CTxIn(COutPoint(19a47e7168, 2), scriptSig=304402205ab56654fd4d6c10)
+    CTxOut(empty)
+    CTxOut(nValue=13.28580572, scriptPubKey=03e37c3773a21aadfface37c16cdbd20faebc712f8e46ed83ede140c380b005916 OP_CHECKSIG)
+    CTxOut(nValue=0.04216377, scriptPubKey=OP_DUP OP_HASH160 6090ce66612099e986df40d0e79db30296a8ae69 OP_EQUALVERIFY OP_CHECKSIG)
+
+  vMerkleTree:  70356c5b85d82147729ce910dece2ea353c80ce5ee884829355d9a92687eb2c6 518e2d2716ccb6619099ce97befc044096513acbf2b6491fd2455b2ffac25c3d af8c775ffde8d5c08c2a6fc7901293eeb3cec31f2a8b6f05bb31e6315a41ea4b
+
+2022-10-19 13:14:47 coinstake, ProcessBlockStake : out 13.32796949
+2022-10-19 13:14:47 *** RGP ProcessBlockStake wallet lock SUCCESS 
+2022-10-19 13:14:47 *** ProcessBlock POS MINING BLOCK!!! 
+2022-10-19 13:14:47 ERROR: ConnectInputs() : 518e2d2716ccb6619099ce97befc044096513acbf2b6491fd2455b2ffac25c3d prev tx already used at (nFile=1, nBlockPos=158457782, nTxPos=158457931)
+2022-10-19 13:14:47 InvalidChainFound: invalid block=44f077a021acc2448c891e0cff0767e1383c9217149f548b977481fa5a67ec2e  height=313172  trust=10446711244688428290  blocktrust=87963431  date=10/19/22 13:14:40
+2022-10-19 13:14:47 InvalidChainFound:  current best=b700923b525840fe893b1c02ef0a3284111363e2b3f341bac319743cf0ea95b9  height=313171  trust=10446711244600464859  blocktrust=87476093  date=10/19/22 13:03:28
+2022-10-19 13:14:47 ERROR: SetBestChain() : SetBestChainInner failed

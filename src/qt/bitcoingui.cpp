@@ -1088,8 +1088,7 @@ void BitcoinGUI::handleURI(QString strURI)
 void BitcoinGUI::setEncryptionStatus(int status)
 {
     if(fWalletUnlockStakingOnly)
-    {
-         LogPrintf("*** RGP BITCOINGUI Wallet Staking Only \n");
+    {         
 
         labelEncryptionIcon->setPixmap(QIcon(fUseBlackTheme ? ":/icons/black/lock_open" : ":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked for staking only</b>"));
@@ -1106,8 +1105,6 @@ void BitcoinGUI::setEncryptionStatus(int status)
     {
     case WalletModel::Unencrypted:
 
-        LogPrintf("*** RGP BITCOINGUI Wallet Unencrypted \n");
-
         labelEncryptionIcon->setPixmap(QIcon(fUseBlackTheme ? ":/icons/black/lock_open" : ":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>not encrypted</b>"));
         changePassphraseAction->setEnabled(false);
@@ -1117,8 +1114,6 @@ void BitcoinGUI::setEncryptionStatus(int status)
         break;
     case WalletModel::Unlocked:
 
-        LogPrintf("*** RGP BITCOINGUI Wallet UNlocked \n");
-
         labelEncryptionIcon->setPixmap(QIcon(fUseBlackTheme ? ":/icons/black/lock_open" : ":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
         changePassphraseAction->setEnabled(true);
@@ -1127,8 +1122,6 @@ void BitcoinGUI::setEncryptionStatus(int status)
         encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
         break;
     case WalletModel::Locked:
-
-        LogPrintf("*** RGP BITCOINGUI Wallet Locked \n");
 
         labelEncryptionIcon->setPixmap(QIcon(fUseBlackTheme ? ":/icons/black/lock_closed" : ":/icons/lock_closed").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>locked</b>"));
@@ -1174,8 +1167,6 @@ void BitcoinGUI::changePassphrase()
 
 void BitcoinGUI::unlockWallet()
 {
-    LogPrintf("*** RGP BITCOINGUI Wallet UNlock action start \n");
-
     if(!walletModel)
         return;
 
@@ -1184,16 +1175,12 @@ void BitcoinGUI::unlockWallet()
     if(walletModel->getEncryptionStatus() == WalletModel::Locked)
     {
 
-         LogPrintf("*** RGP BITCOINGUI Wallet UNlock action ask passphrase \n");
-
         AskPassphraseDialog::Mode mode = sender() == unlockWalletAction ?
               AskPassphraseDialog::UnlockStaking : AskPassphraseDialog::Unlock;
         AskPassphraseDialog dlg(mode, this);
         dlg.setModel(walletModel);
         dlg.exec();
     }
-
-    LogPrintf("*** RGP BITCOINGUI Wallet UNlock action END \n");
 
 }
 
@@ -1267,7 +1254,7 @@ void BitcoinGUI::updateStakingIcon()
 
         nEstimateTime = ( TARGET_SPACING * nNetworkWeight ) / (double) nStakeWeight ;
 
-        LogPrintf("*** RGP Networkweight %f nWeight %d stakeweight %d Estimate %d \n", nNetworkWeight, this->nWeight, nStakeWeight, nEstimateTime);
+        //LogPrintf("*** RGP Networkweight %f nWeight %d stakeweight %d Estimate %d \n", nNetworkWeight, this->nWeight, nStakeWeight, nEstimateTime);
 
 
         QString text;
@@ -1291,7 +1278,7 @@ void BitcoinGUI::updateStakingIcon()
         nStakeWeight /= COIN;
         nNetworkWeight /= COIN;
 
-        LogPrintf("*** RGP Networkweight %f stakeweight %d coin %d \n", nNetworkWeight, nStakeWeight, COIN );
+        //LogPrintf("*** RGP Networkweight %f stakeweight %d coin %d \n", nNetworkWeight, nStakeWeight, COIN );
 
         labelStakingIcon->setPixmap(QIcon(fUseBlackTheme ? ":/icons/black/staking_on" : ":/icons/staking_on").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelStakingIcon->setToolTip(tr("Staking.<br>Your weight is %1<br>Network weight is %2<br>Expected time to earn reward is %3").arg(nStakeWeight).arg(nNetworkWeight).arg(text));

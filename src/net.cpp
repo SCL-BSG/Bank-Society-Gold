@@ -1684,7 +1684,7 @@ unsigned int connecting_port;
     }
     else
     {
-        LogPrintf("*** RGP IP FAILED PORT incorrect [IGNORED] %d \n", addrConnect.GetPort());
+        //LogPrintf("*** RGP IP FAILED PORT incorrect [IGNORED] %d \n", addrConnect.GetPort());
         //return NULL;
     }
 
@@ -1758,7 +1758,7 @@ unsigned int connecting_port;
     }
     else if (!proxyConnectionFailed)
     {
-        LogPrintf("*** RGP IP to connect FAILED %s debug 1 \n", addrConnect.ToString() );
+        //LogPrintf("*** RGP IP to connect FAILED %s debug 1 \n", addrConnect.ToString() );
 
         // If connecting to the node failed, and failure is not caused by a problem connecting to
         // the proxy, mark this as an attempt.
@@ -1854,7 +1854,7 @@ void CNode::CloseSocketDisconnect()
     fDisconnect = true;
     if (hSocket != INVALID_SOCKET)
     {
-        LogPrintf("*** RGP, disconnecting node %s /n", addrName);
+        //LogPrintf("*** RGP, disconnecting node %s /n", addrName);
         closesocket(hSocket);
         hSocket = INVALID_SOCKET;
     }
@@ -3300,7 +3300,7 @@ void static StartSync(const vector<CNode*> &vNodes)
     // Iterate over all nodes
     BOOST_FOREACH(CNode* pnode, vNodes)
     {
-        LogPrintf("*** RGP StartSyncn start \n" );
+        //LogPrintf("*** RGP StartSyncn start \n" );
 
         // check preconditions for allowing a sync
         if (!pnode->fClient && !pnode->fOneShot &&
@@ -3321,7 +3321,7 @@ void static StartSync(const vector<CNode*> &vNodes)
         {
 
            /* set one anyway */
-           LogPrintf("*** RGP StartSyncn node failed checks \n" );
+           //LogPrintf("*** RGP StartSyncn node failed checks \n" );
 
             if ( pnodeNewSync == 0 )
             {

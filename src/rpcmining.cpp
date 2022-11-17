@@ -588,11 +588,10 @@ Value getworkex(const Array& params, bool fHelp)
 Value getwork(const Array &params, bool fHelp)
 {
 
-    LogPrintf("*** RGP rpcmining getwork start \n");
+
 
     if (fHelp || params.size() > 1)
     {
-        LogPrintf("*** RGP rpcmining getwork Debug 1 \n");
 
         throw runtime_error("getwork [data]\n"
                             "If [data] is not specified, returns formatted hash data to work on:\n"
@@ -625,8 +624,6 @@ Value getwork(const Array &params, bool fHelp)
     
     static mapNewBlock_t mapNewBlock;    // FIXME: thread safety
     static vector<CBlock*> vNewBlock;
-
-    LogPrintf("*** RGP rpcmining getwork debug 2 \n");
 
     if (params.size() == 0)
     {
@@ -686,8 +683,6 @@ Value getwork(const Array &params, bool fHelp)
         static unsigned int nExtraNonce = 0;
         IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
 
-        LogPrintf("*** RGP rpcmining getwork debug 3 \n");
-
         // Save
         mapNewBlock[pblock->hashMerkleRoot] = make_pair(pblock, pblock->vtx[0].vin[0].scriptSig);
 
@@ -697,21 +692,15 @@ Value getwork(const Array &params, bool fHelp)
         char phash1[64];
         FormatHashBuffers(pblock, pmidstate, pdata, phash1);
 
-        LogPrintf("*** RGP rpcmining getwork debug 4 \n");
-
         uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
 
         Object result;
         
-        LogPrintf("*** RGP rpcmining getwork debug 5 \n");
-
         result.push_back(Pair("midstate", HexStr(BEGIN(pmidstate), END(pmidstate)))); // deprecated
         result.push_back(Pair("data",     HexStr(BEGIN(pdata), END(pdata))));
         result.push_back(Pair("hash1",    HexStr(BEGIN(phash1), END(phash1)))); // deprecated
         result.push_back(Pair("target",   HexStr(BEGIN(hashTarget), END(hashTarget))));
         
-        LogPrintf("*** RGP rpcmining getwork debug 6 \n");
-
         return result;
     }
     else

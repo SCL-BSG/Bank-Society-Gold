@@ -220,11 +220,16 @@ void MasternodeManager::on_startButton_clicked()
 {
     std::string statusObj;
 
+    LogPrintf("*** RGP MasternodeManager::on_startButton_clicke Start \n");
+
     // start the node
     QItemSelectionModel* selectionModel = ui->tableWidget_2->selectionModel();
     QModelIndexList selected = selectionModel->selectedRows();
     if(selected.count() == 0)
     {
+
+        LogPrintf("*** RGP MasternodeManager::on_startButton_clicke Debug 1 \n");
+
         statusObj += "<br>Select a Masternode alias to start" ;
         QMessageBox msg;
         msg.setText(QString::fromStdString(statusObj));
@@ -232,11 +237,18 @@ void MasternodeManager::on_startButton_clicked()
         return;
     }
 
+    LogPrintf("*** RGP MasternodeManager::on_startButton_clicke Debug 2 \n");
+
     QModelIndex index = selected.at(0);
     int r = index.row();
     std::string sAlias = ui->tableWidget_2->item(r, 0)->text().toStdString();
 
-    if(pwalletMain->IsLocked()) {
+    LogPrintf("*** RGP MasternodeManager::on_startButton_clicke Debug 3 \n");
+
+    if(pwalletMain->IsLocked())
+    {
+
+        LogPrintf("*** RGP MasternodeManager::on_startButton_clicke Debug 4 \n");
 
         statusObj += "<br>Please unlock your wallet to start Masternode" ;
         QMessageBox msg;
@@ -245,18 +257,30 @@ void MasternodeManager::on_startButton_clicked()
         return;
     }
 
+    LogPrintf("*** RGP MasternodeManager::on_startButton_clicke Debug 5 \n");
     
     statusObj += "<center>Alias: " + sAlias;
 
-    BOOST_FOREACH(CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries()) {
+    BOOST_FOREACH(CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries())
+    {
+
+        LogPrintf("*** RGP MasternodeManager::on_startButton_clicke Debug 6 \n");
+
         if(mne.getAlias() == sAlias)
         {
+
+            LogPrintf("*** RGP MasternodeManager::on_startButton_clicke Debug 6a \n");
 
         std::string errorMessage;
         std::string strRewardAddress = mne.getRewardAddress();
         std::string strRewardPercentage = mne.getRewardPercentage();
 
+
+        LogPrintf("*** RGP MasternodeManager::on_startButton_clicke Debug 6b \n");
+
         bool result = activeMasternode.Register(mne.getIp(), mne.getPrivKey(), mne.getTxHash(), mne.getOutputIndex(), strRewardAddress, strRewardPercentage, errorMessage);
+
+        LogPrintf("*** RGP MasternodeManager::on_startButton_clicke Debug 6b \n");
 
             if(result) {
                 statusObj += "<br>Successfully started masternode." ;
@@ -267,13 +291,20 @@ void MasternodeManager::on_startButton_clicked()
         }
     }
 
+    LogPrintf("*** RGP MasternodeManager::on_startButton_clicke Debug 7 \n");
+
     pwalletMain->Lock();
     statusObj += "</center>";
     QMessageBox msg;
     msg.setText(QString::fromStdString(statusObj));
     msg.exec();
 
+
+    LogPrintf("*** RGP MasternodeManager::on_startButton_clicke Debug 8 \n");
+
     MasternodeManager::on_UpdateButton_clicked();
+
+    LogPrintf("*** RGP MasternodeManager::on_startButton_clicke Debug 9 \n");
 }
 
 void MasternodeManager::on_startAllButton_clicked()

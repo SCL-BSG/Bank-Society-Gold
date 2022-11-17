@@ -29,7 +29,7 @@ struct CompareValueOnly
 bool GetBlockHash(uint256& hash, int nBlockHeight)
 {
 
-    LogPrintf("*** RGP Masternode::GetBlockHash Start \n");
+    // LogPrintf("*** RGP Masternode::GetBlockHash Start \n");
 
     if (pindexBest == NULL) return false;
 
@@ -65,7 +65,7 @@ bool GetBlockHash(uint256& hash, int nBlockHeight)
         BlockReading = BlockReading->pprev;
     }
 
-    LogPrintf("*** RGP GetBlockHash FAILED \n");
+    //LogPrintf("*** RGP GetBlockHash FAILED \n");
 
     return false;
 }
@@ -200,7 +200,7 @@ void CMasternode::Check()
     //once spent, stop doing the checks
     if(activeState == MASTERNODE_VIN_SPENT)
     {
-        LogPrintf("*** RGP CMasterNode::Check spent, exit \n");
+        //LogPrintf("*** RGP CMasterNode::Check spent, exit \n");
         return;
     }
 
@@ -212,7 +212,7 @@ void CMasternode::Check()
 
     if(!UpdatedWithin(MASTERNODE_EXPIRATION_SECONDS))
     {
-        LogPrintf("*** RGP CMasterNode::Check Debug 002\n");
+        //LogPrintf("*** RGP CMasterNode::Check Debug 002\n");
 
         activeState = MASTERNODE_EXPIRED;
         return;

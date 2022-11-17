@@ -83,7 +83,7 @@ double GetPoSKernelPS()
     CBlockIndex* pindexPrevStake = NULL;
 
 
-    LogPrintf("*** RGP GetPoSKernelPS Start \n");
+    //LogPrintf("*** RGP GetPoSKernelPS Start \n");
 
     while (pindex && nStakesHandled < nPoSInterval)
     {
@@ -101,23 +101,23 @@ double GetPoSKernelPS()
         pindex = pindex->pprev;
     }
 
-    LogPrintf("*** RGP GetPoSKernelPS PosItems %d dStakeKernelsTriedAvg %f nStakesTime %d nStakesHandled %d \n", nPoSInterval, dStakeKernelsTriedAvg, nStakesTime, nStakesHandled );
+    //LogPrintf("*** RGP GetPoSKernelPS PosItems %d dStakeKernelsTriedAvg %f nStakesTime %d nStakesHandled %d \n", nPoSInterval, dStakeKernelsTriedAvg, nStakesTime, nStakesHandled );
 
 
     double result = 0;
 
     tester = (int) dStakeKernelsTriedAvg;
-    LogPrintf("*** RGP GetPoSKernelPS dStakeKernelsTriedAvgas an int %d  \n", tester  );
+    //LogPrintf("*** RGP GetPoSKernelPS dStakeKernelsTriedAvgas an int %d  \n", tester  );
 
     if (nStakesTime)
         result = dStakeKernelsTriedAvg / nStakesTime;
 
-    LogPrintf("*** RGP GetPoSKernelPS result %f before \n", result );
+    //LogPrintf("*** RGP GetPoSKernelPS result %f before \n", result );
 
 
     result *= STAKE_TIMESTAMP_MASK + 1;
 
-    LogPrintf("*** RGP GetPoSKernelPS result %f after \n", result );
+    //LogPrintf("*** RGP GetPoSKernelPS result %f after \n", result );
 
     return result;
 }

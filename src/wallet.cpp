@@ -3545,9 +3545,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
         }
     }
 
-    LogPrintf("Calculate coin age rewards DEBUG 009 \n" );
-
-    // Calculate coin age reward  
+    // Calculate coin age reward
 
     int64_t nReward;
     {
@@ -3559,7 +3557,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             return false;
         }
 
-        LogPrintf("*** RGP before GetProofOfStakeReward nCoinAge %d nFees %d ", nCoinAge, nFees );
+        //LogPrintf("*** RGP before GetProofOfStakeReward nCoinAge %d nFees %d ", nCoinAge, nFees );
         
         nReward = GetProofOfStakeReward(pindexPrev, nCoinAge, nFees);
 

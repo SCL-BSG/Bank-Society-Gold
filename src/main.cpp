@@ -1263,29 +1263,29 @@ int GetInputAge(CTxIn& vin)
     CTransaction tx;
     uint256 hashBlock;
 
-    LogPrintf("*** RGP GetInputAge Start \n ");
+    //LogPrintf("*** RGP GetInputAge Start \n ");
 
     bool fFound = GetTransaction(prevHash, tx, hashBlock);
     if ( fFound )
     {
-        LogPrintf("*** RGP GetInputAge Found \n ");
+        //LogPrintf("*** RGP GetInputAge Found \n ");
 
         if ( mapBlockIndex.find(hashBlock) != mapBlockIndex.end())
         {
 
-           LogPrintf("*** RGP GetInputAge best height and index end are good  \n" );
+           //LogPrintf("*** RGP GetInputAge best height and index end are good  \n" );
 
            return pindexBest->nHeight - mapBlockIndex[hashBlock]->nHeight;
         }
         else
         {
-           LogPrintf("*** RGP GetInputAge NOT Found blockindex mismatch \n ");
+           //LogPrintf("*** RGP GetInputAge NOT Found blockindex mismatch \n ");
            return 0;
         }
     }
     else
     {
-        LogPrintf("*** RGP GetInputAge NOT Found \n ");
+        //LogPrintf("*** RGP GetInputAge NOT Found \n ");
         return 0;
     }
 }
@@ -1816,12 +1816,6 @@ int64_t GetProofOfStakeReward(const CBlockIndex* pindexPrev, int64_t nCoinAge, i
     //LogPrintf("returning total POS reward %d \n", total_POS_reward );
 
     return total_POS_reward;
-
-    /* int64_t nSubsidy = STATIC_POS_REWARD;
-        if((pindexPrev->nHeight) > 17343)
-          nSubsidy = 18 * COIN;
-    return nSubsidy + nFees;
-    */
 }
 
 
@@ -3476,9 +3470,11 @@ uint256 hashPrev;
 extern bool BSC_Wallet_Synching;
 extern CNode *From_Node;
 int64_t Time_to_Last_block;
-bool PoS_Mining_Block;
+bool PoS_Mining_Block, Accept_Status;
 
     AssertLockHeld(cs_main);
+
+    Accept_Status = false;
 
     PoS_Mining_Block = false;
     if ( pfrom == NULL )
@@ -3516,10 +3512,53 @@ bool PoS_Mining_Block;
 
         From_Node = pfrom;
 
-        // Store to disk
-        if (!pblock->AcceptBlock())
+        try
         {
-            LogPrintf("*** RGP ProcessBlock failed \n");
+
+
+            /* ---------------------------------------------------------------------------------
+               -- RGP, AcceptBlock, after many validation checks, store the new block to disk --
+               --      These blocks can be received blocks from synch nodes or POS blocks     --
+               --      Added an Exception handler to catch invalid blocks detected during     --
+               --      atempted write to block. If this failes a POS Stake has failed.        --
+               --------------------------------------------------------------------------------- */
+
+            Accept_Status = pblock->AcceptBlock();
+
+        }
+        catch (std::ios_base::failure& e)
+        {
+//            if (strstr(e.what(), "end of data"))
+//            {
+//                // Allow exceptions from under-length message on vRecv
+//                LogPrintf("ProcessMessages(%s, %u bytes) : Exception '%s' caught, normally caused by a message being shorter than its stated length\n", strCommand, nMessageSize, e.what());
+//            }
+//            else if (strstr(e.what(), "size too large"))
+//            {
+//                // Allow exceptions from over-long size
+                LogPrintf("pblock->AcceptBlock : Exception '%s' caught\n", e.what());
+//            }
+//            else
+//            {
+
+                PrintExceptionContinue(&e, "AcceptBlock()");
+//            }
+        }
+        catch (boost::thread_interrupted) {
+            throw;
+        }
+        catch (std::exception& e) {
+
+            PrintExceptionContinue(&e, "AcceptBlock()");
+        } catch (...) {
+
+            PrintExceptionContinue(NULL, "AcceptBlock()");
+        }
+
+
+        if (!Accept_Status)
+        {
+            LogPrintf("*** RGP ProcessBlock failed from %s \n", pfrom->addr.ToString() );
 
             /* Previous block is missing, let's ask for it. However, this will repeat
                backwords until it finds the correct block, could take a while         */
@@ -5215,7 +5254,7 @@ CInv Problem_Blocks_Inv;
                    //LogPrintf("*** RGP INVENTORY Processing, Already have in blockchain!!! \n");
                    if ( net_request_filter <= 0 )
                    {
-                       LogPrintf("*** RGP INVENTORY Processing, Already have in blockchain!!! \n");
+                       //LogPrintf("*** RGP INVENTORY Processing, Already have in blockchain!!! \n");
 
                        PushGetBlocks(pfrom, pindexBest, pindexBest->GetBlockHash()  ); /* RGP change the blockhash from 0 */
                        net_request_filter = 200;
@@ -5874,7 +5913,7 @@ string strCommand;
     //{
     //    if ( pfrom->vRecvMsg.size() != 0 )
     //    {
-            LogPrintf("ProcessMessages(%zu messages)\n", pfrom->vRecvMsg.size());
+    //        LogPrintf("ProcessMessages(%zu messages)\n", pfrom->vRecvMsg.size());
     //    }
     //}
 
@@ -6499,7 +6538,7 @@ double MoneySupply;
 
         mn_reward = blockValue * 4/10; /* 40% MN reward */
 
-        LogPrintf("RGP GetMasternodePayment masternode reward %d calc %f \n ", mn_reward, blockValue );
+        LogPrintf("RGP GetMasternodePayment masternode reward %d calc %d \n ", mn_reward, blockValue );
 
 
         //mn_calc = blockValue * 3/4; //75%

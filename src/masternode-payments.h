@@ -35,9 +35,6 @@ public:
     std::vector<unsigned char> vchSig;
     uint64_t score;
 
-
-
-
     CMasternodePaymentWinner()
     {
         nBlockHeight = 0;

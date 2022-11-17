@@ -480,7 +480,7 @@ int64_t GetAverageVoteTime()
 void CleanTransactionLocksList()
 {
 
-    LogPrintf("*** RGP ProcessMessageInstantX::CleanTransactionLocksList  \n");
+    //LogPrintf("*** RGP ProcessMessageInstantX::CleanTransactionLocksList  \n");
 
 
     if(pindexBest == NULL) return;
@@ -515,7 +515,7 @@ void CleanTransactionLocksList()
 uint256 CConsensusVote::GetHash() const
 {
 
-    LogPrintf("*** RGP ProcessMessageInstantX::CConsensusVote::GetHash  \n");
+    //LogPrintf("*** RGP ProcessMessageInstantX::CConsensusVote::GetHash  \n");
 
 
     return vinMasternode.prevout.hash + vinMasternode.prevout.n + txHash;
@@ -524,7 +524,7 @@ uint256 CConsensusVote::GetHash() const
 
 bool CConsensusVote::SignatureValid()
 {
-    LogPrintf("*** RGP ProcessMessageInstantX::CConsensusVote::SignatureValid  \n");
+    //LogPrintf("*** RGP ProcessMessageInstantX::CConsensusVote::SignatureValid  \n");
 
 
     std::string errorMessage;
@@ -550,7 +550,7 @@ bool CConsensusVote::SignatureValid()
 bool CConsensusVote::Sign()
 {
 
-    LogPrintf("*** RGP ProcessMessageInstantX::CConsensusVote::Sign  \n");
+    //LogPrintf("*** RGP ProcessMessageInstantX::CConsensusVote::Sign  \n");
 
 
     std::string errorMessage;
@@ -584,7 +584,7 @@ bool CConsensusVote::Sign()
 bool CTransactionLock::SignaturesValid()
 {
 
-    LogPrintf("*** RGP ProcessMessageInstantX::CConsensusVote::SignaturesValid \n");
+    //LogPrintf("*** RGP ProcessMessageInstantX::CConsensusVote::SignaturesValid \n");
 
 
     BOOST_FOREACH(CConsensusVote vote, vecConsensusVotes)
@@ -614,14 +614,14 @@ bool CTransactionLock::SignaturesValid()
 
 void CTransactionLock::AddSignature(CConsensusVote& cv)
 {
-    LogPrintf("*** RGP ProcessMessageInstantX:: CTransactionLock::AddSignature \n");
+    //LogPrintf("*** RGP ProcessMessageInstantX:: CTransactionLock::AddSignature \n");
 
     vecConsensusVotes.push_back(cv);
 }
 
 int CTransactionLock::CountSignatures()
 {
-    LogPrintf("*** RGP ProcessMessageInstantX:: CTransactionLock::CountSignatures \n");
+    //LogPrintf("*** RGP ProcessMessageInstantX:: CTransactionLock::CountSignatures \n");
 
     /*
         Only count signatures where the BlockHeight matches the transaction's blockheight.

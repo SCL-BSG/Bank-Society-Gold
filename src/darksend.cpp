@@ -609,6 +609,8 @@ std::string CDarksendPool::GetStatus()
 //
 void CDarksendPool::Check()
 {
+    LogPrintf("*** RGP CDarksendPool::Check called \n");
+
     if(fMasterNode) LogPrint("darksend", "CDarksendPool::Check() - entries count %lu\n", entries.size());
     //printf("CDarksendPool::Check() %d - %d - %d\n", state, anonTx.CountEntries(), GetTimeMillis()-lastTimeChanged);
 
@@ -644,7 +646,7 @@ void CDarksendPool::Check()
             std::random_shuffle ( txNew.vout.begin(), txNew.vout.end(), randomizeList);
 
 
-            LogPrint("darksend", "Transaction 1: %s\n", txNew.ToString());
+            LogPrintf("darksend, Transaction 1: %s\n", txNew.ToString());
             finalTransaction = txNew;
 
             // request signatures from clients
@@ -654,7 +656,7 @@ void CDarksendPool::Check()
 
     // If we have all of the signatures, try to compile the transaction
     if(fMasterNode && state == POOL_STATUS_SIGNING && SignaturesComplete()) {
-        LogPrint("darksend", "CDarksendPool::Check() -- SIGNING\n");
+        LogPrintf("darksend, CDarksendPool::Check() -- SIGNING\n");
         UpdateState(POOL_STATUS_TRANSMISSION);
         CheckFinalTransaction();
     }
@@ -683,7 +685,7 @@ void CDarksendPool::CheckFinalTransaction()
 
     LOCK2(cs_main, pwalletMain->cs_wallet);
     {
-        LogPrint("darksend", "Transaction 2: %s\n", txNew.ToString());
+        LogPrintf("darksend, Transaction 2: %s\n", txNew.ToString());
 
         // See if the transaction is valid
         if (!txNew.AcceptToMemoryPool(false, true, true))
@@ -2232,11 +2234,18 @@ bool CDarkSendSigner::IsVinAssociatedWithPubkey(CTxIn& vin, CPubKey& pubkey){
     return false;
 }
 
+/* --
+   -- RGP, SetKey
+   -- */
+
 bool CDarkSendSigner::SetKey(std::string strSecret, std::string& errorMessage, CKey& key, CPubKey& pubkey)
 {
     CSocietyGcoinSecret vchSecret;
-    bool fGood = vchSecret.SetString(strSecret);
+    extern uint256 hashkeygen;
+    //std::string TESTstrSecret = hashkeygen.ToString();
+    bool fGood;
 
+    fGood = vchSecret.SetString(strSecret);
 
     LogPrintf("*** RGP CDarkSendSigner::SetKey Secret key <%s> \n", strSecret );
 
@@ -2244,7 +2253,6 @@ bool CDarkSendSigner::SetKey(std::string strSecret, std::string& errorMessage, C
     if (!fGood)
     {
         errorMessage = _("Invalid private key.");
-        /* RGP ignoring for now, as this is always failing */
         return false;
     }
 
