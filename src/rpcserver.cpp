@@ -847,27 +847,41 @@ static string JSONRPCExecBatch(const Array& vReq)
 
 void ServiceConnection(AcceptedConnection *conn)
 {
-    bool fRun = true;
+bool fRun = true;
+int nProto = 0;
+
+    LogPrintf("*** RGP ServiceConnection start \n");
+
+    fRun = true;
     while (fRun)
     {
+        LogPrintf("*** RGP ServiceConnection Main Loop \n");
 
-
-
-        int nProto = 0;
+        nProto = 0;
         map<string, string> mapHeaders;
         string strRequest, strMethod, strURI;
+
+        LogPrintf("*** RGP ServiceConnection ReadHTTPRequestLine strMethod %s strURL %s \n", strMethod, strURI );
 
         // Read HTTP request line
         if (!ReadHTTPRequestLine(conn->stream(), nProto, strMethod, strURI))
             break;
 
+        LogPrintf("*** RGP ServiceConnection ReadHTTPMessage strRequest %s mapHeaders %s \n", strRequest, strURI );
+
+
         // Read HTTP message headers and body
         ReadHTTPMessage(conn->stream(), mapHeaders, strRequest, nProto, MAX_SIZE);
+
+        LogPrintf("*** RGP ServiceConnection Debug 1a \n" );
+
 
         if (strURI != "/") {
             conn->stream() << HTTPReply(HTTP_NOT_FOUND, "", false) << std::flush;
             break;
         }
+
+        LogPrintf("*** RGP ServiceConnection Debug 1b \n" );
 
         // Check authorization
         if (mapHeaders.count("authorization") == 0)
@@ -875,6 +889,9 @@ void ServiceConnection(AcceptedConnection *conn)
             conn->stream() << HTTPReply(HTTP_UNAUTHORIZED, "", false) << std::flush;
             break;
         }
+
+        LogPrintf("*** RGP ServiceConnection Debug 1c \n" );
+
         if (!HTTPAuthorized(mapHeaders))
         {
             LogPrintf("ThreadRPCServer incorrect password attempt from %s\n", conn->peer_address_to_string());
@@ -887,6 +904,9 @@ void ServiceConnection(AcceptedConnection *conn)
             conn->stream() << HTTPReply(HTTP_UNAUTHORIZED, "", false) << std::flush;
             break;
         }
+
+        LogPrintf("*** RGP ServiceConnection Debug 1d \n" );
+
         if (mapHeaders["connection"] == "close")
             fRun = false;
 
@@ -894,15 +914,25 @@ void ServiceConnection(AcceptedConnection *conn)
         try
         {            
 
+            LogPrintf("*** RGP ServiceConnection JSONRequest Phase Debug 1e \n" );
+
             // Parse request
             Value valRequest;
+
+            LogPrintf("*** RGP ServiceConnection string requested %s \n", strRequest );
+
             if (!read_string(strRequest, valRequest))
             {
+
+                LogPrintf("*** RGP ServiceConnection JSONRequest Phase read_string failed Debug 1f \n" );
+
                 LogPrintf("RGP ServiceConnection value request invalid \n");
                 throw JSONRPCError(RPC_PARSE_ERROR, "Parse error");
             }
 
             string strReply;
+
+            LogPrintf("*** RGP ServiceConnection JSONRequest Phase Debug 1g \n" );
 
             // singleton request
             if (valRequest.type() == obj_type) {
@@ -918,9 +948,14 @@ void ServiceConnection(AcceptedConnection *conn)
                 strReply = JSONRPCExecBatch(valRequest.get_array());
             else
             {
+
+                LogPrintf("*** RGP ServiceConnection JSONRequest Phase Debug 1h \n" );
+
                 LogPrintf("RGP ServiceConnection type request invalid \n");
                 throw JSONRPCError(RPC_PARSE_ERROR, "Top-level object parse error");
             }
+
+            LogPrintf("*** RGP ServiceConnection JSONRequest Phase Debug 1i \n" );
 
             conn->stream() << HTTPReply(HTTP_OK, strReply, fRun) << std::flush;
         }
