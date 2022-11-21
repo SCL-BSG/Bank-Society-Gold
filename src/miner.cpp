@@ -1133,10 +1133,8 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
 
 
         //while ( IsInitialBlockDownload() )
-        while ( Time_to_Last_block > 240 )
+        while ( Time_to_Last_block > 200 )
         {          
-
-
 
             /* RGP, Otherwise, blocks are coming in and this may be a synching process */
             Time_to_Last_block = GetTime() - pindexBest->GetBlockTime();
@@ -1148,14 +1146,14 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                Delay_factor is 10 instead of 1000 */
 
             //LogPrintf("*** RGP ThreadStakeMiner delaying! %d \n",  Time_to_Last_block   );
-            if ( Time_to_Last_block < 1000 )
+            if ( Time_to_Last_block < 240 )
             {
                 /* Consider block may be stuck */
                 MilliSleep( 1000 );
             }
             else
             {
-                if ( Time_to_Last_block > 2000 )
+                if ( Time_to_Last_block > 240 )
                 {
                     /* Block is up to date, eg gettime is 2000+ last received block */
                 }
@@ -1199,7 +1197,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                 /* Block time is not changing, could be waiting at end of the block chain */
                 //LogPrintf("RGP Miner Stake synch loop, blocks stuck ... \n");
                 Time_to_Last_block = GetTime() - pindexBest->GetBlockTime();
-                //LogPrintf(" RGP stuck check time to gettime() %d ", Time_to_Last_block   );
+                LogPrintf(" RGP stuck check time to gettime() %d ", Time_to_Last_block   );
 
                 /* ---------------------
                    -- RGP JIRA BSG-93 --
@@ -1218,7 +1216,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                        ------------------------------------------------------------------- */ 
 
                     Time_to_Last_block = GetTime() - pindexBest->GetBlockTime();
-                    if ( Time_to_Last_block > 480 )
+                    if ( Time_to_Last_block > 240 )
                     {
                         /* something is wrong for code into next sequence */
                         break;
@@ -1267,14 +1265,14 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
 
             Time_to_Last_block = GetTime() - pindexBest->GetBlockTime();
             /* Check if less than half way to next block */
-            if ( Time_to_Last_block > 0 && Time_to_Last_block < 180  )
+            if ( Time_to_Last_block > 0 && Time_to_Last_block < 200  )
             {
 
                 /* Not synched so wait for synch */
 
                 //ms_timeout = ( STAKE_BLOCK_TIME - Time_to_Last_block  ) * 1000;
 
-                LogPrintf("*** RGP Miner 3 loop timeout is %d Time_to_Last_block %d \n", ms_timeout, Time_to_Last_block );
+                //LogPrintf("*** RGP Miner 3 loop timeout is %d Time_to_Last_block %d \n", ms_timeout, Time_to_Last_block );
 
                 if ( Time_to_Last_block > 220 && Time_to_Last_block < 240 )
                     ms_timeout = 100;
@@ -1311,7 +1309,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
 
         }
 
-        LogPrintf("*** RGP ThreadStakeMiner STARTED  Create NEW BLOCK *** \n"  );
+        LogPrintf("*** RGP ThreadStakeMiner STARTED  Staking can begin *** \n"  );
 
         //
         // Create new block
@@ -1321,13 +1319,11 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
         if ( fRequestShutdown == true )
             return;
 
-        /* --
+        /* -----------------------------------------------------------------------------
            -- RGP, Signblock allows a coin maturity check every 15 seconds at present --
-           --      THis is too short, this needs to be optimised to keep processes    --
-           --      less busy.                                                         --
            ----------------------------------------------------------------------------- */
 
-        stake_timeout = ( GetRandInt(5000) ); /* attempt to vary each wallet to avoid conflicted entries */
+        stake_timeout = ( GetRandInt(10000) ); /* attempt to vary each wallet to avoid conflicted entries */
         LogPrintf("*** Stake timeout is %d msecs \n", stake_timeout);
         /* wait a random time before creating a new block */
         MilliSleep( stake_timeout );
@@ -1345,6 +1341,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                ------------------------------------------------------------------- */
 
             last_recorded_block_time = pindexBest->GetBlockTime();  /* Get the current block time */
+            time_to_sleep = 0;
             wait_for_best_time = true;
             first_time = true;
             do
@@ -1358,29 +1355,38 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
 
                 /* Calculate haw long to the next block and sleep */
                 Time_in_since_Last_Block = GetTime() - pindexBest->GetBlockTime();
-                LogPrintf("*** RGP Before Signblock, time between last block %d and now %d, time since last block stored %d \n", pindexBest->GetBlockTime(), GetTime(), Time_in_since_Last_Block );
+                //LogPrintf("*** RGP Before Signblock, time between last block %d and now %d, time since last block stored %d \n", pindexBest->GetBlockTime(), GetTime(), Time_in_since_Last_Block );
 
                 /* RGP Sleep until next block is created */
                 /* REMOVED STAKE ADJUST */
                 if ( Time_in_since_Last_Block > STAKE_BLOCK_TIME  )
                     Time_in_since_Last_Block = 100;
 
-                LogPrintf("*** RGP time to sleep %d %d %d  \n", time_to_sleep, STAKE_BLOCK_TIME, Time_in_since_Last_Block  );
+                //time_to_sleep = ( ( STAKE_BLOCK_TIME - Time_in_since_Last_Block  ) * 1000 ); no workee always zero!
 
-                time_to_sleep = ( ( STAKE_BLOCK_TIME - Time_in_since_Last_Block  ) * 1000 );
+                time_to_sleep = STAKE_BLOCK_TIME - Time_in_since_Last_Block;
+
+
+                //LogPrintf("*** RGP time to sleep %d %d %d  \n", time_to_sleep, STAKE_BLOCK_TIME, Time_in_since_Last_Block  );
+
+
 
 
                 if ( time_to_sleep  == 0 )
                 {
+                    //LogPrintf("*** RGP time to sleep %d %d %d  \n", time_to_sleep, STAKE_BLOCK_TIME, Time_in_since_Last_Block  );
+
+                    time_to_sleep = STAKE_BLOCK_TIME - Time_in_since_Last_Block;
+
+                    time_to_sleep = (int64_t) GetRandInt( (int) 180 );
                     LogPrintf("*** RGP time to sleep %d %d %d  \n", time_to_sleep, STAKE_BLOCK_TIME, Time_in_since_Last_Block  );
-                    // RGP MilliSleep( GetRandInt(20000) );
-                    MilliSleep( GetRandInt(5000) );
+                    MilliSleep( time_to_sleep * 1000 );
                     wait_for_best_time = false;
-                    LogPrintf("*** RGP After Sleep! \n" );
-                    continue;
+                    //LogPrintf("*** RGP After Sleep! \n" );
+                    //continue;
                 }
                 else
-                    MilliSleep( time_to_sleep  );
+                    MilliSleep( time_to_sleep * 1000  );
 
                 first_time = false;
 
