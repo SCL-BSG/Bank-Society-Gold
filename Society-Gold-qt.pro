@@ -1,14 +1,14 @@
 #----------------------------------------------------------
 #-- RGP, Require defines after move to Ubuntu 18 from 16 --
 #----------------------------------------------------------
-OPENSSL_INCLUDE_PATH = ../coin_depends/openssl-1.0.1l/include
-OPENSSL_INCLUDE_PATH += ../coin_depends/openssl-1.0.1l/crypto/bn
-OPENSSL_INCLUDE_PATH += ../coin_depends/openssl-1.0.1l/crypto/ec
-OPENSSL_INCLUDE_PATH += ../coin_depends/openssl-1.0.1l/crypto/evp
-OPENSSL_INCLUDE_PATH += ../coin_depends/openssl-1.0.1l/crypto/hmac
+OPENSSL_INCLUDE_PATH = ../coin_depends/openssl-1.1.1g/include
+OPENSSL_INCLUDE_PATH += ../coin_depends/openssl-1.1.1g/crypto/bn
+OPENSSL_INCLUDE_PATH += ../coin_depends/openssl-1.1.1g/crypto/ec
+OPENSSL_INCLUDE_PATH += ../coin_depends/openssl-1.1.1g/crypto/evp
+OPENSSL_INCLUDE_PATH += ../coin_depends/openssl-1.1.1g/crypto/hmac
 
 
-OPENSSL_LIB_PATH=../coin_depends/openssl-1.0.1l/
+OPENSSL_LIB_PATH=../coin_depends/openssl-1.1.1g/
 
 #BOOST_LIB_PATH= /home/bpickles/BSC_G/boost_1_75_0/libs
 #BOOST_INCLUDE_PATH= /home/bpickles/BSC_G/boost_1_75_0/boost
