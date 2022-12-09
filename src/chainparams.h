@@ -3,6 +3,10 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+/* --------------------------------------------
+   -- JIRA BSG-10 OpenSSL 1.1.1g implemented --
+   -------------------------------------------- */
+
 #ifndef BITCOIN_CHAIN_PARAMS_H
 #define BITCOIN_CHAIN_PARAMS_H
 
@@ -58,7 +62,12 @@ public:
     const MessageStartChars& MessageStart() const { return pchMessageStart; }
     const vector<unsigned char>& AlertKey() const { return vAlertPubKey; }
     int GetDefaultPort() const { return nDefaultPort; }
+
+
+
+
     const CBigNum& ProofOfWorkLimit() const { return bnProofOfWorkLimit; }
+
     int SubsidyHalvingInterval() const { return nSubsidyHalvingInterval; }
     virtual const CBlock& GenesisBlock() const = 0;
     virtual bool RequireRPCPassword() const { return true; }

@@ -1515,7 +1515,13 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                  {
                       //LogPrintf("*** RGP Stake was NOT successfull, small delay and then go again!\n");
                       MilliSleep( 1000 );
-                      break;
+                      /* --------------------
+                         -- JIRA Bug BTS-8 --
+                         --------------------------------------------------------------------
+                         -- The break caused staking to stop, as the break exited the main --
+                         -- while loop.                                                    --
+                         -------------------------------------------------------------------- */
+                      /* break;  REMOVED */
 
                  }
             }

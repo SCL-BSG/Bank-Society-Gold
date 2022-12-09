@@ -5,6 +5,8 @@
 
 #include "util.h"
 
+#include <openssl/crypto.h>
+
 #include "chainparams.h"
 #include "sync.h"
 #include "ui_interface.h"

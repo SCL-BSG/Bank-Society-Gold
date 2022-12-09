@@ -3,7 +3,15 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+/* --------------------------------------------
+   -- JIRA BSG-10 OpenSSL 1.1.1g implemented --
+   -------------------------------------------- */
+
 #include "rpcprotocol.h"
+
+#include <openssl/err.h>
+#include <openssl/crypto.h>
+
 
 #include "util.h"
 

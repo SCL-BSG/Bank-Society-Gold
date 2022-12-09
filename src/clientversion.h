@@ -1,22 +1,24 @@
 #ifndef CLIENTVERSION_H
 #define CLIENTVERSION_H
 
-/* RGP : Changed on 7th Sep 2022 */
+/* RGP : Changed on 9th Dec 2022 */
 
 /* -------------------------------------------------------------
-   -- client versioning V2.0.5.3 --                           --
+   -- client versioning V2.0.6.0 --                           --
    -----------------------                                    --
    -- This release includes fixes for wallet crash during     --
    -- stakes, POW miner delays to meet 240sec block spacing   --
    -- and issues with stake delays using embedded random      --
    -- function calls in MilliSecond().                        --
+   -- JIRA BTS-8 issue resolved.                              --
+   -- JIRA BSG-10 OpenSSL 1.1.1g implemented.                 --
    ------------------------------------------------------------- */
  
 // These need to be macros, as version.cpp's and bitcoin-qt.rc's voodoo requires it
 #define CLIENT_VERSION_MAJOR       2
 #define CLIENT_VERSION_MINOR       0
-#define CLIENT_VERSION_REVISION    5
-#define CLIENT_VERSION_BUILD       3
+#define CLIENT_VERSION_REVISION    6
+#define CLIENT_VERSION_BUILD       0
 
 
 static const int CLIENT_VERSION_RPC =

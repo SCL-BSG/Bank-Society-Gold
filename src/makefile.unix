@@ -9,14 +9,14 @@
 #-- RGP, Require defines after move to Ubuntu 18 from 16 --
 #--      1.1.1g
 #----------------------------------------------------------
-#OPENSSL_INCLUDE_PATH = ../../coin_depends/openssl-1.1.1g/include
-#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1g/crypto/bn
-#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1g/crypto/ec
-#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1g/crypto/evp
-#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1g/crypto/hmac
+OPENSSL_INCLUDE_PATH = ../../coin_depends/openssl-1.1.1g/include
+OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1g/crypto/bn
+OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1g/crypto/ec
+OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1g/crypto/evp
+OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1g/crypto/hmac
 
-#BOOST_LIB_PATH:= /home/bpickles/BankSocietyCoin-Linux/boost_1_57_0/libs
-#OPENSSL_LIB_PATH=../../coin_depends/openssl-1.1.1g/
+BOOST_LIB_PATH:= /home/bpickles/BankSocietyCoin-Linux/boost_1_57_0/libs
+OPENSSL_LIB_PATH=../../coin_depends/openssl-1.1.1g/
 
 #----------------------------------------------------------
 #-- RGP, Require defines after move to Ubuntu 18 from 16 --
@@ -35,14 +35,25 @@
 #-- RGP, Require defines after move to Ubuntu 18 from 16 --
 #--      1.1.1g
 #----------------------------------------------------------
-OPENSSL_INCLUDE_PATH = ../../coin_depends/openssl-1.0.1l/include
-OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.0.1l/crypto/bn
-OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.0.1l/crypto/ec
-OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.0.1l/crypto/evp
-OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.0.1l/crypto/hmac
+#OPENSSL_INCLUDE_PATH = ../../coin_depends/openssl-1.0.1l/include
+#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.0.1l/crypto/bn
+#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.0.1l/crypto/ec
+#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.0.1l/crypto/evp
+#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.0.1l/crypto/hmac
 
-BOOST_LIB_PATH:= /home/bpickles/BankSocietyCoin-Linux/boost_1_57_0/libs
-OPENSSL_LIB_PATH=../../coin_depends/openssl-1.0.1l/
+#OPENSSL_INCLUDE_PATH = ../../coin_depends/openssl-1.1.0/include
+#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.0/crypto/bn
+#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.0/crypto/ec
+#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.0/crypto/evp
+#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.0/crypto/hmac
+
+
+//BOOST_LIB_PATH:= /home/bpickles/BankSocietyCoin-Linux/boost_1_57_0/libs
+//OPENSSL_LIB_PATH=../../coin_depends/openssl-1.0.1l/
+//OPENSSL_LIB_PATH=../../coin_depends/openssl-1.1.0/
+
+
+
 
 
 USE_UPNP:=0

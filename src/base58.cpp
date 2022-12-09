@@ -2,6 +2,10 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+/* --------------------------------------------
+   -- JIRA BSG-10 OpenSSL 1.1.1g implemented --
+   -------------------------------------------- */
+
 #include "base58.h"
 
 #include "hash.h"
@@ -30,14 +34,14 @@ bool DecodeBase58(const char* psz, std::vector<unsigned char>& vchRet) {
         psz++;
     // Skip and count leading '1's.
     int zeroes = 0;
-    while (*psz == '1') {
+    while (*psz == '1') 
+    {
         zeroes++;
         psz++;
     }
     // Convert big endian string to bignum
     for (const char* p = psz; *p; p++)
     {
-
         const char* p1 = strchr(pszBase58, *p);
         if (p1 == NULL)
         {
@@ -49,16 +53,15 @@ bool DecodeBase58(const char* psz, std::vector<unsigned char>& vchRet) {
         }
 
         bnChar.setulong(p1 - pszBase58);
-        if (!BN_mul(&bn, &bn, &bn58, pctx))
-        {
-
+       if (!BN_mul(bn.to_bignum(), bn.to_bignum(), bn58.to_bignum(), pctx))
             throw bignum_error("DecodeBase58 : BN_mul failed");
-        }
         bn += bnChar;
     }
 
      // Get bignum as little endian data
+
     std::vector<unsigned char> vchTmp = bn.getvch();
+
 
     // Trim off sign byte if present
     if (vchTmp.size() >= 2 && vchTmp.end()[-1] == 0 && vchTmp.end()[-2] >= 0x80)
