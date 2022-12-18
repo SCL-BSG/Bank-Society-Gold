@@ -2340,11 +2340,11 @@ MilliSleep(1);
                         {
                             if (GetTime() - pnode->nLastSend < 60)
                             {
-                                //if ( fDebug )
-                                //{
+                                if ( fDebug )
+                                {
                                     LogPrintf("Error: Unexpected idle interruption 1 %s\n", pnode->addrName);
-                                //}
-                                //pnode->CloseSocketDisconnect();
+                                }
+                                pnode->CloseSocketDisconnect();
                             }
                         }
                     }
@@ -2369,10 +2369,10 @@ MilliSleep(1);
                         {
                             if (GetTime() - pnode->nLastSend < 120)
                             {
-                                //if ( fDebug )
-                                //{
+                                if ( fDebug )
+                                {
                                     LogPrintf("Error: Unexpected idle interruption 2 %s\n", pnode->addrName);
-                                //}
+                                }
                                 //pnode->CloseSocketDisconnect();
                             }
                         }
@@ -2393,10 +2393,10 @@ MilliSleep(1);
                 {
                     if (GetTime() - pnode->nLastSend < 120)
                     {
-                        //if ( fDebug )
-                        //{
+                        if ( fDebug )
+                        {
                             LogPrintf("Error: Unexpected idle interruption  3 %s\n", pnode->addrName);
-                        //}
+                        }
                         //pnode->CloseSocketDisconnect();
                     }
                 }

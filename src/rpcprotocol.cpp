@@ -116,31 +116,52 @@ bool ReadHTTPRequestLine(std::basic_istream<char>& stream, int &proto,
     string str;
     getline(stream, str);
 
+    LogPrintf("*** RGP ReadHTTPRequestLine START stream %s  \n", str);
+
     // HTTP request line is space-delimited
     vector<string> vWords;
     boost::split(vWords, str, boost::is_any_of(" "));
     if (vWords.size() < 2)
+    {
+        LogPrintf("*** RGP ReadHTTPRequestLine vWords.size < 2 logic failed \n");
         return false;
+    }
+
+    LogPrintf("*** RGP ReadHTTPRequestLine vWords[0] %s vWords[1] %s  \n", vWords[0], vWords[1] );
+
 
     // HTTP methods permitted: GET, POST
     http_method = vWords[0];
     if (http_method != "GET" && http_method != "POST")
+    {
+        LogPrintf("*** RGP ReadHTTPRequestLine http_method is not GET or POST \n");
         return false;
+    }
 
     // HTTP URI must be an absolute path, relative to current host
     http_uri = vWords[1];
     if (http_uri.size() == 0 || http_uri[0] != '/')
+    {
+        LogPrintf("*** RGP ReadHTTPRequestLine http_uri.size is ZERO or http_uri[0] is not / \n");
+        LogPrintf("*** RGP ReadHTTPRequestLine http_uri.size is %d  http_uri[0] is %s \n", http_uri.size(), http_uri );
         return false;
+    }
 
     // parse proto, if present
     string strProto = "";
     if (vWords.size() > 2)
+    {
+        LogPrintf("*** RGP ReadHTTPRequestLine strProto OK %s \n", vWords[2] );
         strProto = vWords[2];
+    }
 
     proto = 0;
     const char *ver = strstr(strProto.c_str(), "HTTP/1.");
     if (ver != NULL)
+    {
+        LogPrintf("*** RGP ReadHTTPRequestLine HTTP version is not zero OK \n");
         proto = atoi(ver+7);
+    }
 
     return true;
 }

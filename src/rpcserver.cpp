@@ -583,6 +583,9 @@ static void RPCAcceptHandler(boost::shared_ptr< basic_socket_acceptor<Protocol, 
                              const boost::system::error_code& error)
 {
     // Immediately start accepting new connections, except when we're cancelled or our socket is closed.
+
+    LogPrintf("*** RGP RPC Server RPCAcceptHandler() start from %s \n", conn->peer_address_to_string() );
+
     if (error != asio::error::operation_aborted && acceptor->is_open())
         RPCListen(acceptor, context, fUseSSL);
 
@@ -591,6 +594,8 @@ static void RPCAcceptHandler(boost::shared_ptr< basic_socket_acceptor<Protocol, 
     // TODO: Actually handle errors
     if (error)
     {
+        LogPrintf("*** RGP RPC Server RPCAcceptHandler() error condition \n");
+
         delete conn;
     }
 
@@ -604,7 +609,10 @@ static void RPCAcceptHandler(boost::shared_ptr< basic_socket_acceptor<Protocol, 
             conn->stream() << HTTPReply(HTTP_FORBIDDEN, "", false) << std::flush;
         delete conn;
     }
-    else {
+    else
+    {
+        LogPrintf("*** RGP RPC Server ServiceConnect() start \n");
+
         ServiceConnection(conn);
         conn->close();
         delete conn;
@@ -848,9 +856,10 @@ static string JSONRPCExecBatch(const Array& vReq)
 void ServiceConnection(AcceptedConnection *conn)
 {
 bool fRun = true;
+bool httpRet; false;
 int nProto = 0;
 
-    LogPrintf("*** RGP ServiceConnection start \n");
+    LogPrintf("*** RGP ServiceConnection start connection with %s \n", conn->peer_address_to_string() );
 
     fRun = true;
     while (fRun)
@@ -861,23 +870,36 @@ int nProto = 0;
         map<string, string> mapHeaders;
         string strRequest, strMethod, strURI;
 
-        LogPrintf("*** RGP ServiceConnection ReadHTTPRequestLine strMethod %s strURL %s \n", strMethod, strURI );
+        LogPrintf("*** RGP ServiceConnection before ReadHTTPRequestLine  \n" );
 
         // Read HTTP request line
         if (!ReadHTTPRequestLine(conn->stream(), nProto, strMethod, strURI))
+        {
+            LogPrintf("*** RGP ServiceConnection ReadHTTPMessage request FAILED! \n");
             break;
+        }
 
-        LogPrintf("*** RGP ServiceConnection ReadHTTPMessage strRequest %s mapHeaders %s \n", strRequest, strURI );
+        LogPrintf("*** RGP ServiceConnection ReadHTTPMessage strRequest %s mapHeaders %s Protocol %d \n", strRequest, strURI, nProto );
 
 
         // Read HTTP message headers and body
-        ReadHTTPMessage(conn->stream(), mapHeaders, strRequest, nProto, MAX_SIZE);
+        // RGP added bool checks
+        httpRet = false;
+        httpRet = ReadHTTPMessage(conn->stream(), mapHeaders, strRequest, nProto, MAX_SIZE);
 
-        LogPrintf("*** RGP ServiceConnection Debug 1a \n" );
+        if ( httpRet == false )
+        {
+            LogPrintf("*** RGP ServiceConnection Error, ReadHTTP, no stream contents \n" );
+            break;
+        }
 
 
-        if (strURI != "/") {
+        if (strURI != "/")
+        {
             conn->stream() << HTTPReply(HTTP_NOT_FOUND, "", false) << std::flush;
+
+            LogPrintf("*** RGP ServiceConnection Error with strURI %s \n", strURI );
+
             break;
         }
 
@@ -887,7 +909,9 @@ int nProto = 0;
         if (mapHeaders.count("authorization") == 0)
         {
             conn->stream() << HTTPReply(HTTP_UNAUTHORIZED, "", false) << std::flush;
-            break;
+
+            LogPrintf("*** RGP ServiceConnection Error with mapheaders count\n" );
+            break;                       
         }
 
         LogPrintf("*** RGP ServiceConnection Debug 1c \n" );
@@ -895,6 +919,7 @@ int nProto = 0;
         if (!HTTPAuthorized(mapHeaders))
         {
             LogPrintf("ThreadRPCServer incorrect password attempt from %s\n", conn->peer_address_to_string());
+
             /* Deter brute-forcing short passwords.
                If this results in a DoS the user really
                shouldn't have their RPC port exposed. */
@@ -917,9 +942,7 @@ int nProto = 0;
             LogPrintf("*** RGP ServiceConnection JSONRequest Phase Debug 1e \n" );
 
             // Parse request
-            Value valRequest;
-
-            LogPrintf("*** RGP ServiceConnection string requested %s \n", strRequest );
+            Value valRequest;            
 
             if (!read_string(strRequest, valRequest))
             {
@@ -930,6 +953,8 @@ int nProto = 0;
                 throw JSONRPCError(RPC_PARSE_ERROR, "Parse error");
             }
 
+            LogPrintf("*** RGP ServiceConnection string requested %s \n", strRequest );
+
             string strReply;
 
             LogPrintf("*** RGP ServiceConnection JSONRequest Phase Debug 1g \n" );
@@ -937,6 +962,8 @@ int nProto = 0;
             // singleton request
             if (valRequest.type() == obj_type) {
                 jreq.parse(valRequest);
+
+                LogPrintf("*** RGP ServiceConnection JSONRequest before execute Debug 1ga Method %s \n",  jreq.strMethod );
 
                 Value result = tableRPC.execute(jreq.strMethod, jreq.params);
 
