@@ -68,7 +68,7 @@ static const int64_t MIN_TX_FEE = 1000;
 /** Fees smaller than this (in satoshi) are considered zero fee (for relaying) */
 static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 /** No amount larger than this (in satoshi) is valid */
-static const int64_t MAX_MONEY = 75000000 * COIN;  // 75M COIN
+static const int64_t MAX_MONEY = 150000000 * COIN;  // 150M COIN
 
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 /** Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp. */

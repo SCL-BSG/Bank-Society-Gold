@@ -2,6 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2018 Profit Hunters Coin developers
 // Copyright (c) 2019 Bank Society Coin Developers
+// Copyright (c) 2023 Bank Soiety Gold Coin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -1747,7 +1748,10 @@ int64_t GetProofOfStakeReward(const CBlockIndex* pindexPrev, int64_t nCoinAge, i
     MoneySupply = (double)pindexBest->nMoneySupply / (double)COIN;
     //LogPrintf("*** RGP PoS Moneysupply is string %f \n", MoneySupply  );
 
-    if ( MoneySupply > 75000000.0 )
+    /* ---------------------------------------------------------------------
+     * -- RGP, 28th April 2023, Changed the Money Supply from 75M to 150M --
+     * --------------------------------------------------------------------- */
+    if ( MoneySupply > 150000000.0 )
     {
         LogPrintf("MAXIMUM MoneySupply Exceeded!!!\n");
         return 0;
@@ -1772,40 +1776,40 @@ int64_t GetProofOfStakeReward(const CBlockIndex* pindexPrev, int64_t nCoinAge, i
     if (pindexPrev->nHeight > 100)
     {
         /* RGP, JIRA BSG-181 Update */
-        nSubsidy = nSubsidy * 0.35;
+        nSubsidy = nSubsidy * 0.15; //0.15 was 0.35
     }
     /* ------ Initial Mining Phase: Block #500 001 Up to 1 000 000 ------ */
     if (pindexPrev->nHeight > 1000000)
     {
         /* RGP, JIRA BSG-181 Update */
-        nSubsidy = nSubsidy * 0.30;
+        nSubsidy = nSubsidy * 0.05; //  was 0.30
     }
     /* ------ Regular Mining Phase: Block #1 000 001 Up to 5 000 000 ------ */
     if (pindexPrev->nHeight > 5000000)
     {
         /* RGP, JIRA BSG-181 Update */
-        nSubsidy = nSubsidy * 0.15;  //
+        nSubsidy = nSubsidy * 0.025; // 0.025 was 0.15
     }
 
     /* ------ Regular Mining Phase: Block #5 000 001 Up to 20 000 000  ------ */
     if (pindexPrev->nHeight > 5000000)
     {
         /* RGP, JIRA BSG-181 Update */
-        nSubsidy = nSubsidyBase * 0.1; //
+        nSubsidy = nSubsidyBase * 0.01; // 0.01 was 0.1
     }
 
     /* ------ Regular Mining Phase: Block #20 000 001 Up to 50 000 000  ------ */
     if (pindexPrev->nHeight > 20000000)
     {
         /* RGP, JIRA BSG-181 Update */
-        nSubsidy = nSubsidyBase * 0.05; //
+        nSubsidy = nSubsidyBase * 0.005; // 0.005 was 0.05
     }
 
     /* ------ Regular Mining Phase: Block #50 000 001 Up to 75 000 000  ------ */
     if (pindexPrev->nHeight > 50000001 )
     {
         /* RGP, JIRA BSG-181 Update */
-        nSubsidy = nSubsidyBase * 0.02; //
+        nSubsidy = nSubsidyBase * 0.0025; // 0.0025 was 0.02
     }
 
     //LogPrintf("Coin Stake creation GetProofOfStakeReward(): create=%s subsidybase %s nCoinAge=%d\n", FormatMoney(nSubsidy), nSubsidyBase, nCoinAge);
@@ -6527,7 +6531,10 @@ double MoneySupply;
     MoneySupply = (double)pindexBest->nMoneySupply / (double)COIN;
     //LogPrintf(" %f \n", MoneySupply  );
 
-    if ( MoneySupply > 75000000.0 )
+    /* --------------------------------------------------------
+       -- RGP, 30th April 2023, Money supply changed to 150M --
+       -------------------------------------------------------- */
+    if ( MoneySupply > 150000000.0 )
     {
        /* Maximum MoneySupply has been reached, no more rewards */
        mn_reward = 0;
