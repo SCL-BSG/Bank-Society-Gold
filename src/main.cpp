@@ -1776,13 +1776,13 @@ int64_t GetProofOfStakeReward(const CBlockIndex* pindexPrev, int64_t nCoinAge, i
     if (pindexPrev->nHeight > 100)
     {
         /* RGP, JIRA BSG-181 Update */
-        nSubsidy = nSubsidy * 0.15; //0.15 was 0.35
+        nSubsidy = nSubsidy * 0.35; //0.35 keep the same. Otherwise, incorrect rewards.
     }
     /* ------ Initial Mining Phase: Block #500 001 Up to 1 000 000 ------ */
     if (pindexPrev->nHeight > 1000000)
     {
         /* RGP, JIRA BSG-181 Update */
-        nSubsidy = nSubsidy * 0.05; //  was 0.30
+        nSubsidy = nSubsidy * 0.30; // Keep the same, Otherwise incorrect rewards
     }
     /* ------ Regular Mining Phase: Block #1 000 001 Up to 5 000 000 ------ */
     if (pindexPrev->nHeight > 5000000)
