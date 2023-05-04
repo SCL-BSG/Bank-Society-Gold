@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2013 The NovaCoin developers
 // Copyright (c) 2018 Profit Hunters Coin developers
-// Copyright (c) 2022 Bank Society Gold developers
+// Copyright (c) 2018-2023 Bank Society Gold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 

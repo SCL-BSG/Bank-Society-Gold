@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2018 Profit Hunters Coin developers
 // Copyright (c) 2019 Bank Society Coin Developers
-// Copyright (c) 2023 Bank Soiety Gold Coin Developers
+// Copyright (c) 2020-2023 Bank Soiety Gold Coin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 

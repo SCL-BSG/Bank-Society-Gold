@@ -1,7 +1,7 @@
 #ifndef CLIENTVERSION_H
 #define CLIENTVERSION_H
 
-/* RGP : Changed on 9th Dec 2022 */
+/* RGP : Changed on 4th May 2023 */
 
 /* -------------------------------------------------------------
    -- client versioning V2.0.6.0 --                           --
