@@ -7,11 +7,13 @@
 
 #include "base58.h"
 #include "rpcserver.h"
-#include "txdb.h"
+#include "standard.h"
+//#include "txdb.h"
 #include "init.h"
 #include "main.h"
 #include "net.h"
 #include "keystore.h"
+#include "txdb-leveldb.h"
 #ifdef ENABLE_WALLET
 #include "wallet.h"
 #endif
@@ -27,80 +29,80 @@ void ScriptPubKeyToJSON(const CScript& scriptPubKey, Object& out, bool fIncludeH
     vector<CTxDestination> addresses;
     int nRequired;
 
-    out.push_back(Pair("asm", scriptPubKey.ToString()));
+    out.push_back(json_spirit::Pair("asm", scriptPubKey.ToString()));
 
     if (fIncludeHex)
-        out.push_back(Pair("hex", HexStr(scriptPubKey.begin(), scriptPubKey.end())));
+        out.push_back(json_spirit::Pair("hex", HexStr(scriptPubKey.begin(), scriptPubKey.end())));
 
     if (!ExtractDestinations(scriptPubKey, type, addresses, nRequired))
     {
-        out.push_back(Pair("type", GetTxnOutputType(type)));
+        out.push_back(json_spirit::Pair("type", GetTxnOutputType(type)));
         return;
     }
 
-    out.push_back(Pair("reqSigs", nRequired));
-    out.push_back(Pair("type", GetTxnOutputType(type)));
+    out.push_back(json_spirit::Pair("reqSigs", nRequired));
+    out.push_back(json_spirit::Pair("type", GetTxnOutputType(type)));
 
     Array a;
     BOOST_FOREACH(const CTxDestination& addr, addresses)
         a.push_back(CSocietyGcoinAddress(addr).ToString());
-    out.push_back(Pair("addresses", a));
+    out.push_back(json_spirit::Pair("addresses", a));
 }
 
 void TxToJSON(const CTransaction& tx, const uint256 hashBlock, Object& entry)
 {
-    entry.push_back(Pair("txid", tx.GetHash().GetHex()));
-    entry.push_back(Pair("version", tx.nVersion));
-    entry.push_back(Pair("time", (int64_t)tx.nTime));
-    entry.push_back(Pair("locktime", (int64_t)tx.nLockTime));
+    entry.push_back(json_spirit::Pair("txid", tx.GetHash().GetHex()));
+    entry.push_back(json_spirit::Pair("version", tx.nVersion));
+    entry.push_back(json_spirit::Pair("time", (int64_t)tx.nTime));
+    entry.push_back(json_spirit::Pair("locktime", (int64_t)tx.nLockTime));
     Array vin;
     BOOST_FOREACH(const CTxIn& txin, tx.vin)
     {
         Object in;
         if (tx.IsCoinBase())
-            in.push_back(Pair("coinbase", HexStr(txin.scriptSig.begin(), txin.scriptSig.end())));
+            in.push_back(json_spirit::Pair("coinbase", HexStr(txin.scriptSig.begin(), txin.scriptSig.end())));
         else
         {
-            in.push_back(Pair("txid", txin.prevout.hash.GetHex()));
-            in.push_back(Pair("vout", (int64_t)txin.prevout.n));
+            in.push_back(json_spirit::Pair("txid", txin.prevout.hash.GetHex()));
+            in.push_back(json_spirit::Pair("vout", (int64_t)txin.prevout.n));
             Object o;
-            o.push_back(Pair("asm", txin.scriptSig.ToString()));
-            o.push_back(Pair("hex", HexStr(txin.scriptSig.begin(), txin.scriptSig.end())));
-            in.push_back(Pair("scriptSig", o));
+            o.push_back(json_spirit::Pair("asm", txin.scriptSig.ToString()));
+            o.push_back(json_spirit::Pair("hex", HexStr(txin.scriptSig.begin(), txin.scriptSig.end())));
+            in.push_back(json_spirit::Pair("scriptSig", o));
         }
-        in.push_back(Pair("sequence", (int64_t)txin.nSequence));
+        in.push_back(json_spirit::Pair("sequence", (int64_t)txin.nSequence));
         vin.push_back(in);
     }
-    entry.push_back(Pair("vin", vin));
+    entry.push_back(json_spirit::Pair("vin", vin));
     Array vout;
     for (unsigned int i = 0; i < tx.vout.size(); i++)
     {
         const CTxOut& txout = tx.vout[i];
         Object out;
-        out.push_back(Pair("value", ValueFromAmount(txout.nValue)));
-        out.push_back(Pair("n", (int64_t)i));
+        out.push_back(json_spirit::Pair("value", ValueFromAmount(txout.nValue)));
+        out.push_back(json_spirit::Pair("n", (int64_t)i));
         Object o;
         ScriptPubKeyToJSON(txout.scriptPubKey, o, true);
-        out.push_back(Pair("scriptPubKey", o));
+        out.push_back(json_spirit::Pair("scriptPubKey", o));
         vout.push_back(out);
     }
-    entry.push_back(Pair("vout", vout));
+    entry.push_back(json_spirit::Pair("vout", vout));
 
     if (hashBlock != 0)
     {
-        entry.push_back(Pair("blockhash", hashBlock.GetHex()));
+        entry.push_back(json_spirit::Pair("blockhash", hashBlock.GetHex()));
         map<uint256, CBlockIndex*>::iterator mi = mapBlockIndex.find(hashBlock);
         if (mi != mapBlockIndex.end() && (*mi).second)
         {
             CBlockIndex* pindex = (*mi).second;
             if (pindex->IsInMainChain())
             {
-                entry.push_back(Pair("confirmations", 1 + nBestHeight - pindex->nHeight));
-                entry.push_back(Pair("time", (int64_t)pindex->nTime));
-                entry.push_back(Pair("blocktime", (int64_t)pindex->nTime));
+                entry.push_back(json_spirit::Pair("confirmations", 1 + nBestHeight - pindex->nHeight));
+                entry.push_back(json_spirit::Pair("time", (int64_t)pindex->nTime));
+                entry.push_back(json_spirit::Pair("blocktime", (int64_t)pindex->nTime));
             }
             else
-                entry.push_back(Pair("confirmations", 0));
+                entry.push_back(json_spirit::Pair("confirmations", 0));
         }
     }
 }
@@ -135,7 +137,7 @@ Value getrawtransaction(const Array& params, bool fHelp)
         return strHex;
 
     Object result;
-    result.push_back(Pair("hex", strHex));
+    result.push_back(json_spirit::Pair("hex", strHex));
     TxToJSON(tx, hashBlock, result);
     return result;
 }
@@ -199,16 +201,16 @@ Value listunspent(const Array& params, bool fHelp)
         int64_t nValue = out.tx->vout[out.i].nValue;
         const CScript& pk = out.tx->vout[out.i].scriptPubKey;
         Object entry;
-        entry.push_back(Pair("txid", out.tx->GetHash().GetHex()));
-        entry.push_back(Pair("vout", out.i));
+        entry.push_back(json_spirit::Pair("txid", out.tx->GetHash().GetHex()));
+        entry.push_back(json_spirit::Pair("vout", out.i));
         CTxDestination address;
         if (ExtractDestination(out.tx->vout[out.i].scriptPubKey, address))
         {
-            entry.push_back(Pair("address", CSocietyGcoinAddress(address).ToString()));
+            entry.push_back(json_spirit::Pair("address", CSocietyGcoinAddress(address).ToString()));
             if (pwalletMain->mapAddressBook.count(address))
-                entry.push_back(Pair("account", pwalletMain->mapAddressBook[address]));
+                entry.push_back(json_spirit::Pair("account", pwalletMain->mapAddressBook[address]));
         }
-        entry.push_back(Pair("scriptPubKey", HexStr(pk.begin(), pk.end())));
+        entry.push_back(json_spirit::Pair("scriptPubKey", HexStr(pk.begin(), pk.end())));
         if (pk.IsPayToScriptHash())
         {
             CTxDestination address;
@@ -217,12 +219,12 @@ Value listunspent(const Array& params, bool fHelp)
                 const CScriptID& hash = boost::get<CScriptID>(address);
                 CScript redeemScript;
                 if (pwalletMain->GetCScript(hash, redeemScript))
-                    entry.push_back(Pair("redeemScript", HexStr(redeemScript.begin(), redeemScript.end())));
+                    entry.push_back(json_spirit::Pair("redeemScript", HexStr(redeemScript.begin(), redeemScript.end())));
             }
         }
-        entry.push_back(Pair("amount",ValueFromAmount(nValue)));
-        entry.push_back(Pair("confirmations",out.nDepth));
-        entry.push_back(Pair("spendable", out.fSpendable));
+        entry.push_back(json_spirit::Pair("amount",ValueFromAmount(nValue)));
+        entry.push_back(json_spirit::Pair("confirmations",out.nDepth));
+        entry.push_back(json_spirit::Pair("spendable", out.fSpendable));
         results.push_back(entry);
     }
 
@@ -272,7 +274,7 @@ Value createrawtransaction(const Array& params, bool fHelp)
     }
 
     set<CSocietyGcoinAddress> setAddress;
-    BOOST_FOREACH(const Pair& s, sendTo)
+    BOOST_FOREACH(const json_spirit::Pair& s, sendTo)
     {
         CSocietyGcoinAddress address(s.name_);
         if (!address.IsValid())
@@ -339,7 +341,7 @@ Value decodescript(const Array& params, bool fHelp)
     }
     ScriptPubKeyToJSON(script, r, false);
 
-    r.push_back(Pair("p2sh", CSocietyGcoinAddress(script.GetID()).ToString()));
+    r.push_back(json_spirit::Pair("p2sh", CSocietyGcoinAddress(script.GetID()).ToString()));
     return r;
 }
 
@@ -547,8 +549,8 @@ Value signrawtransaction(const Array& params, bool fHelp)
     Object result;
     CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
     ssTx << mergedTx;
-    result.push_back(Pair("hex", HexStr(ssTx.begin(), ssTx.end())));
-    result.push_back(Pair("complete", fComplete));
+    result.push_back(json_spirit::Pair("hex", HexStr(ssTx.begin(), ssTx.end())));
+    result.push_back(json_spirit::Pair("complete", fComplete));
 
     return result;
 }
@@ -642,7 +644,7 @@ Value searchrawtransactions(const Array &params, bool fHelp)
         {
            // throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Cannot read transaction from disk");
            Object obj;
-	   obj.push_back(Pair("ERROR", "Cannot read transaction from disk"));
+       obj.push_back(json_spirit::Pair("ERROR", "Cannot read transaction from disk"));
 	   result.push_back(obj);
 	}
 	else
@@ -654,7 +656,7 @@ Value searchrawtransactions(const Array &params, bool fHelp)
         if (fVerbose) {
             Object object;
             TxToJSON(tx, hashBlock, object);
-            object.push_back(Pair("hex", strHex));
+            object.push_back(json_spirit::Pair("hex", strHex));
             result.push_back(object);
         } else {
             result.push_back(strHex);
