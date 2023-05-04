@@ -12,8 +12,9 @@
 #include "util.h"
 #include "sync.h"
 #include "base58.h"
-#include "db.h"
+//#include "db.h"
 #include "ui_interface.h"
+#include <filesystem>
 #ifdef ENABLE_WALLET
 #include "wallet.h"
 #endif
@@ -51,8 +52,8 @@ static ssl::context* rpc_ssl_context = NULL;
 static boost::thread_group* rpc_worker_group = NULL;
 
 
-
-UniValue getblockchaininfo(const JSONRPCRequest& request);
+//printf("*** RGP DEBUG getblockchaininfo needs to be implemented for mining!!! \n");
+//UniValue getblockchaininfo(const JSONRPCRequest& request);
 
 
 
@@ -236,7 +237,7 @@ Value stop(const Array& params, bool fHelp)
 }
 
 
-
+/* RGP new mining routine
 UniValue getblockchaininfo(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 0)
@@ -328,9 +329,9 @@ UniValue getblockchaininfo(const JSONRPCRequest& request)
     obj.pushKV("warnings", GetWarnings("statusbar"));
     return obj;
 }
+*/
 
-
-
+/*
 static bool rest_chaininfo(HTTPRequest* req, const std::string& strURIPart)
 {
     if (!CheckWarmup(req))
@@ -356,7 +357,7 @@ static bool rest_chaininfo(HTTPRequest* req, const std::string& strURIPart)
     // not reached
     return true; // continue to process further HTTP reqs on this cxn
 }
-
+*/
 //
 // Call Table
 //
@@ -666,6 +667,12 @@ private:
     iostreams::stream< SSLIOStreamDevice<Protocol> > _stream;
 };
 
+#if BOOST_VERSION >= 107000
+#define GET_IO_SERVICE(s) ((boost::asio::io_context&)(s).get_executor().context())
+#else
+#define GET_IO_SERVICE(s) ((s).get_io_service())
+#endif
+
 void ServiceConnection(AcceptedConnection *conn);
 
 // Forward declaration required for RPCListen
@@ -686,7 +693,7 @@ static void RPCListen(boost::shared_ptr< basic_socket_acceptor<Protocol, SocketA
 {
 
     // Accept connection
-    AcceptedConnectionImpl<Protocol>* conn = new AcceptedConnectionImpl<Protocol>(acceptor->get_io_service(), context, fUseSSL);
+/*    AcceptedConnectionImpl<Protocol>* conn = new AcceptedConnectionImpl<Protocol>get_io_service(), context, fUseSSL);
 
     acceptor->async_accept(
             conn->sslStream.lowest_layer(),
@@ -697,6 +704,7 @@ static void RPCListen(boost::shared_ptr< basic_socket_acceptor<Protocol, SocketA
                 fUseSSL,
                 conn,
                 boost::asio::placeholders::error));
+*/
 }
 
 
@@ -781,16 +789,21 @@ void StartRPCThreads()
     }
 
     assert(rpc_io_service == NULL);
-    rpc_io_service = new asio::io_service();
-    rpc_ssl_context = new ssl::context(*rpc_io_service, ssl::context::sslv23);
+    rpc_io_service = new asio::io_service;
+    //rpc_ssl_context = new boost::asio::ssl::context   (*rpc_io_service, boost::asio::ssl::context::sslv23 );
+
+    const SSL_METHOD* raw_method = SSLv23_server_method();
+    SSL_CTX*          raw_ctx    = SSL_CTX_new(raw_method);
+
 
     const bool fUseSSL = GetBoolArg("-rpcssl", false);
-
+    printf("*** RGP DEBUG Ignoroing rpcserver.cpp line 790 for FUseSSL \n");
+    /*
     if (fUseSSL)
     {
         rpc_ssl_context->set_options(ssl::context::no_sslv2 | ssl::context::no_sslv3);
 
-        filesystem::path pathCertFile(GetArg("-rpcsslcertificatechainfile", "server.cert"));
+        boost::filesystem::path::pathCertFile(GetArg("-rpcsslcertificatechainfile", "server.cert"));
         if (!pathCertFile.is_complete()) pathCertFile = filesystem::path(GetDataDir()) / pathCertFile;
         if (filesystem::exists(pathCertFile)) rpc_ssl_context->use_certificate_chain_file(pathCertFile.string());
         else LogPrintf("ThreadRPCServer ERROR: missing server certificate file %s\n", pathCertFile.string());
@@ -803,7 +816,7 @@ void StartRPCThreads()
         string strCiphers = GetArg("-rpcsslciphers", "TLSv1.2+HIGH:TLSv1+HIGH:!SSLv3:!SSLv2:!aNULL:!eNULL:!3DES:@STRENGTH");
         SSL_CTX_set_cipher_list(rpc_ssl_context->impl(), strCiphers.c_str());
     }
-
+*/
     // Try a dual IPv6/IPv4 socket, falling back to separate IPv4 and IPv6 sockets
     const bool loopback = !mapArgs.count("-rpcallowip");
     asio::ip::address bindAddress = loopback ? asio::ip::address_v6::loopback() : asio::ip::address_v6::any();
