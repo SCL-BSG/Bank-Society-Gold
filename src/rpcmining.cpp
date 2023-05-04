@@ -198,31 +198,31 @@ Value getmininginfo(const Array& params, bool fHelp)
     }
 
     Object obj, diff, weight;
-    obj.push_back(Pair("blocks",                (int)nBestHeight));
-    obj.push_back(Pair("currentblocksize",      (uint64_t)nLastBlockSize));
-    obj.push_back(Pair("currentblocktx",        (uint64_t)nLastBlockTx));
+    obj.push_back(json_spirit::Pair("blocks",                (int)nBestHeight));
+    obj.push_back(json_spirit::Pair("currentblocksize",      (uint64_t)nLastBlockSize));
+    obj.push_back(json_spirit::Pair("currentblocktx",        (uint64_t)nLastBlockTx));
 
-    diff.push_back(Pair("proof-of-work",        GetDifficulty()));
-    diff.push_back(Pair("proof-of-stake",       GetDifficulty(GetLastBlockIndex(pindexBest, true))));
-    diff.push_back(Pair("search-interval",      (int)nLastCoinStakeSearchInterval));
-    obj.push_back(Pair("difficulty",            GetDifficulty(GetLastBlockIndex(pindexBest, true))));
+    diff.push_back(json_spirit::Pair("proof-of-work",        GetDifficulty()));
+    diff.push_back(json_spirit::Pair("proof-of-stake",       GetDifficulty(GetLastBlockIndex(pindexBest, true))));
+    diff.push_back(json_spirit::Pair("search-interval",      (int)nLastCoinStakeSearchInterval));
+    obj.push_back(json_spirit::Pair("difficulty",            GetDifficulty(GetLastBlockIndex(pindexBest, true))));
 
-    obj.push_back(Pair("generate",              GetBoolArg("-gen", false)));
-    obj.push_back(Pair("genproclimit",          (int)GetArg("-genproclimit", -1)));
-    //obj.push_back(Pair("hashespersec",        gethashespersec(params, false)));
+    obj.push_back(json_spirit::Pair("generate",              GetBoolArg("-gen", false)));
+    obj.push_back(json_spirit::Pair("genproclimit",          (int)GetArg("-genproclimit", -1)));
+    //obj.push_back(json_spirit::Pair("hashespersec",        gethashespersec(params, false)));
 
-    obj.push_back(Pair("blockvalue",            (int64_t)GetProofOfStakeReward(pindexBest->pprev, 0, 0)));
-    obj.push_back(Pair("netmhashps",            GetPoWMHashPS()));
-    obj.push_back(Pair("netstakeweight",        GetPoSKernelPS()));
-    obj.push_back(Pair("errors",                GetWarnings("statusbar")));
-    obj.push_back(Pair("pooledtx",              (uint64_t)mempool.size()));
+    obj.push_back(json_spirit::Pair("blockvalue",            (int64_t)GetProofOfStakeReward(pindexBest->pprev, 0, 0)));
+    obj.push_back(json_spirit::Pair("netmhashps",            GetPoWMHashPS()));
+    obj.push_back(json_spirit::Pair("netstakeweight",        GetPoSKernelPS()));
+    obj.push_back(json_spirit::Pair("errors",                GetWarnings("statusbar")));
+    obj.push_back(json_spirit::Pair("pooledtx",              (uint64_t)mempool.size()));
 
-    weight.push_back(Pair("minimum",            (uint64_t)nWeight));
-    weight.push_back(Pair("maximum",            (uint64_t)0));
-    weight.push_back(Pair("combined",           (uint64_t)nWeight));
-    obj.push_back(Pair("stakeweight",           weight));
+    weight.push_back(json_spirit::Pair("minimum",            (uint64_t)nWeight));
+    weight.push_back(json_spirit::Pair("maximum",            (uint64_t)0));
+    weight.push_back(json_spirit::Pair("combined",           (uint64_t)nWeight));
+    obj.push_back(json_spirit::Pair("stakeweight",           weight));
 
-    obj.push_back(Pair("testnet",               TestNet()));
+    obj.push_back(json_spirit::Pair("testnet",               TestNet()));
     
     return obj;
 }
@@ -267,21 +267,21 @@ double nNetworkWeight;
 
     Object obj;
 
-    obj.push_back(Pair("enabled",           GetBoolArg("-staking", true)));
-    obj.push_back(Pair("staking",           staking));
-    obj.push_back(Pair("errors",            GetWarnings("statusbar")));
+    obj.push_back(json_spirit::Pair("enabled",           GetBoolArg("-staking", true)));
+    obj.push_back(json_spirit::Pair("staking",           staking));
+    obj.push_back(json_spirit::Pair("errors",            GetWarnings("statusbar")));
 
-    obj.push_back(Pair("currentblocksize",  (uint64_t)nLastBlockSize));
-    obj.push_back(Pair("currentblocktx",    (uint64_t)nLastBlockTx));
-    obj.push_back(Pair("pooledtx",          (uint64_t)mempool.size()));
+    obj.push_back(json_spirit::Pair("currentblocksize",  (uint64_t)nLastBlockSize));
+    obj.push_back(json_spirit::Pair("currentblocktx",    (uint64_t)nLastBlockTx));
+    obj.push_back(json_spirit::Pair("pooledtx",          (uint64_t)mempool.size()));
 
-    obj.push_back(Pair("difficulty",        GetDifficulty(GetLastBlockIndex(pindexBest, true))));
-    obj.push_back(Pair("search-interval",   (int)nLastCoinStakeSearchInterval));
+    obj.push_back(json_spirit::Pair("difficulty",        GetDifficulty(GetLastBlockIndex(pindexBest, true))));
+    obj.push_back(json_spirit::Pair("search-interval",   (int)nLastCoinStakeSearchInterval));
 
-    obj.push_back(Pair("weight",            (uint64_t)nWeight));
-    obj.push_back(Pair("netstakeweight",    (uint64_t)nNetworkWeight));
+    obj.push_back(json_spirit::Pair("weight",            (uint64_t)nWeight));
+    obj.push_back(json_spirit::Pair("netstakeweight",    (uint64_t)nNetworkWeight));
 
-    obj.push_back(Pair("expectedtime",      nExpectedTime));
+    obj.push_back(json_spirit::Pair("expectedtime",      nExpectedTime));
 
     return obj;
 }
@@ -364,7 +364,7 @@ Value checkkernel(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("found", !kernel.IsNull()));
+    result.push_back(json_spirit::Pair("found", !kernel.IsNull()));
 
     if (kernel.IsNull())
     {
@@ -372,10 +372,10 @@ Value checkkernel(const Array& params, bool fHelp)
     }
 
     Object oKernel;
-    oKernel.push_back(Pair("txid", kernel.hash.GetHex()));
-    oKernel.push_back(Pair("vout", (int64_t)kernel.n));
-    oKernel.push_back(Pair("time", nTime));
-    result.push_back(Pair("kernel", oKernel));
+    oKernel.push_back(json_spirit::Pair("txid", kernel.hash.GetHex()));
+    oKernel.push_back(json_spirit::Pair("vout", (int64_t)kernel.n));
+    oKernel.push_back(json_spirit::Pair("time", nTime));
+    result.push_back(json_spirit::Pair("kernel", oKernel));
 
     if (!fCreateBlockTemplate)
     {
@@ -394,8 +394,8 @@ Value checkkernel(const Array& params, bool fHelp)
     CDataStream ss(SER_DISK, PROTOCOL_VERSION);
     ss << *pblock;
 
-    result.push_back(Pair("blocktemplate", HexStr(ss.begin(), ss.end())));
-    result.push_back(Pair("blocktemplatefees", nFees));
+    result.push_back(json_spirit::Pair("blocktemplate", HexStr(ss.begin(), ss.end())));
+    result.push_back(json_spirit::Pair("blocktemplatefees", nFees));
 
     CPubKey pubkey;
     if (!pMiningKey->GetReservedKey(pubkey))
@@ -403,7 +403,7 @@ Value checkkernel(const Array& params, bool fHelp)
         throw JSONRPCError(RPC_MISC_ERROR, "GetReservedKey failed");
     }
 
-    result.push_back(Pair("blocktemplatesignkey", HexStr(pubkey)));
+    result.push_back(json_spirit::Pair("blocktemplatesignkey", HexStr(pubkey)));
 
     return result;
 }
@@ -506,14 +506,14 @@ Value getworkex(const Array& params, bool fHelp)
          LogPrintf("*** RGP rpcmining after FormatHashBuffer debug 001\n");
 
         Object result;
-        result.push_back(Pair("data",     HexStr(BEGIN(pdata), END(pdata))));
-        result.push_back(Pair("target",   HexStr(BEGIN(hashTarget), END(hashTarget))));
+        result.push_back(json_spirit::Pair("data",     HexStr(BEGIN(pdata), END(pdata))));
+        result.push_back(json_spirit::Pair("target",   HexStr(BEGIN(hashTarget), END(hashTarget))));
 
         LogPrintf("*** RGP rpcmining after FormatHashBuffer debug 002\n");
 
         CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
         ssTx << coinbaseTx;
-        result.push_back(Pair("coinbase", HexStr(ssTx.begin(), ssTx.end())));
+        result.push_back(json_spirit::Pair("coinbase", HexStr(ssTx.begin(), ssTx.end())));
 
         Array merkle_arr;
 
@@ -526,7 +526,7 @@ Value getworkex(const Array& params, bool fHelp)
 
         LogPrintf("*** RGP rpcmining after FormatHashBuffer debug 004\n");
 
-        result.push_back(Pair("merkle", merkle_arr));
+        result.push_back(json_spirit::Pair("merkle", merkle_arr));
 
         LogPrintf("*** RGP rpcmining after FormatHashBuffer debug 005\n");
 
@@ -696,10 +696,10 @@ Value getwork(const Array &params, bool fHelp)
 
         Object result;
         
-        result.push_back(Pair("midstate", HexStr(BEGIN(pmidstate), END(pmidstate)))); // deprecated
-        result.push_back(Pair("data",     HexStr(BEGIN(pdata), END(pdata))));
-        result.push_back(Pair("hash1",    HexStr(BEGIN(phash1), END(phash1)))); // deprecated
-        result.push_back(Pair("target",   HexStr(BEGIN(hashTarget), END(hashTarget))));
+        result.push_back(json_spirit::Pair("midstate", HexStr(BEGIN(pmidstate), END(pmidstate)))); // deprecated
+        result.push_back(json_spirit::Pair("data",     HexStr(BEGIN(pdata), END(pdata))));
+        result.push_back(json_spirit::Pair("hash1",    HexStr(BEGIN(phash1), END(phash1)))); // deprecated
+        result.push_back(json_spirit::Pair("target",   HexStr(BEGIN(hashTarget), END(hashTarget))));
         
         return result;
     }
@@ -876,9 +876,9 @@ Value getblocktemplate(const Array& params, bool fHelp)
 
         CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
         ssTx << tx;
-        entry.push_back(Pair("data", HexStr(ssTx.begin(), ssTx.end())));
+        entry.push_back(json_spirit::Pair("data", HexStr(ssTx.begin(), ssTx.end())));
 
-        entry.push_back(Pair("hash", txHash.GetHex()));
+        entry.push_back(json_spirit::Pair("hash", txHash.GetHex()));
 
         MapPrevTx mapInputs;
         map<uint256, CTxIndex> mapUnused;
@@ -887,7 +887,7 @@ Value getblocktemplate(const Array& params, bool fHelp)
         
         if (tx.FetchInputs(txdb, mapUnused, false, false, mapInputs, fInvalid))
         {
-            entry.push_back(Pair("fee", (int64_t)(tx.GetValueIn(mapInputs) - tx.GetValueOut())));
+            entry.push_back(json_spirit::Pair("fee", (int64_t)(tx.GetValueIn(mapInputs) - tx.GetValueOut())));
 
             Array deps;
             
@@ -899,18 +899,18 @@ Value getblocktemplate(const Array& params, bool fHelp)
                 }
             }
 
-            entry.push_back(Pair("depends", deps));
+            entry.push_back(json_spirit::Pair("depends", deps));
 
             int64_t nSigOps = GetLegacySigOpCount(tx);
             nSigOps += GetP2SHSigOpCount(tx, mapInputs);
-            entry.push_back(Pair("sigops", nSigOps));
+            entry.push_back(json_spirit::Pair("sigops", nSigOps));
         }
 
         transactions.push_back(entry);
     }
 
     Object aux;
-    aux.push_back(Pair("flags", HexStr(COINBASE_FLAGS.begin(), COINBASE_FLAGS.end())));
+    aux.push_back(json_spirit::Pair("flags", HexStr(COINBASE_FLAGS.begin(), COINBASE_FLAGS.end())));
 
     uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
 
@@ -924,20 +924,20 @@ Value getblocktemplate(const Array& params, bool fHelp)
 
     Object result;
 
-    result.push_back(Pair("version",                pblock->nVersion));
-    result.push_back(Pair("previousblockhash",      pblock->hashPrevBlock.GetHex()));
-    result.push_back(Pair("transactions",           transactions));
-    result.push_back(Pair("coinbaseaux",            aux));
-    result.push_back(Pair("coinbasevalue",          (int64_t)pblock->vtx[0].vout[0].nValue));
-    result.push_back(Pair("target",                 hashTarget.GetHex()));
-    result.push_back(Pair("mintime",                (int64_t)pindexPrev->GetPastTimeLimit()+1));
-    result.push_back(Pair("mutable",                aMutable));
-    result.push_back(Pair("noncerange",             "00000000ffffffff"));
-    result.push_back(Pair("sigoplimit",             (int64_t)MAX_BLOCK_SIGOPS));
-    result.push_back(Pair("sizelimit",              (int64_t)MAX_BLOCK_SIZE));
-    result.push_back(Pair("curtime",                (int64_t)pblock->nTime));
-    result.push_back(Pair("bits",                   strprintf("%08x", pblock->nBits)));
-    result.push_back(Pair("height",                 (int64_t)(pindexPrev->nHeight+1)));
+    result.push_back(json_spirit::Pair("version",                pblock->nVersion));
+    result.push_back(json_spirit::Pair("previousblockhash",      pblock->hashPrevBlock.GetHex()));
+    result.push_back(json_spirit::Pair("transactions",           transactions));
+    result.push_back(json_spirit::Pair("coinbaseaux",            aux));
+    result.push_back(json_spirit::Pair("coinbasevalue",          (int64_t)pblock->vtx[0].vout[0].nValue));
+    result.push_back(json_spirit::Pair("target",                 hashTarget.GetHex()));
+    result.push_back(json_spirit::Pair("mintime",                (int64_t)pindexPrev->GetPastTimeLimit()+1));
+    result.push_back(json_spirit::Pair("mutable",                aMutable));
+    result.push_back(json_spirit::Pair("noncerange",             "00000000ffffffff"));
+    result.push_back(json_spirit::Pair("sigoplimit",             (int64_t)MAX_BLOCK_SIGOPS));
+    result.push_back(json_spirit::Pair("sizelimit",              (int64_t)MAX_BLOCK_SIZE));
+    result.push_back(json_spirit::Pair("curtime",                (int64_t)pblock->nTime));
+    result.push_back(json_spirit::Pair("bits",                   strprintf("%08x", pblock->nBits)));
+    result.push_back(json_spirit::Pair("height",                 (int64_t)(pindexPrev->nHeight+1)));
 
     return result;
 }

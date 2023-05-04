@@ -8,6 +8,8 @@
 
 #include "compat.h"
 
+#include "univalue.h"
+
 #include <list>
 #include <map>
 #include <stdint.h>
@@ -31,6 +33,23 @@ enum HTTPStatusCode
     HTTP_NOT_FOUND             = 404,
     HTTP_INTERNAL_SERVER_ERROR = 500,
 };
+
+// RGP added from Dogecoi rpc/server.h
+class JSONRPCRequest
+{
+public:
+    UniValue id;
+    std::string strMethod;
+    UniValue params;
+    bool fHelp;
+    std::string URI;
+    std::string authUser;
+
+    JSONRPCRequest() { id = NullUniValue; params = NullUniValue; fHelp = false; }
+    void parse(const UniValue& valRequest);
+};
+
+
 
 // Bitcoin RPC error codes
 enum RPCErrorCode

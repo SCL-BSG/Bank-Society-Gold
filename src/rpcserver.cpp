@@ -6,13 +6,15 @@
 
 #include "rpcserver.h"
 
+
 #include "base58.h"
 #include "init.h"
 #include "util.h"
 #include "sync.h"
 #include "base58.h"
-#include "db.h"
+//#include "db.h"
 #include "ui_interface.h"
+#include <filesystem>
 #ifdef ENABLE_WALLET
 #include "wallet.h"
 #endif
@@ -48,6 +50,13 @@ static asio::io_service* rpc_io_service = NULL;
 static map<string, boost::shared_ptr<deadline_timer> > deadlineTimers;
 static ssl::context* rpc_ssl_context = NULL;
 static boost::thread_group* rpc_worker_group = NULL;
+
+
+//printf("*** RGP DEBUG getblockchaininfo needs to be implemented for mining!!! \n");
+//UniValue getblockchaininfo(const JSONRPCRequest& request);
+
+
+
 
 void RPCTypeCheck(const Array& params,
                   const list<Value_type>& typesExpected,
@@ -228,7 +237,127 @@ Value stop(const Array& params, bool fHelp)
 }
 
 
+/* RGP new mining routine
+UniValue getblockchaininfo(const JSONRPCRequest& request)
+{
+    if (request.fHelp || request.params.size() != 0)
+        throw runtime_error(
+            "getblockchaininfo\n"
+            "Returns an object containing various state info regarding blockchain processing.\n"
+            "\nResult:\n"
+            "{\n"
+            "  \"chain\": \"xxxx\",        (string) current network name as defined in BIP70 (main, test, regtest)\n"
+            "  \"blocks\": xxxxxx,         (numeric) the current number of blocks processed in the server\n"
+            "  \"headers\": xxxxxx,        (numeric) the current number of headers we have validated\n"
+            "  \"bestblockhash\": \"...\", (string) the hash of the currently best block\n"
+            "  \"difficulty\": xxxxxx,     (numeric) the current difficulty\n"
+            "  \"mediantime\": xxxxxx,     (numeric) median time for the current best block\n"
+            "  \"verificationprogress\": xxxx, (numeric) estimate of verification progress [0..1]\n"
+            "  \"initialblockdownload\": xxxx, (bool) (debug information) estimate of whether this node is in Initial Block Download mode.\n"
+            "  \"chainwork\": \"xxxx\"     (string) total amount of work in active chain, in hexadecimal\n"
+            "  \"size_on_disk\": xxxxxx,   (numeric) the estimated size of the block and undo files on disk\n"
+            "  \"pruned\": xx,             (boolean) if the blocks are subject to pruning\n"
+            "  \"pruneheight\": xxxxxx,    (numeric) lowest-height complete block stored (only present if pruning is enabled)\n"
+            "  \"automatic_pruning\": xx,  (boolean) whether automatic pruning is enabled (only present if pruning is enabled)\n"
+            "  \"prune_target_size\": xxxxxx,  (numeric) the target size used by pruning (only present if automatic pruning is enabled)\n"
+            "  \"softforks\": [            (array) status of softforks in progress\n"
+            "     {\n"
+            "        \"id\": \"xxxx\",        (string) name of softfork\n"
+            "        \"version\": xx,         (numeric) block version\n"
+            "        \"reject\": {            (object) progress toward rejecting pre-softfork blocks\n"
+            "           \"status\": xx,       (boolean) true if threshold reached\n"
+            "        },\n"
+            "     }, ...\n"
+            "  ],\n"
+            "  \"bip9_softforks\": {          (object) status of BIP9 softforks in progress\n"
+            "     \"xxxx\" : {                (string) name of the softfork\n"
+            "        \"status\": \"xxxx\",    (string) one of \"defined\", \"started\", \"locked_in\", \"active\", \"failed\"\n"
+            "        \"bit\": xx,             (numeric) the bit (0-28) in the block version field used to signal this softfork (only for \"started\" status)\n"
+            "        \"startTime\": xx,       (numeric) the minimum median time past of a block at which the bit gains its meaning\n"
+            "        \"timeout\": xx,         (numeric) the median time past of a block at which the deployment is considered failed if not yet locked in\n"
+            "        \"since\": xx            (numeric) height of the first block to which the status applies\n"
+            "     }\n"
+            "  }\n"
+            "}\n"
+            "\nExamples:\n"
+            + HelpExampleCli("getblockchaininfo", "")
+            + HelpExampleRpc("getblockchaininfo", "")
+        );
 
+    LOCK(cs_main);
+
+    UniValue obj(UniValue::VOBJ);
+    obj.pushKV("chain",                 Params().NetworkIDString());
+    obj.pushKV("blocks",                (int)chainActive.Height());
+    obj.pushKV("headers",               pindexBestHeader ? pindexBestHeader->nHeight : -1);
+    obj.pushKV("bestblockhash",         chainActive.Tip()->GetBlockHash().GetHex());
+    obj.pushKV("difficulty",            (double)GetDifficulty());
+    obj.pushKV("mediantime",            (int64_t)chainActive.Tip()->GetMedianTimePast());
+    obj.pushKV("verificationprogress",  GuessVerificationProgress(Params().TxData(), chainActive.Tip()));
+    obj.pushKV("initialblockdownload",  IsInitialBlockDownload());
+    obj.pushKV("chainwork",             chainActive.Tip()->nChainWork.GetHex());
+    obj.pushKV("size_on_disk",          CalculateCurrentUsage());
+    obj.pushKV("pruned",                fPruneMode);
+    if (fPruneMode) {
+        CBlockIndex* block = chainActive.Tip();
+        assert(block);
+        while (block->pprev && (block->pprev->nStatus & BLOCK_HAVE_DATA)) {
+            block = block->pprev;
+        }
+
+        obj.pushKV("pruneheight",        block->nHeight);
+
+        // if 0, execution bypasses the whole if block.
+        bool automatic_pruning = (GetArg("-prune", 0) != 1);
+        obj.pushKV("automatic_pruning",  automatic_pruning);
+        if (automatic_pruning) {
+            obj.pushKV("prune_target_size",  nPruneTarget);
+        }
+    }
+
+    const Consensus::Params& consensusParams = Params().GetConsensus(0);
+    CBlockIndex* tip = chainActive.Tip();
+    UniValue softforks(UniValue::VARR);
+    UniValue bip9_softforks(UniValue::VOBJ);
+    softforks.push_back(SoftForkDesc("bip34", 2, tip, consensusParams));
+    softforks.push_back(SoftForkDesc("bip66", 3, tip, consensusParams));
+    softforks.push_back(SoftForkDesc("bip65", 4, tip, consensusParams));
+    BIP9SoftForkDescPushBack(bip9_softforks, "csv", consensusParams, Consensus::DEPLOYMENT_CSV);
+    BIP9SoftForkDescPushBack(bip9_softforks, "segwit", consensusParams, Consensus::DEPLOYMENT_SEGWIT);
+    obj.pushKV("softforks",             softforks);
+    obj.pushKV("bip9_softforks", bip9_softforks);
+    obj.pushKV("warnings", GetWarnings("statusbar"));
+    return obj;
+}
+*/
+
+/*
+static bool rest_chaininfo(HTTPRequest* req, const std::string& strURIPart)
+{
+    if (!CheckWarmup(req))
+        return false;
+    std::string param;
+    const RetFormat rf = ParseDataFormat(param, strURIPart);
+
+    switch (rf) {
+    case RF_JSON: {
+        JSONRPCRequest jsonRequest;
+        jsonRequest.params = UniValue(UniValue::VARR);
+        UniValue chainInfoObject = getblockchaininfo(jsonRequest);
+        std::string strJSON = chainInfoObject.write() + "\n";
+        req->WriteHeader("Content-Type", "application/json");
+        req->WriteReply(HTTP_OK, strJSON);
+        return true;
+    }
+    default: {
+        return RESTERR(req, HTTP_NOT_FOUND, "output format not found (available: json)");
+    }
+    }
+
+    // not reached
+    return true; // continue to process further HTTP reqs on this cxn
+}
+*/
 //
 // Call Table
 //
@@ -538,6 +667,12 @@ private:
     iostreams::stream< SSLIOStreamDevice<Protocol> > _stream;
 };
 
+#if BOOST_VERSION >= 107000
+#define GET_IO_SERVICE(s) ((boost::asio::io_context&)(s).get_executor().context())
+#else
+#define GET_IO_SERVICE(s) ((s).get_io_service())
+#endif
+
 void ServiceConnection(AcceptedConnection *conn);
 
 // Forward declaration required for RPCListen
@@ -558,7 +693,7 @@ static void RPCListen(boost::shared_ptr< basic_socket_acceptor<Protocol, SocketA
 {
 
     // Accept connection
-    AcceptedConnectionImpl<Protocol>* conn = new AcceptedConnectionImpl<Protocol>(acceptor->get_io_service(), context, fUseSSL);
+/*    AcceptedConnectionImpl<Protocol>* conn = new AcceptedConnectionImpl<Protocol>get_io_service(), context, fUseSSL);
 
     acceptor->async_accept(
             conn->sslStream.lowest_layer(),
@@ -569,6 +704,7 @@ static void RPCListen(boost::shared_ptr< basic_socket_acceptor<Protocol, SocketA
                 fUseSSL,
                 conn,
                 boost::asio::placeholders::error));
+*/
 }
 
 
@@ -583,6 +719,9 @@ static void RPCAcceptHandler(boost::shared_ptr< basic_socket_acceptor<Protocol, 
                              const boost::system::error_code& error)
 {
     // Immediately start accepting new connections, except when we're cancelled or our socket is closed.
+
+    LogPrintf("*** RGP RPC Server RPCAcceptHandler() start from %s \n", conn->peer_address_to_string() );
+
     if (error != asio::error::operation_aborted && acceptor->is_open())
         RPCListen(acceptor, context, fUseSSL);
 
@@ -591,6 +730,8 @@ static void RPCAcceptHandler(boost::shared_ptr< basic_socket_acceptor<Protocol, 
     // TODO: Actually handle errors
     if (error)
     {
+        LogPrintf("*** RGP RPC Server RPCAcceptHandler() error condition \n");
+
         delete conn;
     }
 
@@ -604,7 +745,10 @@ static void RPCAcceptHandler(boost::shared_ptr< basic_socket_acceptor<Protocol, 
             conn->stream() << HTTPReply(HTTP_FORBIDDEN, "", false) << std::flush;
         delete conn;
     }
-    else {
+    else
+    {
+        LogPrintf("*** RGP RPC Server ServiceConnect() start \n");
+
         ServiceConnection(conn);
         conn->close();
         delete conn;
@@ -645,16 +789,21 @@ void StartRPCThreads()
     }
 
     assert(rpc_io_service == NULL);
-    rpc_io_service = new asio::io_service();
-    rpc_ssl_context = new ssl::context(*rpc_io_service, ssl::context::sslv23);
+    rpc_io_service = new asio::io_service;
+    //rpc_ssl_context = new boost::asio::ssl::context   (*rpc_io_service, boost::asio::ssl::context::sslv23 );
+
+    const SSL_METHOD* raw_method = SSLv23_server_method();
+    SSL_CTX*          raw_ctx    = SSL_CTX_new(raw_method);
+
 
     const bool fUseSSL = GetBoolArg("-rpcssl", false);
-
+    printf("*** RGP DEBUG Ignoroing rpcserver.cpp line 790 for FUseSSL \n");
+    /*
     if (fUseSSL)
     {
         rpc_ssl_context->set_options(ssl::context::no_sslv2 | ssl::context::no_sslv3);
 
-        filesystem::path pathCertFile(GetArg("-rpcsslcertificatechainfile", "server.cert"));
+        boost::filesystem::path::pathCertFile(GetArg("-rpcsslcertificatechainfile", "server.cert"));
         if (!pathCertFile.is_complete()) pathCertFile = filesystem::path(GetDataDir()) / pathCertFile;
         if (filesystem::exists(pathCertFile)) rpc_ssl_context->use_certificate_chain_file(pathCertFile.string());
         else LogPrintf("ThreadRPCServer ERROR: missing server certificate file %s\n", pathCertFile.string());
@@ -667,7 +816,7 @@ void StartRPCThreads()
         string strCiphers = GetArg("-rpcsslciphers", "TLSv1.2+HIGH:TLSv1+HIGH:!SSLv3:!SSLv2:!aNULL:!eNULL:!3DES:@STRENGTH");
         SSL_CTX_set_cipher_list(rpc_ssl_context->impl(), strCiphers.c_str());
     }
-
+*/
     // Try a dual IPv6/IPv4 socket, falling back to separate IPv4 and IPv6 sockets
     const bool loopback = !mapArgs.count("-rpcallowip");
     asio::ip::address bindAddress = loopback ? asio::ip::address_v6::loopback() : asio::ip::address_v6::any();
@@ -848,9 +997,10 @@ static string JSONRPCExecBatch(const Array& vReq)
 void ServiceConnection(AcceptedConnection *conn)
 {
 bool fRun = true;
+bool httpRet; false;
 int nProto = 0;
 
-    LogPrintf("*** RGP ServiceConnection start \n");
+    LogPrintf("*** RGP ServiceConnection start connection with %s \n", conn->peer_address_to_string() );
 
     fRun = true;
     while (fRun)
@@ -861,23 +1011,36 @@ int nProto = 0;
         map<string, string> mapHeaders;
         string strRequest, strMethod, strURI;
 
-        LogPrintf("*** RGP ServiceConnection ReadHTTPRequestLine strMethod %s strURL %s \n", strMethod, strURI );
+        LogPrintf("*** RGP ServiceConnection before ReadHTTPRequestLine  \n" );
 
         // Read HTTP request line
         if (!ReadHTTPRequestLine(conn->stream(), nProto, strMethod, strURI))
+        {
+            LogPrintf("*** RGP ServiceConnection ReadHTTPMessage request FAILED! \n");
             break;
+        }
 
-        LogPrintf("*** RGP ServiceConnection ReadHTTPMessage strRequest %s mapHeaders %s \n", strRequest, strURI );
+        LogPrintf("*** RGP ServiceConnection ReadHTTPMessage strRequest %s mapHeaders %s Protocol %d \n", strRequest, strURI, nProto );
 
 
         // Read HTTP message headers and body
-        ReadHTTPMessage(conn->stream(), mapHeaders, strRequest, nProto, MAX_SIZE);
+        // RGP added bool checks
+        httpRet = false;
+        httpRet = ReadHTTPMessage(conn->stream(), mapHeaders, strRequest, nProto, MAX_SIZE);
 
-        LogPrintf("*** RGP ServiceConnection Debug 1a \n" );
+        if ( httpRet == false )
+        {
+            LogPrintf("*** RGP ServiceConnection Error, ReadHTTP, no stream contents \n" );
+            break;
+        }
 
 
-        if (strURI != "/") {
+        if (strURI != "/")
+        {
             conn->stream() << HTTPReply(HTTP_NOT_FOUND, "", false) << std::flush;
+
+            LogPrintf("*** RGP ServiceConnection Error with strURI %s \n", strURI );
+
             break;
         }
 
@@ -887,7 +1050,9 @@ int nProto = 0;
         if (mapHeaders.count("authorization") == 0)
         {
             conn->stream() << HTTPReply(HTTP_UNAUTHORIZED, "", false) << std::flush;
-            break;
+
+            LogPrintf("*** RGP ServiceConnection Error with mapheaders count\n" );
+            break;                       
         }
 
         LogPrintf("*** RGP ServiceConnection Debug 1c \n" );
@@ -895,6 +1060,7 @@ int nProto = 0;
         if (!HTTPAuthorized(mapHeaders))
         {
             LogPrintf("ThreadRPCServer incorrect password attempt from %s\n", conn->peer_address_to_string());
+
             /* Deter brute-forcing short passwords.
                If this results in a DoS the user really
                shouldn't have their RPC port exposed. */
@@ -917,9 +1083,7 @@ int nProto = 0;
             LogPrintf("*** RGP ServiceConnection JSONRequest Phase Debug 1e \n" );
 
             // Parse request
-            Value valRequest;
-
-            LogPrintf("*** RGP ServiceConnection string requested %s \n", strRequest );
+            Value valRequest;            
 
             if (!read_string(strRequest, valRequest))
             {
@@ -930,6 +1094,8 @@ int nProto = 0;
                 throw JSONRPCError(RPC_PARSE_ERROR, "Parse error");
             }
 
+            LogPrintf("*** RGP ServiceConnection string requested %s \n", strRequest );
+
             string strReply;
 
             LogPrintf("*** RGP ServiceConnection JSONRequest Phase Debug 1g \n" );
@@ -937,6 +1103,8 @@ int nProto = 0;
             // singleton request
             if (valRequest.type() == obj_type) {
                 jreq.parse(valRequest);
+
+                LogPrintf("*** RGP ServiceConnection JSONRequest before execute Debug 1ga Method %s \n",  jreq.strMethod );
 
                 Value result = tableRPC.execute(jreq.strMethod, jreq.params);
 

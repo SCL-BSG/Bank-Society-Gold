@@ -119,10 +119,10 @@ Value getpoolinfo(const Array& params, bool fHelp)
             "Returns an object containing anonymous pool-related information.");
 
     Object obj;
-    obj.push_back(Pair("current_masternode",        mnodeman.GetCurrentMasterNode()->addr.ToString()));
-    obj.push_back(Pair("state",        darkSendPool.GetState()));
-    obj.push_back(Pair("entries",      darkSendPool.GetEntriesCount()));
-    obj.push_back(Pair("entries_accepted",      darkSendPool.GetCountEntriesAccepted()));
+    obj.push_back(json_spirit::Pair("current_masternode",        mnodeman.GetCurrentMasterNode()->addr.ToString()));
+    obj.push_back(json_spirit::Pair("state",        darkSendPool.GetState()));
+    obj.push_back(json_spirit::Pair("entries",      darkSendPool.GetEntriesCount()));
+    obj.push_back(json_spirit::Pair("entries_accepted",      darkSendPool.GetCountEntriesAccepted()));
     return obj;
 }
 
@@ -224,7 +224,7 @@ Value masternode(const Array& params, bool fHelp)
     	bool found = false;
 
 		Object statusObj;
-		statusObj.push_back(Pair("alias", alias));
+        statusObj.push_back(json_spirit::Pair("alias", alias));
 
     	BOOST_FOREACH(CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries()) {
     		if(mne.getAlias() == alias) {
@@ -232,17 +232,17 @@ Value masternode(const Array& params, bool fHelp)
     			std::string errorMessage;
     			bool result = activeMasternode.StopMasterNode(mne.getIp(), mne.getPrivKey(), errorMessage);
 
-				statusObj.push_back(Pair("result", result ? "successful" : "failed"));
+                statusObj.push_back(json_spirit::Pair("result", result ? "successful" : "failed"));
     			if(!result) {
-   					statusObj.push_back(Pair("errorMessage", errorMessage));
+                    statusObj.push_back(json_spirit::Pair("errorMessage", errorMessage));
    				}
     			break;
     		}
     	}
 
     	if(!found) {
-    		statusObj.push_back(Pair("result", "failed"));
-    		statusObj.push_back(Pair("errorMessage", "could not find alias in config. Verify with list-conf."));
+            statusObj.push_back(json_spirit::Pair("result", "failed"));
+            statusObj.push_back(json_spirit::Pair("errorMessage", "could not find alias in config. Verify with list-conf."));
     	}
 
     	pwalletMain->Lock();
@@ -281,24 +281,24 @@ Value masternode(const Array& params, bool fHelp)
 			bool result = activeMasternode.StopMasterNode(mne.getIp(), mne.getPrivKey(), errorMessage);
 
 			Object statusObj;
-			statusObj.push_back(Pair("alias", mne.getAlias()));
-			statusObj.push_back(Pair("result", result ? "successful" : "failed"));
+            statusObj.push_back(json_spirit::Pair("alias", mne.getAlias()));
+            statusObj.push_back(json_spirit::Pair("result", result ? "successful" : "failed"));
 
 			if(result) {
 				successful++;
 			} else {
 				fail++;
-				statusObj.push_back(Pair("errorMessage", errorMessage));
+                statusObj.push_back(json_spirit::Pair("errorMessage", errorMessage));
 			}
 
-			resultsObj.push_back(Pair("status", statusObj));
+            resultsObj.push_back(json_spirit::Pair("status", statusObj));
 		}
 		pwalletMain->Lock();
 
 		Object returnObj;
-		returnObj.push_back(Pair("overall", "Successfully stopped " + boost::lexical_cast<std::string>(successful) + " masternodes, failed to stop " +
+        returnObj.push_back(json_spirit::Pair("overall", "Successfully stopped " + boost::lexical_cast<std::string>(successful) + " masternodes, failed to stop " +
 				boost::lexical_cast<std::string>(fail) + ", total " + boost::lexical_cast<std::string>(total)));
-		returnObj.push_back(Pair("detail", resultsObj));
+        returnObj.push_back(json_spirit::Pair("detail", resultsObj));
 
 		return returnObj;
 
@@ -391,7 +391,7 @@ Value masternode(const Array& params, bool fHelp)
     	bool found = false;
 
 		Object statusObj;
-		statusObj.push_back(Pair("alias", alias));
+        statusObj.push_back(json_spirit::Pair("alias", alias));
 
     	BOOST_FOREACH(CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries()) {
     		if(mne.getAlias() == alias) {
@@ -399,17 +399,17 @@ Value masternode(const Array& params, bool fHelp)
     			std::string errorMessage;
                 bool result = activeMasternode.Register(mne.getIp(), mne.getPrivKey(), mne.getTxHash(), mne.getOutputIndex(), mne.getRewardAddress(), mne.getRewardPercentage(), errorMessage);
   
-                statusObj.push_back(Pair("result", result ? "successful" : "failed"));
+                statusObj.push_back(json_spirit::Pair("result", result ? "successful" : "failed"));
     			if(!result) {
-					statusObj.push_back(Pair("errorMessage", errorMessage));
+                    statusObj.push_back(json_spirit::Pair("errorMessage", errorMessage));
 				}
     			break;
     		}
     	}
 
     	if(!found) {
-    		statusObj.push_back(Pair("result", "failed"));
-    		statusObj.push_back(Pair("errorMessage", "could not find alias in config. Verify with list-conf."));
+            statusObj.push_back(json_spirit::Pair("result", "failed"));
+            statusObj.push_back(json_spirit::Pair("errorMessage", "could not find alias in config. Verify with list-conf."));
     	}
 
     	pwalletMain->Lock();
@@ -451,24 +451,24 @@ Value masternode(const Array& params, bool fHelp)
             bool result = activeMasternode.Register(mne.getIp(), mne.getPrivKey(), mne.getTxHash(), mne.getOutputIndex(), mne.getRewardAddress(), mne.getRewardPercentage(), errorMessage);
 
 			Object statusObj;
-			statusObj.push_back(Pair("alias", mne.getAlias()));
-			statusObj.push_back(Pair("result", result ? "succesful" : "failed"));
+            statusObj.push_back(json_spirit::Pair("alias", mne.getAlias()));
+            statusObj.push_back(json_spirit::Pair("result", result ? "succesful" : "failed"));
 
 			if(result) {
 				successful++;
 			} else {
 				fail++;
-				statusObj.push_back(Pair("errorMessage", errorMessage));
+                statusObj.push_back(json_spirit::Pair("errorMessage", errorMessage));
 			}
 
-			resultsObj.push_back(Pair("status", statusObj));
+            resultsObj.push_back(json_spirit::Pair("status", statusObj));
 		}
 		pwalletMain->Lock();
 
 		Object returnObj;
-		returnObj.push_back(Pair("overall", "Successfully started " + boost::lexical_cast<std::string>(successful) + " masternodes, failed to start " +
+        returnObj.push_back(json_spirit::Pair("overall", "Successfully started " + boost::lexical_cast<std::string>(successful) + " masternodes, failed to start " +
 				boost::lexical_cast<std::string>(fail) + ", total " + boost::lexical_cast<std::string>(total)));
-		returnObj.push_back(Pair("detail", resultsObj));
+        returnObj.push_back(json_spirit::Pair("detail", resultsObj));
 
 		return returnObj;
     }
@@ -510,12 +510,12 @@ Value masternode(const Array& params, bool fHelp)
             ExtractDestination(pubkey, address1);
             CSocietyGcoinAddress address2(address1);
 
-            obj.push_back(Pair("IP:port",       winner->addr.ToString().c_str()));
-            obj.push_back(Pair("protocol",      (int64_t)winner->protocolVersion));
-            obj.push_back(Pair("vin",           winner->vin.prevout.hash.ToString().c_str()));
-            obj.push_back(Pair("pubkey",        address2.ToString().c_str()));
-            obj.push_back(Pair("lastseen",      (int64_t)winner->lastTimeSeen));
-            obj.push_back(Pair("activeseconds", (int64_t)(winner->lastTimeSeen - winner->sigTime)));
+            obj.push_back(json_spirit::Pair("IP:port",       winner->addr.ToString().c_str()));
+            obj.push_back(json_spirit::Pair("protocol",      (int64_t)winner->protocolVersion));
+            obj.push_back(json_spirit::Pair("vin",           winner->vin.prevout.hash.ToString().c_str()));
+            obj.push_back(json_spirit::Pair("pubkey",        address2.ToString().c_str()));
+            obj.push_back(json_spirit::Pair("lastseen",      (int64_t)winner->lastTimeSeen));
+            obj.push_back(json_spirit::Pair("activeseconds", (int64_t)(winner->lastTimeSeen - winner->sigTime)));
             return obj;
         }
 
@@ -547,13 +547,13 @@ Value masternode(const Array& params, bool fHelp)
                 CSocietyGcoinAddress address2(address1);
 
                 if(strMode == "addr")
-                    obj.push_back(Pair(boost::lexical_cast<std::string>(nHeight),       address2.ToString().c_str()));
+                    obj.push_back(json_spirit::Pair(boost::lexical_cast<std::string>(nHeight),       address2.ToString().c_str()));
 
                 if(strMode == "vin")
-                    obj.push_back(Pair(boost::lexical_cast<std::string>(nHeight),       vin.ToString().c_str()));
+                    obj.push_back(json_spirit::Pair(boost::lexical_cast<std::string>(nHeight),       vin.ToString().c_str()));
 
             } else {
-                obj.push_back(Pair(boost::lexical_cast<std::string>(nHeight),       ""));
+                obj.push_back(json_spirit::Pair(boost::lexical_cast<std::string>(nHeight),       ""));
             }
         }
 
@@ -594,12 +594,12 @@ Value masternode(const Array& params, bool fHelp)
 
         BOOST_FOREACH(CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries()) {
     		Object mnObj;
-    		mnObj.push_back(Pair("alias", mne.getAlias()));
-    		mnObj.push_back(Pair("address", mne.getIp()));
-    		mnObj.push_back(Pair("privateKey", mne.getPrivKey()));
-    		mnObj.push_back(Pair("txHash", mne.getTxHash()));
-    		mnObj.push_back(Pair("outputIndex", mne.getOutputIndex()));
-    		resultObj.push_back(Pair("masternode", mnObj));
+            mnObj.push_back(json_spirit::Pair("alias", mne.getAlias()));
+            mnObj.push_back(json_spirit::Pair("address", mne.getIp()));
+            mnObj.push_back(json_spirit::Pair("privateKey", mne.getPrivKey()));
+            mnObj.push_back(json_spirit::Pair("txHash", mne.getTxHash()));
+            mnObj.push_back(json_spirit::Pair("outputIndex", mne.getOutputIndex()));
+            resultObj.push_back(json_spirit::Pair("masternode", mnObj));
     	}
 
     	return resultObj;
@@ -611,7 +611,7 @@ Value masternode(const Array& params, bool fHelp)
 
         Object obj;
         BOOST_FOREACH(COutput& out, possibleCoins) {
-            obj.push_back(Pair(out.tx->GetHash().ToString().c_str(), boost::lexical_cast<std::string>(out.i)));
+            obj.push_back(json_spirit::Pair(out.tx->GetHash().ToString().c_str(), boost::lexical_cast<std::string>(out.i)));
         }
 
         return obj;
@@ -738,11 +738,11 @@ Value masternode(const Array& params, bool fHelp)
         CSocietyGcoinAddress address2(address1);
 
         Object mnObj;
-        mnObj.push_back(Pair("vin", activeMasternode.vin.ToString().c_str()));
-        mnObj.push_back(Pair("service", activeMasternode.service.ToString().c_str()));
-        mnObj.push_back(Pair("status", activeMasternode.status));
-        mnObj.push_back(Pair("pubKeyMasternode", address2.ToString().c_str()));
-        mnObj.push_back(Pair("notCapableReason", activeMasternode.notCapableReason.c_str()));
+        mnObj.push_back(json_spirit::Pair("vin", activeMasternode.vin.ToString().c_str()));
+        mnObj.push_back(json_spirit::Pair("service", activeMasternode.service.ToString().c_str()));
+        mnObj.push_back(json_spirit::Pair("status", activeMasternode.status));
+        mnObj.push_back(json_spirit::Pair("pubKeyMasternode", address2.ToString().c_str()));
+        mnObj.push_back(json_spirit::Pair("notCapableReason", activeMasternode.notCapableReason.c_str()));
         return mnObj;
     }
 
@@ -788,7 +788,7 @@ Value masternodelist(const Array& params, bool fHelp)
         BOOST_FOREACH(PAIRTYPE(int, CMasternode)& s, vMasternodeRanks) {
             std::string strVin = s.second.vin.prevout.ToStringShort();
             if(strFilter !="" && strVin.find(strFilter) == string::npos) continue;
-            obj.push_back(Pair(strVin,       s.first));
+            obj.push_back(json_spirit::Pair(strVin,       s.first));
         }
     } else {
         std::vector<CMasternode> vMasternodes = mnodeman.GetFullMasternodeVector();
@@ -796,7 +796,7 @@ Value masternodelist(const Array& params, bool fHelp)
             std::string strVin = mn.vin.prevout.ToStringShort();
             if (strMode == "activeseconds") {
                 if(strFilter !="" && strVin.find(strFilter) == string::npos) continue;
-                obj.push_back(Pair(strVin,       (int64_t)(mn.lastTimeSeen - mn.sigTime)));
+                obj.push_back(json_spirit::Pair(strVin,       (int64_t)(mn.lastTimeSeen - mn.sigTime)));
             } else if (strMode == "reward") {
                 CTxDestination address1;
                 ExtractDestination(mn.rewardAddress, address1);
@@ -812,7 +812,7 @@ Value masternodelist(const Array& params, bool fHelp)
                     strOut += ":";
                     strOut += boost::lexical_cast<std::string>(mn.rewardPercentage);
                 }
-                obj.push_back(Pair(strVin,       strOut.c_str()));
+                obj.push_back(json_spirit::Pair(strVin,       strOut.c_str()));
             } else if (strMode == "full") {
                 CScript pubkey;
                 pubkey.SetDestination(mn.pubkey.GetID());
@@ -836,14 +836,14 @@ Value masternodelist(const Array& params, bool fHelp)
                 stringStream << " " << strVin;
                 if(strFilter !="" && stringStream.str().find(strFilter) == string::npos &&
                         strVin.find(strFilter) == string::npos) continue;
-                obj.push_back(Pair(addrStream.str(), output));
+                obj.push_back(json_spirit::Pair(addrStream.str(), output));
             } else if (strMode == "lastseen") {
                 if(strFilter !="" && strVin.find(strFilter) == string::npos) continue;
-                obj.push_back(Pair(strVin,       (int64_t)mn.lastTimeSeen));
+                obj.push_back(json_spirit::Pair(strVin,       (int64_t)mn.lastTimeSeen));
             } else if (strMode == "protocol") {
                 if(strFilter !="" && strFilter != boost::lexical_cast<std::string>(mn.protocolVersion) &&
                     strVin.find(strFilter) == string::npos) continue;
-                obj.push_back(Pair(strVin,       (int64_t)mn.protocolVersion));
+                obj.push_back(json_spirit::Pair(strVin,       (int64_t)mn.protocolVersion));
             } else if (strMode == "pubkey") {
                 CScript pubkey;
                 pubkey.SetDestination(mn.pubkey.GetID());
@@ -853,15 +853,15 @@ Value masternodelist(const Array& params, bool fHelp)
 
                 if(strFilter !="" && address2.ToString().find(strFilter) == string::npos &&
                     strVin.find(strFilter) == string::npos) continue;
-                obj.push_back(Pair(strVin,       address2.ToString().c_str()));
+                obj.push_back(json_spirit::Pair(strVin,       address2.ToString().c_str()));
             } else if(strMode == "status") {
                 std::string strStatus = mn.Status();
                 if(strFilter !="" && strVin.find(strFilter) == string::npos && strStatus.find(strFilter) == string::npos) continue;
-                obj.push_back(Pair(strVin,       strStatus.c_str()));
+                obj.push_back(json_spirit::Pair(strVin,       strStatus.c_str()));
             } else if (strMode == "addr") {
                 if(strFilter !="" && mn.vin.prevout.hash.ToString().find(strFilter) == string::npos &&
                     strVin.find(strFilter) == string::npos) continue;
-                obj.push_back(Pair(strVin,       mn.addr.ToString().c_str()));
+                obj.push_back(json_spirit::Pair(strVin,       mn.addr.ToString().c_str()));
             } else if(strMode == "votes"){
                 std::string strStatus = "ABSTAIN";
 
@@ -873,11 +873,11 @@ Value masternodelist(const Array& params, bool fHelp)
                 }
 
                 if(strFilter !="" && (strVin.find(strFilter) == string::npos && strStatus.find(strFilter) == string::npos)) continue;
-                obj.push_back(Pair(strVin,       strStatus.c_str()));
+                obj.push_back(json_spirit::Pair(strVin,       strStatus.c_str()));
             } else if(strMode == "lastpaid"){
                 if(strFilter !="" && mn.vin.prevout.hash.ToString().find(strFilter) == string::npos &&
                     strVin.find(strFilter) == string::npos) continue;
-                obj.push_back(Pair(strVin,      (int64_t)mn.nLastPaid));
+                obj.push_back(json_spirit::Pair(strVin,      (int64_t)mn.nLastPaid));
             }
         }
     }

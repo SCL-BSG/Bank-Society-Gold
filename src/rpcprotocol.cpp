@@ -116,31 +116,52 @@ bool ReadHTTPRequestLine(std::basic_istream<char>& stream, int &proto,
     string str;
     getline(stream, str);
 
+    LogPrintf("*** RGP ReadHTTPRequestLine START stream %s  \n", str);
+
     // HTTP request line is space-delimited
     vector<string> vWords;
     boost::split(vWords, str, boost::is_any_of(" "));
     if (vWords.size() < 2)
+    {
+        LogPrintf("*** RGP ReadHTTPRequestLine vWords.size < 2 logic failed \n");
         return false;
+    }
+
+    LogPrintf("*** RGP ReadHTTPRequestLine vWords[0] %s vWords[1] %s  \n", vWords[0], vWords[1] );
+
 
     // HTTP methods permitted: GET, POST
     http_method = vWords[0];
     if (http_method != "GET" && http_method != "POST")
+    {
+        LogPrintf("*** RGP ReadHTTPRequestLine http_method is not GET or POST \n");
         return false;
+    }
 
     // HTTP URI must be an absolute path, relative to current host
     http_uri = vWords[1];
     if (http_uri.size() == 0 || http_uri[0] != '/')
+    {
+        LogPrintf("*** RGP ReadHTTPRequestLine http_uri.size is ZERO or http_uri[0] is not / \n");
+        LogPrintf("*** RGP ReadHTTPRequestLine http_uri.size is %d  http_uri[0] is %s \n", http_uri.size(), http_uri );
         return false;
+    }
 
     // parse proto, if present
     string strProto = "";
     if (vWords.size() > 2)
+    {
+        LogPrintf("*** RGP ReadHTTPRequestLine strProto OK %s \n", vWords[2] );
         strProto = vWords[2];
+    }
 
     proto = 0;
     const char *ver = strstr(strProto.c_str(), "HTTP/1.");
     if (ver != NULL)
+    {
+        LogPrintf("*** RGP ReadHTTPRequestLine HTTP version is not zero OK \n");
         proto = atoi(ver+7);
+    }
 
     return true;
 }
@@ -241,9 +262,9 @@ int ReadHTTPMessage(std::basic_istream<char>& stream, map<string,
 string JSONRPCRequest(const string& strMethod, const Array& params, const Value& id)
 {
     Object request;
-    request.push_back(Pair("method", strMethod));
-    request.push_back(Pair("params", params));
-    request.push_back(Pair("id", id));
+    request.push_back(json_spirit::Pair("method", strMethod));
+    request.push_back(json_spirit::Pair("params", params));
+    request.push_back(json_spirit::Pair("id", id));
     return write_string(Value(request), false) + "\n";
 }
 
@@ -251,11 +272,11 @@ Object JSONRPCReplyObj(const Value& result, const Value& error, const Value& id)
 {
     Object reply;
     if (error.type() != null_type)
-        reply.push_back(Pair("result", Value::null));
+        reply.push_back(json_spirit::Pair("result", Value::null));
     else
-        reply.push_back(Pair("result", result));
-    reply.push_back(Pair("error", error));
-    reply.push_back(Pair("id", id));
+        reply.push_back(json_spirit::Pair("result", result));
+    reply.push_back(json_spirit::Pair("error", error));
+    reply.push_back(json_spirit::Pair("id", id));
     return reply;
 }
 
@@ -268,7 +289,7 @@ string JSONRPCReply(const Value& result, const Value& error, const Value& id)
 Object JSONRPCError(int code, const string& message)
 {
     Object error;
-    error.push_back(Pair("code", code));
-    error.push_back(Pair("message", message));
+    error.push_back(json_spirit::Pair("code", code));
+    error.push_back(json_spirit::Pair("message", message));
     return error;
 }

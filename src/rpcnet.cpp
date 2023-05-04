@@ -89,27 +89,27 @@ Value getpeerinfo(const Array& params, bool fHelp)
         Object obj;
         CNodeStateStats statestats;
         bool fStateStats = GetNodeStateStats(stats.nodeid, statestats);
-        obj.push_back(Pair("addr", stats.addrName));
+        obj.push_back(json_spirit::Pair("addr", stats.addrName));
         if (!(stats.addrLocal.empty()))
-            obj.push_back(Pair("addrlocal", stats.addrLocal));
-        obj.push_back(Pair("services", strprintf("%08x", stats.nServices)));
-        obj.push_back(Pair("lastsend", (int64_t)stats.nLastSend));
-        obj.push_back(Pair("lastrecv", (int64_t)stats.nLastRecv));
-        obj.push_back(Pair("bytessent", (int64_t)stats.nSendBytes));
-        obj.push_back(Pair("bytesrecv", (int64_t)stats.nRecvBytes));
-        obj.push_back(Pair("conntime", (int64_t)stats.nTimeConnected));
-        obj.push_back(Pair("timeoffset", stats.nTimeOffset));
-        obj.push_back(Pair("pingtime", stats.dPingTime));
+            obj.push_back(json_spirit::Pair("addrlocal", stats.addrLocal));
+        obj.push_back(json_spirit::Pair("services", strprintf("%08x", stats.nServices)));
+        obj.push_back(json_spirit::Pair("lastsend", (int64_t)stats.nLastSend));
+        obj.push_back(json_spirit::Pair("lastrecv", (int64_t)stats.nLastRecv));
+        obj.push_back(json_spirit::Pair("bytessent", (int64_t)stats.nSendBytes));
+        obj.push_back(json_spirit::Pair("bytesrecv", (int64_t)stats.nRecvBytes));
+        obj.push_back(json_spirit::Pair("conntime", (int64_t)stats.nTimeConnected));
+        obj.push_back(json_spirit::Pair("timeoffset", stats.nTimeOffset));
+        obj.push_back(json_spirit::Pair("pingtime", stats.dPingTime));
         if (stats.dPingWait > 0.0)
-            obj.push_back(Pair("pingwait", stats.dPingWait));
-        obj.push_back(Pair("version", stats.nVersion));
-        obj.push_back(Pair("subver", stats.strSubVer));
-        obj.push_back(Pair("inbound", stats.fInbound));
-        obj.push_back(Pair("startingheight", stats.nStartingHeight));
+            obj.push_back(json_spirit::Pair("pingwait", stats.dPingWait));
+        obj.push_back(json_spirit::Pair("version", stats.nVersion));
+        obj.push_back(json_spirit::Pair("subver", stats.strSubVer));
+        obj.push_back(json_spirit::Pair("inbound", stats.fInbound));
+        obj.push_back(json_spirit::Pair("startingheight", stats.nStartingHeight));
         if (fStateStats) {
-            obj.push_back(Pair("banscore", statestats.nMisbehavior));
+            obj.push_back(json_spirit::Pair("banscore", statestats.nMisbehavior));
         }
-        obj.push_back(Pair("syncnode", stats.fSyncNode));
+        obj.push_back(json_spirit::Pair("syncnode", stats.fSyncNode));
 
         ret.push_back(obj);
     }
@@ -196,7 +196,7 @@ Value getaddednodeinfo(const Array& params, bool fHelp)
     {
         Object ret;
         BOOST_FOREACH(string& strAddNode, laddedNodes)
-            ret.push_back(Pair("addednode", strAddNode));
+            ret.push_back(json_spirit::Pair("addednode", strAddNode));
         return ret;
     }
 
@@ -211,10 +211,10 @@ Value getaddednodeinfo(const Array& params, bool fHelp)
         else
         {
             Object obj;
-            obj.push_back(Pair("addednode", strAddNode));
-            obj.push_back(Pair("connected", false));
+            obj.push_back(json_spirit::Pair("addednode", strAddNode));
+            obj.push_back(json_spirit::Pair("connected", false));
             Array addresses;
-            obj.push_back(Pair("addresses", addresses));
+            obj.push_back(json_spirit::Pair("addresses", addresses));
         }
     }
 
@@ -222,7 +222,7 @@ Value getaddednodeinfo(const Array& params, bool fHelp)
     for (list<pair<string, vector<CService> > >::iterator it = laddedAddreses.begin(); it != laddedAddreses.end(); it++)
     {
         Object obj;
-        obj.push_back(Pair("addednode", it->first));
+        obj.push_back(json_spirit::Pair("addednode", it->first));
 
         Array addresses;
         bool fConnected = false;
@@ -230,21 +230,21 @@ Value getaddednodeinfo(const Array& params, bool fHelp)
         {
             bool fFound = false;
             Object node;
-            node.push_back(Pair("address", addrNode.ToString()));
+            node.push_back(json_spirit::Pair("address", addrNode.ToString()));
             BOOST_FOREACH(CNode* pnode, vNodes)
                 if (pnode->addr == addrNode)
                 {
                     fFound = true;
                     fConnected = true;
-                    node.push_back(Pair("connected", pnode->fInbound ? "inbound" : "outbound"));
+                    node.push_back(json_spirit::Pair("connected", pnode->fInbound ? "inbound" : "outbound"));
                     break;
                 }
             if (!fFound)
-                node.push_back(Pair("connected", "false"));
+                node.push_back(json_spirit::Pair("connected", "false"));
             addresses.push_back(node);
         }
-        obj.push_back(Pair("connected", fConnected));
-        obj.push_back(Pair("addresses", addresses));
+        obj.push_back(json_spirit::Pair("connected", fConnected));
+        obj.push_back(json_spirit::Pair("addresses", addresses));
         ret.push_back(obj);
     }
 
@@ -269,11 +269,11 @@ static Value GetNetworksInfo()
         proxyType proxy;
         Object obj;
         GetProxy(network, proxy);
-        obj.push_back(Pair("name", GetNetworkName(network)));
-        obj.push_back(Pair("limited", IsLimited(network)));
-        obj.push_back(Pair("reachable", IsReachable(network)));
-        obj.push_back(Pair("proxy", proxy.IsValid() ? proxy.proxy.ToStringIPPort() : string()));
-        obj.push_back(Pair("proxy_randomize_credentials", proxy.randomize_credentials));
+        obj.push_back(json_spirit::Pair("name", GetNetworkName(network)));
+        obj.push_back(json_spirit::Pair("limited", IsLimited(network)));
+        obj.push_back(json_spirit::Pair("reachable", IsReachable(network)));
+        obj.push_back(json_spirit::Pair("proxy", proxy.IsValid() ? proxy.proxy.ToStringIPPort() : string()));
+        obj.push_back(json_spirit::Pair("proxy_randomize_credentials", proxy.randomize_credentials));
         ret.push_back(obj);
     }
     return ret;
@@ -338,15 +338,15 @@ Value getnetworkinfo(const Array& params, bool fHelp)
 
     int version = 1006;
 
-    //objects.push_back (Pair("version", version ) );
-    objects.push_back(Pair("version", CLIENT_VERSION_RPC));
-    objects.push_back(Pair("subversion", FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, std::vector<string>())));
-    objects.push_back(Pair("protocolversion", PROTOCOL_VERSION));
-    objects.push_back(Pair("localservices", strprintf("%016x", nLocalServices)));
-    objects.push_back(Pair("timeoffset", GetTimeOffset()));
-    objects.push_back(Pair("connections", (int)vNodes.size()));
-    objects.push_back(Pair("networks", GetNetworksInfo()));
-    objects.push_back(Pair("relayfee", ValueFromAmount( 1000 ) ) );
+    //objects.push_back (json_spirit::Pair("version", version ) );
+    objects.push_back(json_spirit::Pair("version", CLIENT_VERSION_RPC));
+    objects.push_back(json_spirit::Pair("subversion", FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, std::vector<string>())));
+    objects.push_back(json_spirit::Pair("protocolversion", PROTOCOL_VERSION));
+    objects.push_back(json_spirit::Pair("localservices", strprintf("%016x", nLocalServices)));
+    objects.push_back(json_spirit::Pair("timeoffset", GetTimeOffset()));
+    objects.push_back(json_spirit::Pair("connections", (int)vNodes.size()));
+    objects.push_back(json_spirit::Pair("networks", GetNetworksInfo()));
+    objects.push_back(json_spirit::Pair("relayfee", ValueFromAmount( 1000 ) ) );
 
 
     //UniValue localAddresses(UniValue::VARR);
@@ -356,14 +356,14 @@ Value getnetworkinfo(const Array& params, bool fHelp)
 //        BOOST_FOREACH (const PAIRTYPE(CNetAddr, LocalServiceInfo) & item, mapLocalHost) {
 //            //UniValue rec(UniValue::VOBJ);
 //            Object rec;
-//            rec.push_back(Pair("address", item.first.ToString()));
-//            rec.push_back(Pair("port", item.second.nPort));
-//            rec.push_back(Pair("score", item.second.nScore));
+//            rec.push_backjson_spirit::Pair("address", item.first.ToString()));
+//            rec.push_backjson_spirit::Pair("port", item.second.nPort));
+//            rec.push_backjson_spirit::Pair("score", item.second.nScore));
 //            localAddresses.push_back(rec);
 //        }
 //    }
 
-//    objects.push_back(Pair("localaddresses", localAddresses));
+//    objects.push_backjson_spirit::Pair("localaddresses", localAddresses));
 
 
 
@@ -427,14 +427,14 @@ Value sendalert(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("strStatusBar", alert.strStatusBar));
-    result.push_back(Pair("nVersion", alert.nVersion));
-    result.push_back(Pair("nMinVer", alert.nMinVer));
-    result.push_back(Pair("nMaxVer", alert.nMaxVer));
-    result.push_back(Pair("nPriority", alert.nPriority));
-    result.push_back(Pair("nID", alert.nID));
+    result.push_back(json_spirit::Pair("strStatusBar", alert.strStatusBar));
+    result.push_back(json_spirit::Pair("nVersion", alert.nVersion));
+    result.push_back(json_spirit::Pair("nMinVer", alert.nMinVer));
+    result.push_back(json_spirit::Pair("nMaxVer", alert.nMaxVer));
+    result.push_back(json_spirit::Pair("nPriority", alert.nPriority));
+    result.push_back(json_spirit::Pair("nID", alert.nID));
     if (alert.nCancel > 0)
-        result.push_back(Pair("nCancel", alert.nCancel));
+        result.push_back(json_spirit::Pair("nCancel", alert.nCancel));
     return result;
 }
 
@@ -447,9 +447,9 @@ Value getnettotals(const Array& params, bool fHelp)
             "and current time.");
 
     Object obj;
-    obj.push_back(Pair("totalbytesrecv", CNode::GetTotalBytesRecv()));
-    obj.push_back(Pair("totalbytessent", CNode::GetTotalBytesSent()));
-    obj.push_back(Pair("timemillis", GetTimeMillis()));
+    obj.push_back(json_spirit::Pair("totalbytesrecv", CNode::GetTotalBytesRecv()));
+    obj.push_back(json_spirit::Pair("totalbytessent", CNode::GetTotalBytesSent()));
+    obj.push_back(json_spirit::Pair("timemillis", GetTimeMillis()));
     return obj;
 }
 
@@ -539,10 +539,10 @@ Value listbanned(const Array& params, bool fHelp)
     {
         CBanEntry banEntry = (*it).second;
         Object rec;
-        rec.push_back(Pair("address", (*it).first.ToString()));
-        rec.push_back(Pair("banned_until", banEntry.nBanUntil));
-        rec.push_back(Pair("ban_created", banEntry.nCreateTime));
-        rec.push_back(Pair("ban_reason", banEntry.banReasonToString()));
+        rec.push_back(json_spirit::Pair("address", (*it).first.ToString()));
+        rec.push_back(json_spirit::Pair("banned_until", banEntry.nBanUntil));
+        rec.push_back(json_spirit::Pair("ban_created", banEntry.nCreateTime));
+        rec.push_back(json_spirit::Pair("ban_reason", banEntry.banReasonToString()));
 
         bannedAddresses.push_back(rec);
     }
@@ -580,36 +580,36 @@ Value firewallstatus(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("enabled", BoolToString(FIREWALL_ENABLED)));
-    result.push_back(Pair("clear-blacklist", BoolToString(FIREWALL_CLEAR_BLACKLIST)));
-    result.push_back(Pair("clear-banlist", BoolToString(FIREWALL_CLEAR_BANS)));
-    result.push_back(Pair("live-debug", BoolToString(FIREWALL_LIVE_DEBUG)));
-    result.push_back(Pair("live-debug-exam", BoolToString(FIREWALL_LIVEDEBUG_EXAM)));
-    result.push_back(Pair("live-debug-bans", BoolToString(FIREWALL_LIVEDEBUG_BANS)));
-    result.push_back(Pair("live-debug-blacklist", BoolToString(FIREWALL_LIVEDEBUG_BLACKLIST)));
-    result.push_back(Pair("live-debug-disconnect", BoolToString(FIREWALL_LIVEDEBUG_DISCONNECT)));
-    result.push_back(Pair("live-debug-bandwidthabuse", BoolToString(FIREWALL_LIVEDEBUG_BANDWIDTHABUSE)));
-    result.push_back(Pair("live-debug-nofalsepositive", BoolToString(FIREWALL_LIVEDEBUG_NOFALSEPOSITIVE)));
-    result.push_back(Pair("live-debug-invalidwallet", BoolToString(FIREWALL_LIVEDEBUG_INVALIDWALLET)));
-    result.push_back(Pair("live-debug-forkedwallet", BoolToString(FIREWALL_LIVEDEBUG_FORKEDWALLET)));
-    result.push_back(Pair("live-debug-floodingwallet", BoolToString(FIREWALL_LIVEDEBUG_FLOODINGWALLET)));
-    result.push_back(Pair("detect-bandwidthabuse", BoolToString(FIREWALL_DETECT_BANDWIDTHABUSE)));
-    result.push_back(Pair("nofalsepositive", BoolToString(FIREWALL_NOFALSEPOSITIVE_BANDWIDTHABUSE)));
-    result.push_back(Pair("detect-invalidwallet", BoolToString(FIREWALL_DETECT_INVALIDWALLET)));
-    result.push_back(Pair("detect-forkedwallet", BoolToString(FIREWALL_DETECT_FORKEDWALLET)));
-    result.push_back(Pair("detect-floodingwallet", BoolToString(FIREWALL_DETECT_FLOODINGWALLET)));
-    result.push_back(Pair("blacklist-bandwidthabuse", BoolToString(FIREWALL_BLACKLIST_BANDWIDTHABUSE)));
-    result.push_back(Pair("blacklist-invalidwallet", BoolToString(FIREWALL_BLACKLIST_INVALIDWALLET)));
-    result.push_back(Pair("blacklist-forkedwallet", BoolToString(FIREWALL_BLACKLIST_FORKEDWALLET)));
-    result.push_back(Pair("blacklist-floodingwallet", BoolToString(FIREWALL_BLACKLIST_FLOODINGWALLET)));
-    result.push_back(Pair("ban-bandwidthabuse", BoolToString(FIREWALL_BAN_BANDWIDTHABUSE)));
-    result.push_back(Pair("ban-invalidwallet", BoolToString(FIREWALL_BAN_INVALIDWALLET)));
-    result.push_back(Pair("ban-forkedwallet", BoolToString(FIREWALL_BAN_FORKEDWALLET)));
-    result.push_back(Pair("ban-floodingwallet", BoolToString(FIREWALL_BAN_FLOODINGWALLET)));
-    result.push_back(Pair("bantime-bandwidthabuse", (int64_t)FIREWALL_BANTIME_BANDWIDTHABUSE));
-    result.push_back(Pair("bantime-invalidwallet", (int64_t)FIREWALL_BANTIME_INVALIDWALLET));
-    result.push_back(Pair("bantime-forkedwallet", (int64_t)FIREWALL_BANTIME_FORKEDWALLET));
-    result.push_back(Pair("bantime-floodingwallet", (int64_t)FIREWALL_BANTIME_FLOODINGWALLET));
+    result.push_back(json_spirit::Pair("enabled", BoolToString(FIREWALL_ENABLED)));
+    result.push_back(json_spirit::Pair("clear-blacklist", BoolToString(FIREWALL_CLEAR_BLACKLIST)));
+    result.push_back(json_spirit::Pair("clear-banlist", BoolToString(FIREWALL_CLEAR_BANS)));
+    result.push_back(json_spirit::Pair("live-debug", BoolToString(FIREWALL_LIVE_DEBUG)));
+    result.push_back(json_spirit::Pair("live-debug-exam", BoolToString(FIREWALL_LIVEDEBUG_EXAM)));
+    result.push_back(json_spirit::Pair("live-debug-bans", BoolToString(FIREWALL_LIVEDEBUG_BANS)));
+    result.push_back(json_spirit::Pair("live-debug-blacklist", BoolToString(FIREWALL_LIVEDEBUG_BLACKLIST)));
+    result.push_back(json_spirit::Pair("live-debug-disconnect", BoolToString(FIREWALL_LIVEDEBUG_DISCONNECT)));
+    result.push_back(json_spirit::Pair("live-debug-bandwidthabuse", BoolToString(FIREWALL_LIVEDEBUG_BANDWIDTHABUSE)));
+    result.push_back(json_spirit::Pair("live-debug-nofalsepositive", BoolToString(FIREWALL_LIVEDEBUG_NOFALSEPOSITIVE)));
+    result.push_back(json_spirit::Pair("live-debug-invalidwallet", BoolToString(FIREWALL_LIVEDEBUG_INVALIDWALLET)));
+    result.push_back(json_spirit::Pair("live-debug-forkedwallet", BoolToString(FIREWALL_LIVEDEBUG_FORKEDWALLET)));
+    result.push_back(json_spirit::Pair("live-debug-floodingwallet", BoolToString(FIREWALL_LIVEDEBUG_FLOODINGWALLET)));
+    result.push_back(json_spirit::Pair("detect-bandwidthabuse", BoolToString(FIREWALL_DETECT_BANDWIDTHABUSE)));
+    result.push_back(json_spirit::Pair("nofalsepositive", BoolToString(FIREWALL_NOFALSEPOSITIVE_BANDWIDTHABUSE)));
+    result.push_back(json_spirit::Pair("detect-invalidwallet", BoolToString(FIREWALL_DETECT_INVALIDWALLET)));
+    result.push_back(json_spirit::Pair("detect-forkedwallet", BoolToString(FIREWALL_DETECT_FORKEDWALLET)));
+    result.push_back(json_spirit::Pair("detect-floodingwallet", BoolToString(FIREWALL_DETECT_FLOODINGWALLET)));
+    result.push_back(json_spirit::Pair("blacklist-bandwidthabuse", BoolToString(FIREWALL_BLACKLIST_BANDWIDTHABUSE)));
+    result.push_back(json_spirit::Pair("blacklist-invalidwallet", BoolToString(FIREWALL_BLACKLIST_INVALIDWALLET)));
+    result.push_back(json_spirit::Pair("blacklist-forkedwallet", BoolToString(FIREWALL_BLACKLIST_FORKEDWALLET)));
+    result.push_back(json_spirit::Pair("blacklist-floodingwallet", BoolToString(FIREWALL_BLACKLIST_FLOODINGWALLET)));
+    result.push_back(json_spirit::Pair("ban-bandwidthabuse", BoolToString(FIREWALL_BAN_BANDWIDTHABUSE)));
+    result.push_back(json_spirit::Pair("ban-invalidwallet", BoolToString(FIREWALL_BAN_INVALIDWALLET)));
+    result.push_back(json_spirit::Pair("ban-forkedwallet", BoolToString(FIREWALL_BAN_FORKEDWALLET)));
+    result.push_back(json_spirit::Pair("ban-floodingwallet", BoolToString(FIREWALL_BAN_FLOODINGWALLET)));
+    result.push_back(json_spirit::Pair("bantime-bandwidthabuse", (int64_t)FIREWALL_BANTIME_BANDWIDTHABUSE));
+    result.push_back(json_spirit::Pair("bantime-invalidwallet", (int64_t)FIREWALL_BANTIME_INVALIDWALLET));
+    result.push_back(json_spirit::Pair("bantime-forkedwallet", (int64_t)FIREWALL_BANTIME_FORKEDWALLET));
+    result.push_back(json_spirit::Pair("bantime-floodingwallet", (int64_t)FIREWALL_BANTIME_FLOODINGWALLET));
 
 return result;
 }
@@ -646,7 +646,7 @@ Value firewallenabled(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("enabled", strCommand));
+    result.push_back(json_spirit::Pair("enabled", strCommand));
 
 return result;
 }
@@ -684,7 +684,7 @@ Value firewallclearblacklist(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("clear-blacklist", strCommand));
+    result.push_back(json_spirit::Pair("clear-blacklist", strCommand));
 
 return result;
 }
@@ -721,7 +721,7 @@ Value firewallclearbanlist(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("clear-banlist", strCommand));
+    result.push_back(json_spirit::Pair("clear-banlist", strCommand));
 
 return result;
 }
@@ -758,7 +758,7 @@ Value firewalldebug(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("live-debug", strCommand));
+    result.push_back(json_spirit::Pair("live-debug", strCommand));
 
 return result;
 }
@@ -794,7 +794,7 @@ Value firewalldebugexam(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("live-debug-exam", strCommand));
+    result.push_back(json_spirit::Pair("live-debug-exam", strCommand));
 
 return result;
 }
@@ -831,7 +831,7 @@ Value firewalldebugbans(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("live-debug-bans", strCommand));
+    result.push_back(json_spirit::Pair("live-debug-bans", strCommand));
 
 return result;
 }
@@ -867,7 +867,7 @@ Value firewalldebugblacklist(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("live-debug-blacklist", strCommand));
+    result.push_back(json_spirit::Pair("live-debug-blacklist", strCommand));
 
 return result;
 }
@@ -904,7 +904,7 @@ Value firewalldebugdisconnect(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("live-debug-disconnect", strCommand));
+    result.push_back(json_spirit::Pair("live-debug-disconnect", strCommand));
 
 return result;
 }
@@ -941,7 +941,7 @@ Value firewalldebugbandwidthabuse(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("live-debug-bandwidthabuse", strCommand));
+    result.push_back(json_spirit::Pair("live-debug-bandwidthabuse", strCommand));
 
 return result;
 }
@@ -978,7 +978,7 @@ Value firewalldebugnofalsepositivebandwidthabuse(const Array& params, bool fHelp
 
 
     Object result;
-    result.push_back(Pair("live-debug-nofalsepositive", strCommand));
+    result.push_back(json_spirit::Pair("live-debug-nofalsepositive", strCommand));
 
 return result;
 }
@@ -1015,7 +1015,7 @@ Value firewalldebuginvalidwallet(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("live-debug-invalidwallet", strCommand));
+    result.push_back(json_spirit::Pair("live-debug-invalidwallet", strCommand));
 
 return result;
 }
@@ -1052,7 +1052,7 @@ Value firewalldebugforkedwallet(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("live-debug-forkedwallet", strCommand));
+    result.push_back(json_spirit::Pair("live-debug-forkedwallet", strCommand));
 
 return result;
 }
@@ -1088,7 +1088,7 @@ Value firewalldebugfloodingwallet(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("live-debug-floodingwallet", strCommand));
+    result.push_back(json_spirit::Pair("live-debug-floodingwallet", strCommand));
 
 return result;
 }
@@ -1113,7 +1113,7 @@ Value firewallaveragetolerance(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("exam-average-tolerance", FIREWALL_AVERAGE_TOLERANCE));
+    result.push_back(json_spirit::Pair("exam-average-tolerance", FIREWALL_AVERAGE_TOLERANCE));
 
 return result;
 }
@@ -1138,7 +1138,7 @@ Value firewallaveragerange(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("exam-average-range", FIREWALL_AVERAGE_RANGE));
+    result.push_back(json_spirit::Pair("exam-average-range", FIREWALL_AVERAGE_RANGE));
 
 return result;
 }
@@ -1163,7 +1163,7 @@ Value firewalltraffictolerance(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("exam-traffic-tolerance", FIREWALL_TRAFFIC_TOLERANCE));
+    result.push_back(json_spirit::Pair("exam-traffic-tolerance", FIREWALL_TRAFFIC_TOLERANCE));
 
 return result;
 }
@@ -1188,7 +1188,7 @@ Value firewalltrafficzone(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("exam-traffic-zone", FIREWALL_TRAFFIC_ZONE));
+    result.push_back(json_spirit::Pair("exam-traffic-zone", FIREWALL_TRAFFIC_ZONE));
 
 return result;
 }
@@ -1224,7 +1224,7 @@ Value firewalladdtowhitelist(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("exam-whitelist-add", MSG));
+    result.push_back(json_spirit::Pair("exam-whitelist-add", MSG));
 
 return result;
 }
@@ -1260,7 +1260,7 @@ Value firewalladdtoblacklist(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("exam-blacklist-add", MSG));
+    result.push_back(json_spirit::Pair("exam-blacklist-add", MSG));
 
 return result;
 }
@@ -1296,7 +1296,7 @@ Value firewalldetectbandwidthabuse(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("detect-bandwidthabuse", strCommand));
+    result.push_back(json_spirit::Pair("detect-bandwidthabuse", strCommand));
 
 return result;
 }
@@ -1331,7 +1331,7 @@ Value firewallblacklistbandwidthabuse(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("blacklist-bandwidthabuse", strCommand));
+    result.push_back(json_spirit::Pair("blacklist-bandwidthabuse", strCommand));
 
 return result;
 }
@@ -1366,7 +1366,7 @@ Value firewallbanbandwidthabuse(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("ban-bandwidthabuse", strCommand));
+    result.push_back(json_spirit::Pair("ban-bandwidthabuse", strCommand));
 
 return result;
 }
@@ -1401,7 +1401,7 @@ Value firewallnofalsepositivebandwidthabuse(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("firewallnofalsepositivebandwidthabuse", strCommand));
+    result.push_back(json_spirit::Pair("firewallnofalsepositivebandwidthabuse", strCommand));
 
 return result;
 }
@@ -1428,7 +1428,7 @@ Value firewallbantimebandwidthabuse(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("bantime-bandwidthabuse", FIREWALL_BANTIME_BANDWIDTHABUSE));
+    result.push_back(json_spirit::Pair("bantime-bandwidthabuse", FIREWALL_BANTIME_BANDWIDTHABUSE));
 
 return result;
 }
@@ -1455,7 +1455,7 @@ Value firewallbandwidthabusemaxcheck(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("maxcheck-bandwidthabuse", FIREWALL_BANDWIDTHABUSE_MAXCHECK));
+    result.push_back(json_spirit::Pair("maxcheck-bandwidthabuse", FIREWALL_BANDWIDTHABUSE_MAXCHECK));
 
 return result;
 }
@@ -1481,7 +1481,7 @@ Value firewallbandwidthabuseminattack(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("minattack-bandwidthabuse", FIREWALL_BANDWIDTHABUSE_MINATTACK));
+    result.push_back(json_spirit::Pair("minattack-bandwidthabuse", FIREWALL_BANDWIDTHABUSE_MINATTACK));
 
 return result;
 }
@@ -1507,7 +1507,7 @@ Value firewallbandwidthabusemaxattack(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("maxattack-bandwidthabuse", FIREWALL_BANDWIDTHABUSE_MAXATTACK));
+    result.push_back(json_spirit::Pair("maxattack-bandwidthabuse", FIREWALL_BANDWIDTHABUSE_MAXATTACK));
 
 return result;
 }
@@ -1543,7 +1543,7 @@ Value firewalldetectinvalidwallet(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("detect-invalidwallet", strCommand));
+    result.push_back(json_spirit::Pair("detect-invalidwallet", strCommand));
 
 return result;
 }
@@ -1579,7 +1579,7 @@ Value firewallblacklistinvalidwallet(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("blacklist-invalidwallet", strCommand));
+    result.push_back(json_spirit::Pair("blacklist-invalidwallet", strCommand));
 
 return result;
 }
@@ -1615,7 +1615,7 @@ Value firewallbaninvalidwallet(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("ban-invalidwallet", strCommand));
+    result.push_back(json_spirit::Pair("ban-invalidwallet", strCommand));
 
 return result;
 }
@@ -1641,7 +1641,7 @@ Value firewallbantimeinvalidwallet(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("bantime-invalidwallet", FIREWALL_BANTIME_INVALIDWALLET));
+    result.push_back(json_spirit::Pair("bantime-invalidwallet", FIREWALL_BANTIME_INVALIDWALLET));
 
 return result;
 }
@@ -1667,7 +1667,7 @@ Value firewallinvalidwalletminprotocol(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("minprotocol-invalidwallet", FIREWALL_MINIMUM_PROTOCOL));
+    result.push_back(json_spirit::Pair("minprotocol-invalidwallet", FIREWALL_MINIMUM_PROTOCOL));
 
 return result;
 }
@@ -1693,7 +1693,7 @@ Value firewallinvalidwalletmaxcheck(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("maxcheck-invalidwallet", FIREWALL_INVALIDWALLET_MAXCHECK));
+    result.push_back(json_spirit::Pair("maxcheck-invalidwallet", FIREWALL_INVALIDWALLET_MAXCHECK));
 
 return result;
 }
@@ -1729,7 +1729,7 @@ Value firewalldetectforkedwallet(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("detect-forkedwallet", strCommand));
+    result.push_back(json_spirit::Pair("detect-forkedwallet", strCommand));
 
 return result;
 }
@@ -1765,7 +1765,7 @@ Value firewallblacklistforkedwallet(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("blacklist-forkedwallet", strCommand));
+    result.push_back(json_spirit::Pair("blacklist-forkedwallet", strCommand));
 
 return result;
 }
@@ -1801,7 +1801,7 @@ Value firewallbanforkedwallet(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("ban-forkedwallet", strCommand));
+    result.push_back(json_spirit::Pair("ban-forkedwallet", strCommand));
 
 return result;
 }
@@ -1827,7 +1827,7 @@ Value firewallbantimeforkedwallet(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("bantime-forkedwallet", FIREWALL_BANTIME_FORKEDWALLET));
+    result.push_back(json_spirit::Pair("bantime-forkedwallet", FIREWALL_BANTIME_FORKEDWALLET));
 
 return result;
 }
@@ -1863,7 +1863,7 @@ Value firewallforkedwalletnodeheight(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("attackpattern-forkedwallet-nodeheight-add", MSG));
+    result.push_back(json_spirit::Pair("attackpattern-forkedwallet-nodeheight-add", MSG));
 
 return result;
 }
@@ -1899,7 +1899,7 @@ Value firewalldetectfloodingwallet(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("detect-floodingwallet", strCommand));
+    result.push_back(json_spirit::Pair("detect-floodingwallet", strCommand));
 
 return result;
 }
@@ -1935,7 +1935,7 @@ Value firewallblacklistfloodingwallet(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("blacklist-floodingwallet", strCommand));
+    result.push_back(json_spirit::Pair("blacklist-floodingwallet", strCommand));
 
 return result;
 }
@@ -1971,7 +1971,7 @@ Value firewallbanfloodingwallet(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("ban-floodingwallet", strCommand));
+    result.push_back(json_spirit::Pair("ban-floodingwallet", strCommand));
 
 return result;
 }
@@ -1997,7 +1997,7 @@ Value firewallbantimefloodingwallet(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("bantime-floodingwallet", FIREWALL_BANTIME_FLOODINGWALLET));
+    result.push_back(json_spirit::Pair("bantime-floodingwallet", FIREWALL_BANTIME_FLOODINGWALLET));
 
 return result;
 }
@@ -2023,7 +2023,7 @@ Value firewallfloodingwalletminbytes(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("minbytes-floodingwallet", FIREWALL_FLOODINGWALLET_MINBYTES));
+    result.push_back(json_spirit::Pair("minbytes-floodingwallet", FIREWALL_FLOODINGWALLET_MINBYTES));
 
 return result;
 }
@@ -2049,7 +2049,7 @@ Value firewallfloodingwalletmaxbytes(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("bantime-floodingwallet", FIREWALL_FLOODINGWALLET_MAXBYTES));
+    result.push_back(json_spirit::Pair("bantime-floodingwallet", FIREWALL_FLOODINGWALLET_MAXBYTES));
 
 return result;
 }
@@ -2085,7 +2085,7 @@ Value firewallfloodingwalletattackpatternadd(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("attackpattern-floodingwallet-attackpattern-add", MSG));
+    result.push_back(json_spirit::Pair("attackpattern-floodingwallet-attackpattern-add", MSG));
 
 return result;
 }
@@ -2130,7 +2130,7 @@ Value firewallfloodingwalletattackpatternremove(const Array& params, bool fHelp)
 
 
     Object result;
-    result.push_back(Pair("attackpattern-floodingwallet-attackpattern-remove", MSG));
+    result.push_back(json_spirit::Pair("attackpattern-floodingwallet-attackpattern-remove", MSG));
 
 return result;
 }
@@ -2156,7 +2156,7 @@ Value firewallfloodingwalletmintrafficavg(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("mintrafficavg-floodingwallet", FIREWALL_FLOODINGWALLET_MINTRAFFICAVERAGE));
+    result.push_back(json_spirit::Pair("mintrafficavg-floodingwallet", FIREWALL_FLOODINGWALLET_MINTRAFFICAVERAGE));
 
 return result;
 }
@@ -2182,7 +2182,7 @@ Value firewallfloodingwalletmaxtrafficavg(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("trafficavg-floodingwallet", FIREWALL_FLOODINGWALLET_MAXTRAFFICAVERAGE));
+    result.push_back(json_spirit::Pair("trafficavg-floodingwallet", FIREWALL_FLOODINGWALLET_MAXTRAFFICAVERAGE));
 
 return result;
 }
@@ -2208,7 +2208,7 @@ Value firewallfloodingwalletmincheck(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("mincheck-floodingwallet", FIREWALL_FLOODINGWALLET_MINCHECK));
+    result.push_back(json_spirit::Pair("mincheck-floodingwallet", FIREWALL_FLOODINGWALLET_MINCHECK));
 
 return result;
 }
@@ -2234,7 +2234,7 @@ Value firewallfloodingwalletmaxcheck(const Array& params, bool fHelp)
     }
 
     Object result;
-    result.push_back(Pair("maxcheck-floodingwallet", FIREWALL_FLOODINGWALLET_MAXCHECK));
+    result.push_back(json_spirit::Pair("maxcheck-floodingwallet", FIREWALL_FLOODINGWALLET_MAXCHECK));
 
 return result;
 }

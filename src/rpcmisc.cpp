@@ -14,10 +14,11 @@
 #include "spork.h"
 #ifdef ENABLE_WALLET
 #include "wallet.h"
-#include "walletdb.h"
+//#include "walletdb.h"
 #endif
 
 #include <stdint.h>
+#include "standard.h"
 
 #include <boost/assign/list_of.hpp>
 #include "json/json_spirit_utils.h"
@@ -39,46 +40,46 @@ Value getinfo(const Array& params, bool fHelp)
     GetProxy(NET_IPV4, proxy);
 
     Object obj, diff;
-    obj.push_back(Pair("version",       FormatFullVersion()));
-    obj.push_back(Pair("protocolversion",(int)PROTOCOL_VERSION));
+    obj.push_back(json_spirit::Pair("version",       FormatFullVersion()));
+    obj.push_back(json_spirit::Pair("protocolversion",(int)PROTOCOL_VERSION));
 #ifdef ENABLE_WALLET
     if (pwalletMain) {
-        obj.push_back(Pair("walletversion", pwalletMain->GetVersion()));
-        obj.push_back(Pair("balance",       ValueFromAmount(pwalletMain->GetBalance())));
+        obj.push_back(json_spirit::Pair("walletversion", pwalletMain->GetVersion()));
+        obj.push_back(json_spirit::Pair("balance",       ValueFromAmount(pwalletMain->GetBalance())));
         if(!fLiteMode)
-            obj.push_back(Pair("darksend_balance", ValueFromAmount(pwalletMain->GetAnonymizedBalance())));
-        obj.push_back(Pair("newmint",       ValueFromAmount(pwalletMain->GetNewMint())));
-        obj.push_back(Pair("lastreward",   ValueFromAmount(pindexBest->nLastReward)));
-        obj.push_back(Pair("stake",         ValueFromAmount(pwalletMain->GetStake())));
+            obj.push_back(json_spirit::Pair("darksend_balance", ValueFromAmount(pwalletMain->GetAnonymizedBalance())));
+        obj.push_back(json_spirit::Pair("newmint",       ValueFromAmount(pwalletMain->GetNewMint())));
+        obj.push_back(json_spirit::Pair("lastreward",   ValueFromAmount(pindexBest->nLastReward)));
+        obj.push_back(json_spirit::Pair("stake",         ValueFromAmount(pwalletMain->GetStake())));
     }
 #endif
 
 #ifndef LOWMEM
-    obj.push_back(Pair("moneysupply",   ValueFromAmount(pindexBest->nMoneySupply)));
+    obj.push_back(json_spirit::Pair("moneysupply",   ValueFromAmount(pindexBest->nMoneySupply)));
 #endif
-    obj.push_back(Pair("blocks",        (int)nBestHeight));
-    obj.push_back(Pair("timeoffset",    (int64_t)GetTimeOffset()));
-    obj.push_back(Pair("connections",   (int)vNodes.size()));
-    obj.push_back(Pair("proxy",         (proxy.IsValid() ? proxy.proxy.ToStringIPPort() : string())));
+    obj.push_back(json_spirit::Pair("blocks",        (int)nBestHeight));
+    obj.push_back(json_spirit::Pair("timeoffset",    (int64_t)GetTimeOffset()));
+    obj.push_back(json_spirit::Pair("connections",   (int)vNodes.size()));
+    obj.push_back(json_spirit::Pair("proxy",         (proxy.IsValid() ? proxy.proxy.ToStringIPPort() : string())));
     //obj.push_back(Pair("proxy",         (proxy.first.IsValid() ? proxy.first.ToStringIPPort() : string())));
-    obj.push_back(Pair("ip",            GetLocalAddress(NULL).ToStringIP()));
+    obj.push_back(json_spirit::Pair("ip",            GetLocalAddress(NULL).ToStringIP()));
 
-    diff.push_back(Pair("proof-of-work",  GetDifficulty()));
-    diff.push_back(Pair("proof-of-stake", GetDifficulty(GetLastBlockIndex(pindexBest, true))));
-    obj.push_back(Pair("difficulty",    GetDifficulty(GetLastBlockIndex(pindexBest, true))));
+    diff.push_back(json_spirit::Pair("proof-of-work",  GetDifficulty()));
+    diff.push_back(json_spirit::Pair("proof-of-stake", GetDifficulty(GetLastBlockIndex(pindexBest, true))));
+    obj.push_back(json_spirit::Pair("difficulty",    GetDifficulty(GetLastBlockIndex(pindexBest, true))));
 
-    obj.push_back(Pair("testnet",       TestNet()));
+    obj.push_back(json_spirit::Pair("testnet",       TestNet()));
 #ifdef ENABLE_WALLET
     if (pwalletMain) {
-        obj.push_back(Pair("keypoololdest", (int64_t)pwalletMain->GetOldestKeyPoolTime()));
-        obj.push_back(Pair("keypoolsize",   (int)pwalletMain->GetKeyPoolSize()));
+        obj.push_back(json_spirit::Pair("keypoololdest", (int64_t)pwalletMain->GetOldestKeyPoolTime()));
+        obj.push_back(json_spirit::Pair("keypoolsize",   (int)pwalletMain->GetKeyPoolSize()));
     }
-    obj.push_back(Pair("paytxfee",      ValueFromAmount(nTransactionFee)));
-    obj.push_back(Pair("mininput",      ValueFromAmount(nMinimumInputValue)));
+    obj.push_back(json_spirit::Pair("paytxfee",      ValueFromAmount(nTransactionFee)));
+    obj.push_back(json_spirit::Pair("mininput",      ValueFromAmount(nMinimumInputValue)));
     if (pwalletMain && pwalletMain->IsCrypted())
-        obj.push_back(Pair("unlocked_until", (int64_t)nWalletUnlockTime));
+        obj.push_back(json_spirit::Pair("unlocked_until", (int64_t)nWalletUnlockTime));
 #endif
-    obj.push_back(Pair("errors",        GetWarnings("statusbar")));
+    obj.push_back(json_spirit::Pair("errors",        GetWarnings("statusbar")));
     return obj;
 }
 
@@ -96,18 +97,18 @@ public:
     Object operator()(const CKeyID &keyID) const {
         Object obj;
         CPubKey vchPubKey;
-        obj.push_back(Pair("isscript", false));
+        obj.push_back(json_spirit::Pair("isscript", false));
         if (mine == ISMINE_SPENDABLE) {
             pwalletMain->GetPubKey(keyID, vchPubKey);
-            obj.push_back(Pair("pubkey", HexStr(vchPubKey)));
-            obj.push_back(Pair("iscompressed", vchPubKey.IsCompressed()));
+            obj.push_back(json_spirit::Pair("pubkey", HexStr(vchPubKey)));
+            obj.push_back(json_spirit::Pair("iscompressed", vchPubKey.IsCompressed()));
         }
         return obj;
     }
 
     Object operator()(const CScriptID &scriptID) const {
         Object obj;
-        obj.push_back(Pair("isscript", true));
+        obj.push_back(json_spirit::Pair("isscript", true));
         if (mine != ISMINE_NO) {
             CScript subscript;
             pwalletMain->GetCScript(scriptID, subscript);
@@ -115,21 +116,21 @@ public:
           txnouttype whichType;
             int nRequired;
             ExtractDestinations(subscript, whichType, addresses, nRequired);
-            obj.push_back(Pair("script", GetTxnOutputType(whichType)));
-            obj.push_back(Pair("hex", HexStr(subscript.begin(), subscript.end())));
+            obj.push_back(json_spirit::Pair("script", GetTxnOutputType(whichType)));
+            obj.push_back(json_spirit::Pair("hex", HexStr(subscript.begin(), subscript.end())));
             Array a;
             BOOST_FOREACH(const CTxDestination& addr, addresses)
                 a.push_back(CSocietyGcoinAddress(addr).ToString());
-            obj.push_back(Pair("addresses", a));
+            obj.push_back(json_spirit::Pair("addresses", a));
             if (whichType == TX_MULTISIG)
-                obj.push_back(Pair("sigsrequired", nRequired));
+                obj.push_back(json_spirit::Pair("sigsrequired", nRequired));
         }
         return obj;
     }
 
     Object operator()(const CStealthAddress &stxAddr) const {
         Object obj;
-        obj.push_back(Pair("todo", true));
+        obj.push_back(json_spirit::Pair("todo", true));
         return obj;
     }
 };
@@ -146,22 +147,22 @@ Value validateaddress(const Array& params, bool fHelp)
     bool isValid = address.IsValid();
 
     Object ret;
-    ret.push_back(Pair("isvalid", isValid));
+    ret.push_back(json_spirit::Pair("isvalid", isValid));
     if (isValid)
     {
         CTxDestination dest = address.Get();
         string currentAddress = address.ToString();
-        ret.push_back(Pair("address", currentAddress));
+        ret.push_back(json_spirit::Pair("address", currentAddress));
 #ifdef ENABLE_WALLET
         isminetype mine = pwalletMain ? IsMine(*pwalletMain, dest) : ISMINE_NO;
-        ret.push_back(Pair("ismine", (mine & ISMINE_SPENDABLE) ? true : false));
+        ret.push_back(json_spirit::Pair("ismine", (mine & ISMINE_SPENDABLE) ? true : false));
         if (mine != ISMINE_NO) {
-            ret.push_back(Pair("iswatchonly", (mine & ISMINE_WATCH_ONLY) ? true: false));
+            ret.push_back(json_spirit::Pair("iswatchonly", (mine & ISMINE_WATCH_ONLY) ? true: false));
             Object detail = boost::apply_visitor(DescribeAddressVisitor(mine), dest);
             ret.insert(ret.end(), detail.begin(), detail.end());
         }
         if (pwalletMain && pwalletMain->mapAddressBook.count(dest))
-            ret.push_back(Pair("account", pwalletMain->mapAddressBook[dest]));
+            ret.push_back(json_spirit::Pair("account", pwalletMain->mapAddressBook[dest]));
 #endif
     }
     return ret;
@@ -185,23 +186,23 @@ Value validatepubkey(const Array& params, bool fHelp)
     address.Set(keyID);
 
     Object ret;
-    ret.push_back(Pair("isvalid", isValid));
+    ret.push_back(json_spirit::Pair("isvalid", isValid));
     if (isValid)
     {
         CTxDestination dest = address.Get();
         string currentAddress = address.ToString();
-        ret.push_back(Pair("address", currentAddress));
-        ret.push_back(Pair("iscompressed", isCompressed));
+        ret.push_back(json_spirit::Pair("address", currentAddress));
+        ret.push_back(json_spirit::Pair("iscompressed", isCompressed));
 #ifdef ENABLE_WALLET
         isminetype mine = pwalletMain ? IsMine(*pwalletMain, dest) : ISMINE_NO;
-        ret.push_back(Pair("ismine", (mine & ISMINE_SPENDABLE) ? true : false));
+        ret.push_back(json_spirit::Pair("ismine", (mine & ISMINE_SPENDABLE) ? true : false));
         if (mine != ISMINE_NO) {
-        	ret.push_back(Pair("iswatchonly", (mine & ISMINE_WATCH_ONLY) ? true: false));
+            ret.push_back(json_spirit::Pair("iswatchonly", (mine & ISMINE_WATCH_ONLY) ? true: false));
         	Object detail = boost::apply_visitor(DescribeAddressVisitor(mine), dest);
             ret.insert(ret.end(), detail.begin(), detail.end());
         }
         if (pwalletMain && pwalletMain->mapAddressBook.count(dest))
-            ret.push_back(Pair("account", pwalletMain->mapAddressBook[dest]));
+            ret.push_back(json_spirit::Pair("account", pwalletMain->mapAddressBook[dest]));
 #endif
     }
     return ret;
@@ -253,7 +254,7 @@ Value spork(const Array& params, bool fHelp)
 
         Object ret;
         while(it != mapSporksActive.end()) {
-            ret.push_back(Pair(sporkManager.GetSporkNameByID(it->second.nSporkID), it->second.nValue));
+            ret.push_back(json_spirit::Pair(sporkManager.GetSporkNameByID(it->second.nSporkID), it->second.nValue));
             it++;
         }
         return ret;
