@@ -18,7 +18,7 @@
 #endif
 
 #include <stdint.h>
-#include "standard.h"
+//#include "standard.h"
 
 #include <boost/assign/list_of.hpp>
 #include "json/json_spirit_utils.h"

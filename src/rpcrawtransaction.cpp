@@ -7,7 +7,7 @@
 
 #include "base58.h"
 #include "rpcserver.h"
-#include "standard.h"
+//#include "standard.h"
 //#include "txdb.h"
 #include "init.h"
 #include "main.h"

@@ -14,7 +14,7 @@
 #include "base58.h"
 //#include "db.h"
 #include "ui_interface.h"
-#include <filesystem>
+//#include <filesystem>
 #ifdef ENABLE_WALLET
 #include "wallet.h"
 #endif
