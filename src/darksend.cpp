@@ -2247,7 +2247,7 @@ bool CDarkSendSigner::SetKey(std::string strSecret, std::string& errorMessage, C
 
     fGood = vchSecret.SetString(strSecret);
 
-    LogPrintf("*** RGP CDarkSendSigner::SetKey Secret key <%s> \n", strSecret );
+    //LogPrintf("*** RGP CDarkSendSigner::SetKey Secret key <%s> \n", strSecret );
 
 
     if (!fGood)

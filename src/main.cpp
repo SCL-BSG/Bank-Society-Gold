@@ -4810,7 +4810,7 @@ CInv Problem_Blocks_Inv;
 
     if (strCommand == "version")
     {
-        LogPrintf("\nProcessMessage VERSION Received \n");
+        //LogPrintf("\nProcessMessage VERSION Received \n");
 
         //LOCK(cs_main);
 
@@ -4837,13 +4837,23 @@ CInv Problem_Blocks_Inv;
             return true;
         }
 
+        LogPrintf("*** RGP Debug Subversion Check \n");
         if (pfrom->nVersion == 10300)
             pfrom->nVersion = 300;
         if (!vRecv.empty())
             vRecv >> addrFrom >> nNonce;
         if (!vRecv.empty()) {
             vRecv >> pfrom->strSubVer;
+            LogPrintf("*** RGP Debug Subversion Check %s \n", pfrom->strSubVer );
             pfrom->cleanSubVer = SanitizeString(pfrom->strSubVer);
+            LogPrintf("*** RGP Debug Subversion Check %s \n", pfrom->cleanSubVer );
+            if ( pfrom->cleanSubVer == "/SocietyG:3.0.0/"  )
+                LogPrintf("VALID SUBVERSION");
+            else
+            {
+                LogPrintf("INvalid SUBVERSION, DISCONNECTED");
+                pfrom->fDisconnect = true;
+            }
         }
         if (!vRecv.empty())
         {
