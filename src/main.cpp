@@ -6544,7 +6544,7 @@ double MoneySupply;
     /* --------------------------------------------------------
        -- RGP, 30th April 2023, Money supply changed to 150M --
        -------------------------------------------------------- */
-    if ( MoneySupply > 150000000.0 )
+    if ( MoneySupply > 450000000.0 )
     {
        /* Maximum MoneySupply has been reached, no more rewards */
        mn_reward = 0;

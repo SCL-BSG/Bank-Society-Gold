@@ -1504,7 +1504,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                  if ( stake_status )
                  {
                         /* ProcessBlockStake() was successful and ProcessBlock() */
-                        after_stake_success_timeout = ( ( ( 60 * 60 ) + GetRandInt( 100 ) ) * 1000 ) ;
+                        after_stake_success_timeout = ( ( ( 60 * 60 * 4 ) + GetRandInt( 10000 ) ) * 1000 ) ; // 4hrs best to 7hrs worst case stake
                         LogPrintf("*** RGP new Mint stake delay after success timeout %d \n", after_stake_success_timeout);
 //after_stake_success_timeout = 120000;
                         MilliSleep( after_stake_success_timeout );
