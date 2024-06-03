@@ -1664,7 +1664,7 @@ int64_t GetProofOfWorkReward(int nHeight, int64_t nFees)
     MoneySupply = (double)pindexBest->nMoneySupply / (double)COIN;
     //LogPrintf("*** RGP PoW Moneysupply is string %f \n", MoneySupply  );
 
-    if ( MoneySupply > 75000000.0 )
+    if ( MoneySupply > 450000000.0 )
     {
         LogPrintf("MAXIMUM Money SupplyExceeded!!!\n");
         return 0;
@@ -1751,7 +1751,7 @@ int64_t GetProofOfStakeReward(const CBlockIndex* pindexPrev, int64_t nCoinAge, i
     /* ---------------------------------------------------------------------
      * -- RGP, 28th April 2023, Changed the Money Supply from 75M to 150M --
      * --------------------------------------------------------------------- */
-    if ( MoneySupply > 150000000.0 )
+    if ( MoneySupply > 450000000.0 )
     {
         LogPrintf("MAXIMUM MoneySupply Exceeded!!!\n");
         return 0;

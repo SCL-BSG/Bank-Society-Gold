@@ -35,7 +35,6 @@ static const int64_t TARGET_SPACING = 4 * 60; //240 sec
 #define INSTANTX_SIGNATURES_TOTAL              15
 
 #define MASTERNODE_COLLATERAL                  150000    /* SocietyG Coin Masternode Collateral */
-#define SUPERNODE_COLLATERAL                   2000000   /* Interblockchain SuperNode           */
 #define WALLET_STAKE_COLLATERAL                7500      /* Society Gold minimum stake amount   */
 
 class CBlock;
