@@ -66,6 +66,7 @@ bool AppInit(int argc, char* argv[])
     fHaveGUI = false;
     try
     {
+
         //
         // Parameters
         //
@@ -78,6 +79,7 @@ bool AppInit(int argc, char* argv[])
         }
         ReadConfigFile(mapArgs, mapMultiArgs);
 
+LogPrintf("RGP DEBUG Bitcoind.cpp 001 \n");
         if (mapArgs.count("-?") || mapArgs.count("--help"))
         {
             // First part of help message is specific to bitcoind / RPC client
@@ -90,26 +92,40 @@ bool AppInit(int argc, char* argv[])
 
             strUsage += "\n" + HelpMessage();
 
+LogPrintf("RGP DEBUG Bitcoind.cpp 002 \n");
+
             fprintf(stdout, "%s", strUsage.c_str());
             return false;
         }
 
+LogPrintf("RGP DEBUG Bitcoind.cpp 003 \n");
+
         // Command-line RPC
         for (int i = 1; i < argc; i++)
+        {
+LogPrintf("RGP bitcoind.cpp argv %s %d i\n", argv[i], i );        
             if (!IsSwitchChar(argv[i][0]) && !boost::algorithm::istarts_with(argv[i], "SocietyG:"))
                 fCommandLine = true;
+	}
+LogPrintf("RGP DEBUG Bitcoind.cpp 005 \n");
 
         if (fCommandLine)
         {
-            if (!SelectParamsFromCommandLine()) {
+LogPrintf("fCommandLine is true \n");
+            if (!SelectParamsFromCommandLine())
+            {
                 fprintf(stderr, "Error: invalid combination of -regtest and -testnet.\n");
+LogPrintf("RGP DEBUG Bitcoind.cpp 006 \n");
                 return false;
             }
+LogPrintf("RGP DEBUG Bitcoind.cpp 007 \n");            
             int ret = CommandLineRPC(argc, argv);
             exit(ret);
         }
 #if !WIN32
-        fDaemon = GetBoolArg("-daemon", false);
+
+LogPrintf("RGP DEBUG Bitcoind.cpp 010 \n");
+        fDaemon = GetBoolArg("daemon", false);
         if (fDaemon)
         {
             // Daemonize
@@ -141,7 +157,12 @@ bool AppInit(int argc, char* argv[])
 
         fRet = AppInit2(threadGroup);
 
+        MilliSleep( 1000 );
+
         LogPrintf("*** RGP AppINit2 after init returned \n");
+LogPrintf("RGP DEBUG Bitcoind.cpp 001.1 \n");
+        Read_MN_Config();
+LogPrintf("RGP DEBUG Bitcoind.cpp 001.2 \n");
 
     }
     catch (std::exception& e) {

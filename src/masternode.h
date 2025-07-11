@@ -44,7 +44,7 @@ extern map<int64_t, uint256> mapCacheBlockHashes;
 bool GetBlockHash(uint256& hash, int nBlockHeight);
 
 //
-// The Masternode Class. For managing the darksend process. It contains the input of the 10000 SocietyG, signature to prove
+// The Masternode Class. For managing the darksend process. It contains the input of the 150,000 SocietyG, signature to prove
 // it's the one who own that ip address and code for calculating the payment election.
 //
 class CMasternode
@@ -87,8 +87,7 @@ public:
     bool isPortOpen;
     bool isOldNode;
 
-    /* RGP Added this to the Masternode structure, as it seems missing for Masternodes_payments.cpp */
-    //std::string strKeyMasternode;
+    
 
     CMasternode();
     CMasternode(const CMasternode& other);
@@ -187,11 +186,18 @@ public:
 
     void UpdateLastSeen(int64_t override=0)
     {
-        if(override == 0){
+    
+LogPrintf("RGP UpdateLastSeen start \n");
+        if(override == 0)
+        {
             lastTimeSeen = GetAdjustedTime();
-        } else {
+        } 
+        else 
+        {
             lastTimeSeen = override;
         }
+
+LogPrintf("RGP UpdateLastSeen end %d \n", lastTimeSeen );
     }
 
     void ChangePortStatus(bool status)
@@ -215,7 +221,7 @@ public:
 
     bool UpdatedWithin(int seconds)
     {
-        // LogPrintf("UpdatedWithin %d, %d --  %d \n", GetAdjustedTime() , lastTimeSeen, (GetAdjustedTime() - lastTimeSeen) < seconds);
+        LogPrintf("UpdatedWithin %d, %d --  %d \n", GetAdjustedTime() , lastTimeSeen, (GetAdjustedTime() - lastTimeSeen) < seconds);
 
         return (GetAdjustedTime() - lastTimeSeen) < seconds;
     }

@@ -131,6 +131,8 @@ public:
                 {
                     ++genesis.nTime;
                 }
+                MilliSleep( 1 ); /* RGP Optimise */
+
             }
 
         }

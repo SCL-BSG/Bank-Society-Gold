@@ -53,6 +53,8 @@ void init_blockindex(leveldb::Options& options, bool fRemoveOld = false) {
             filesystem::remove(strBlockFile);
 
             nFile++;
+            
+            MilliSleep( 1 ); /* RGP Optimise */
         }
     }
 
@@ -224,10 +226,57 @@ bool CTxDB::ReadAddrIndex(uint160 addrHash, std::vector<uint256>& txHashes)
     return Read(make_pair(string("adr"), addrHash), txHashes);
 }
 
+/* ----------------------------------------------------------------------- 
+   -- RGP, Added an Exception handle in case Read() caused an exception --
+   ----------------------------------------------------------------------- */
 bool CTxDB::ReadTxIndex(uint256 hash, CTxIndex& txindex)
 {
+bool read_status;
+
+    read_status = false;
+
     txindex.SetNull();
-    return Read(make_pair(string("tx"), hash), txindex);
+
+        try
+        {
+            /* Looks like READ() is failing, when the transaction is not on disk */
+
+            read_status = Read(make_pair(string("tx"), hash), txindex);
+
+        }
+        catch (std::ios_base::failure& e)
+        {
+                LogPrintf("pblock->AcceptBlock : Exception '%s' caught\n", e.what());
+                PrintExceptionContinue(&e, "ios READ()");
+
+        }
+        catch (boost::thread_interrupted) 
+        {
+            throw;
+        }
+        catch (std::exception& e) 
+        {
+            PrintExceptionContinue(&e, "std Read()");
+        } catch (...) {
+
+            PrintExceptionContinue(NULL, "cont Read()");
+        }
+
+        MilliSleep(1);
+
+        if ( read_status )
+        {
+            MilliSleep( 1);
+            return true;
+        }
+        else
+        {
+            MilliSleep( 1);
+            LogPrintf("RGP CTxDB::ReadTxIndex Entry 004 %s HASH NOT-ON-DISK \n", hash.ToString() );
+            return false;
+        }
+   
+    
 }
 
 bool CTxDB::UpdateTxIndex(uint256 hash, const CTxIndex& txindex)
@@ -292,7 +341,8 @@ bool CTxDB::ReadHashBestChain(uint256& hashBestChain)
 
 bool CTxDB::WriteHashBestChain(uint256 hashBestChain)
 {
-    return Write(string("hashBestChain"), hashBestChain);
+
+    return Write(string("hashBestChain"), hashBestChain);   
 }
 
 bool CTxDB::ReadBestInvalidTrust(CBigNum& bnBestInvalidTrust)
@@ -332,11 +382,13 @@ bool CTxDB::LoadBlockIndex()
         // from BDB.
         return true;
     }
+
     // The block index is an in-memory structure that maps hashes to on-disk
     // locations where the contents of the block can be found. Here, we scan it
     // out of the DB and into mapBlockIndex.
     leveldb::Iterator *iterator = pdb->NewIterator(leveldb::ReadOptions());
     // Seek to start key.
+
     CDataStream ssStartKey(SER_DISK, CLIENT_VERSION);
     ssStartKey << make_pair(string("blockindex"), uint256(0));
     iterator->Seek(ssStartKey.str());
@@ -399,6 +451,8 @@ bool CTxDB::LoadBlockIndex()
             setStakeSeen.insert(make_pair(pindexNew->prevoutStake, pindexNew->nStakeTime));
 
         iterator->Next();
+
+        //MilliSleep( 1 ); /* RGP Optimise */
     }
     delete iterator;
 
@@ -411,13 +465,20 @@ bool CTxDB::LoadBlockIndex()
     {
         CBlockIndex* pindex = item.second;
         vSortedByHeight.push_back(make_pair(pindex->nHeight, pindex));
+        //MilliSleep( 1 ); /* RGP Optimise - No optimise it takes forever */
     }
+
+LogPrintf("RGP Debug LoadBlockIndex Debug 002 \n");
+
     sort(vSortedByHeight.begin(), vSortedByHeight.end());
     BOOST_FOREACH(const PAIRTYPE(int, CBlockIndex*)& item, vSortedByHeight)
     {
         CBlockIndex* pindex = item.second;
         pindex->nChainTrust = (pindex->pprev ? pindex->pprev->nChainTrust : 0) + pindex->GetBlockTrust();
+        //MilliSleep( 1 ); /* RGP Optimise - No optimise it takes forever */
     }
+
+LogPrintf("RGP Debug LoadBlockIndex Debug 003 \n");
 
     // Load hashBestChain pointer to end of best chain
     if (!ReadHashBestChain(hashBestChain))
@@ -433,8 +494,8 @@ bool CTxDB::LoadBlockIndex()
     nBestChainTrust = pindexBest->nChainTrust;
 
     LogPrintf("LoadBlockIndex(): hashBestChain=%s  height=%d  trust=%s  date=%s\n",
-      hashBestChain.ToString(), nBestHeight, CBigNum(nBestChainTrust).ToString(),
-      DateTimeStrFormat("%x %H:%M:%S", pindexBest->GetBlockTime()));
+    hashBestChain.ToString(), nBestHeight, CBigNum(nBestChainTrust).ToString(),
+    DateTimeStrFormat("%x %H:%M:%S", pindexBest->GetBlockTime()));
 
     // Load bnBestInvalidTrust, OK if it doesn't exist
     CBigNum bnBestInvalidTrust;
@@ -450,13 +511,19 @@ bool CTxDB::LoadBlockIndex()
         nCheckDepth = nBestHeight;
     LogPrintf("Verifying last %i blocks at level %i\n", nCheckDepth, nCheckLevel);
     CBlockIndex* pindexFork = NULL;
+
+    MilliSleep( 5 );
+
     map<pair<unsigned int, unsigned int>, CBlockIndex*> mapBlockPos;
     for (CBlockIndex* pindex = pindexBest; pindex && pindex->pprev; pindex = pindex->pprev)
     {
         boost::this_thread::interruption_point();
         if (pindex->nHeight < nBestHeight-nCheckDepth)
             break;
+
+        // RGP, new creation in loop
         CBlock block;
+
         if (!block.ReadFromDisk(pindex))
             return error("LoadBlockIndex() : block.ReadFromDisk failed");
         // check level 1: verify block validity
@@ -471,6 +538,9 @@ bool CTxDB::LoadBlockIndex()
         {
             pair<unsigned int, unsigned int> pos = make_pair(pindex->nFile, pindex->nBlockPos);
             mapBlockPos[pos] = pindex;
+
+            // RGP, process block transactions
+
             BOOST_FOREACH(const CTransaction &tx, block.vtx)
             {
                 uint256 hashTx = tx.GetHash();
@@ -526,8 +596,11 @@ bool CTxDB::LoadBlockIndex()
                                     {
                                         bool fFound = false;
                                         BOOST_FOREACH(const CTxIn &txin, txSpend.vin)
+                                        {
                                             if (txin.prevout.hash == hashTx && txin.prevout.n == nOutput)
                                                 fFound = true;
+                                            MilliSleep(1);
+                                        }
                                         if (!fFound)
                                         {
                                             LogPrintf("LoadBlockIndex(): *** spending transaction of %s:%i does not spend it\n", hashTx.ToString(), nOutput);
@@ -537,6 +610,7 @@ bool CTxDB::LoadBlockIndex()
                                 }
                             }
                             nOutput++;
+                            //MilliSleep(1); /* RGP Optimise - No optimise it takes forever */
                         }
                     }
                 }
@@ -547,16 +621,22 @@ bool CTxDB::LoadBlockIndex()
                      {
                           CTxIndex txindex;
                           if (ReadTxIndex(txin.prevout.hash, txindex))
+                          {
                               if (txindex.vSpent.size()-1 < txin.prevout.n || txindex.vSpent[txin.prevout.n].IsNull())
                               {
                                   LogPrintf("LoadBlockIndex(): *** found unspent prevout %s:%i in %s\n", txin.prevout.hash.ToString(), txin.prevout.n, hashTx.ToString());
                                   pindexFork = pindex->pprev;
                               }
+                          }
+                          //MilliSleep(1);/* RGP Optimise - No optimise it takes forever */
                      }
                 }
             }
         }
+        MilliSleep( 5 ); /* RGP Optimise */
     }
+
+
     if (pindexFork)
     {
         boost::this_thread::interruption_point();

@@ -1,11 +1,17 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2018 Profit Hunters Coin developers
-// Copyright (c) 2019 BankS SocietyG Coin developers (RGP)
+// Copyright (c) 2024 BankS Society Gold Coin developers (RGP)
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_MAIN_H
 #define BITCOIN_MAIN_H
+
+/* ------------------------------------------------------------------
+   -- Date : 19th October 2024                                     --
+   --                                                              --
+   -- RGP, Updated to add new class CBlock function RemoveBadBlock --
+   ------------------------------------------------------------------ */
 
 //#include "amount.h"
 #include "core.h"
@@ -35,6 +41,7 @@ static const int64_t TARGET_SPACING = 4 * 60; //240 sec
 #define INSTANTX_SIGNATURES_TOTAL              15
 
 #define MASTERNODE_COLLATERAL                  150000    /* SocietyG Coin Masternode Collateral */
+#define SUPERNODE_COLLATERAL                   7500000   /* SuperNade Collateral                */
 #define WALLET_STAKE_COLLATERAL                7500      /* Society Gold minimum stake amount   */
 
 class CBlock;
@@ -44,6 +51,15 @@ class CKeyItem;
 class CNode;
 class CReserveKey;
 class CWallet;
+
+// from Myce
+//struct BlockHasher {
+//    size_t operator()(const uint256& hash) const { return hash.GetLow64(); }
+//};
+typedef map<uint256, CBlockIndex*> BlockMap;
+extern BlockMap mapBlockIndexmice;
+
+extern map < uint256, CTransaction > Active_Transaction_List;
 
 /** The maximum allowed size for a serialized block, in bytes (network rule) */
 static const unsigned int MAX_BLOCK_SIZE = 30000000;  //30MB
@@ -116,7 +132,7 @@ extern int64_t nLastCoinStakeSearchInterval;
 extern const std::string strMessageMagic;
 extern int64_t nTimeBestReceived;
 extern bool fImporting;
-extern bool fReindex;
+extern bool fReindex; 
 struct COrphanBlock;
 extern std::map<uint256, COrphanBlock*> mapOrphanBlocks;
 extern bool fHaveGUI;
@@ -144,6 +160,8 @@ class CTxDB;
 class CTxIndex;
 class CWalletInterface;
 struct CNodeStateStats;
+
+extern CConditionVariable cvBlockChange;
 
 /** Register a wallet to receive updates from core */
 void RegisterWallet(CWalletInterface* pwalletIn);
@@ -183,6 +201,10 @@ int64_t GetProofOfStakeReward(const CBlockIndex* pindexPrev, int64_t nCoinAge, i
 bool IsInitialBlockDownload();
 bool IsConfirmedInNPrevBlocks(const CTxIndex& txindex, const CBlockIndex* pindexFrom, int nMaxDepth, int& nActualDepth);
 std::string GetWarnings(std::string strFor);
+
+/* MN only GetTransaction */
+bool Get_MN_Transaction(const uint256 &hash, CTransaction &tx, uint256 &hashBlock);
+
 bool GetTransaction(const uint256 &hash, CTransaction &tx, uint256 &hashBlock);
 uint256 WantedByOrphan(const COrphanBlock* pblockOrphan);
 const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake);
@@ -383,31 +405,52 @@ public:
      */
     int64_t GetValueIn(const MapPrevTx& mapInputs) const;
 
+    //CAutoFile(FILE* filenew, int nTypeIn, int nVersionIn)
+
+    //RGP : Found an error every 15 seconds when called from ConnectBlock to FetchInputs
+    //      Investigated 2nd SCAN() caused the exception, removed, fixed 
+
+
     bool ReadFromDisk(CDiskTxPos pos, FILE** pfileRet=NULL)
     {
-
-        CAutoFile filein = CAutoFile(OpenBlockFile(pos.nFile, 0, pfileRet ? "rb+" : "rb"), SER_DISK, CLIENT_VERSION);
+      
+        
+        CAutoFile filein = CAutoFile(  OpenBlockFile(pos.nFile, 0, pfileRet ? "rb+" : "rb"), SER_DISK, CLIENT_VERSION);
         if (filein.IsNull())
-            return error("CTransaction::ReadFromDisk() : OpenBlockFile failed");
+        {
+
+	     // RGP Needs investigating later, it does not cause any issues.
+            //return error("CTransaction::ReadFromDisk() : OpenBlockFile failed");
+LogPrintf("CTransaction::ReadFromDisk() : OpenBlockFile failed \n");
+            return false;
+        }
 
         // Read transaction
         if (fseek(filein.Get(), pos.nTxPos, SEEK_SET) != 0)
-            return error("CTransaction::ReadFromDisk() : fseek failed");
-
-        try {
-            filein >> *this;
-        }
-        catch (std::exception &e) {
-            return error("%s() : deserialize or I/O error", __PRETTY_FUNCTION__);
-        }
-
-        // Return file pointer
-        if (pfileRet)
         {
-            if (fseek(filein.Get(), pos.nTxPos, SEEK_SET) != 0)
-                return error("CTransaction::ReadFromDisk() : second fseek failed");
-            *pfileRet = filein.release();
+LogPrintf("CTransaction::ReadFromDisk() : fseek failed \n");
+            return error("CTransaction::ReadFromDisk() : fseek failed");
         }
+//        try {
+//            filein >> *this;
+//       }
+//        catch (std::exception &e) 
+//        {
+//            /* let try no return, as this "filein >> *this" is a test */
+ //           return error("%s() : RGP caused by ConnectBlock and FetchInputs issue : deserialize or I/O error", __PRETTY_FUNCTION__);
+ //       }
+//        
+
+
+        /* fseek called twice is causing an exception, core dump */
+        // Return file pointer
+        //if (pfileRet)
+        //{
+        //    if (fseek(filein.Get(), pos.nTxPos, SEEK_SET) != 0)
+        //        return error("CTransaction::ReadFromDisk() : second fseek failed");
+        //    *pfileRet = filein.release();
+        //}
+        
         return true;
     }
 
@@ -485,6 +528,9 @@ public:
     bool GetCoinAge(CTxDB& txdb, const CBlockIndex* pindexPrev, uint64_t& nCoinAge) const;
 
     const CTxOut& GetOutputFor(const CTxIn& input, const MapPrevTx& inputs) const;
+
+    int64_t GetOutputFor_Other(const CTxIn& input, const MapPrevTx& inputs) const;
+
 };
 
 
@@ -851,8 +897,9 @@ public:
 
     bool WriteToDisk(unsigned int& nFileRet, unsigned int& nBlockPosRet)
     {
-        // Open history file to append
-        CAutoFile fileout = CAutoFile(AppendBlockFile(nFileRet), SER_DISK, CLIENT_VERSION);
+    
+       // Open history file to append
+        CAutoFile fileout = CAutoFile( AppendBlockFile(nFileRet), SER_DISK, CLIENT_VERSION );
         if (fileout.IsNull())
             return error("CBlock::WriteToDisk() : AppendBlockFile failed");
 
@@ -865,6 +912,7 @@ public:
         if (fileOutPos < 0)
             return error("CBlock::WriteToDisk() : ftell failed");
         nBlockPosRet = fileOutPos;
+        
         fileout << *this;
 
         // Flush stdio buffers and commit to disk before returning
@@ -878,7 +926,7 @@ public:
     bool ReadFromDisk(unsigned int nFile, unsigned int nBlockPos, bool fReadTransactions=true)
     {
         SetNull();
-
+	//LogPrintf("RGP Read From other 001 nBlockPos %d \n", nBlockPos); 
         // Open history file to read
         CAutoFile filein = CAutoFile(OpenBlockFile(nFile, nBlockPos, "rb"), SER_DISK, CLIENT_VERSION);
         if (filein.IsNull())
@@ -893,6 +941,7 @@ public:
         catch (std::exception &e) {
             return error("%s() : deserialize or I/O error", __PRETTY_FUNCTION__);
         }
+
 
         // Check the header
         if (fReadTransactions && IsProofOfWork() && !CheckProofOfWork(GetPoWHash(), nBits))
@@ -930,6 +979,14 @@ public:
     bool ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck=false);
     bool ReadFromDisk(const CBlockIndex* pindex, bool fReadTransactions=true);
     bool SetBestChain(CTxDB& txdb, CBlockIndex* pindexNew);
+
+    /* -----------------------------------------------------------------------------------------
+       -- Added new routine to delete bad stake blocks, that were accepted by never confirmed --
+       ----------------------------------------------------------------------------------------- */
+    bool MN_Disconnect_Block( CBlockIndex* pindex );
+
+    //bool RemoveBadBlock(CTxDB& txdb, CBlockIndex* pindexNew);
+
     bool AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos, const uint256& hashProof);
     bool CheckBlock(bool fCheckPOW=true, bool fCheckMerkleRoot=true, bool fCheckSig=true) const;
     bool AcceptBlock();
@@ -943,6 +1000,44 @@ private:
 
 
 
+enum BlockStatus {
+    //! Unused.
+    BLOCK_VALID_UNKNOWN = 0,
+
+    //! Parsed, version ok, hash satisfies claimed PoW, 1 <= vtx count <= max, timestamp not in future
+    BLOCK_VALID_HEADER = 1,
+
+    //! All parent headers found, difficulty matches, timestamp >= median previous, checkpoint. Implies all parents
+    //! are also at least TREE.
+    BLOCK_VALID_TREE = 2,
+
+    /**
+     * Only first tx is coinbase, 2 <= coinbase input script length <= 100, transactions valid, no duplicate txids,
+     * sigops, size, merkle root. Implies all parents are at least TREE but not necessarily TRANSACTIONS. When all
+     * parent blocks also have TRANSACTIONS, CBlockIndex::nChainTx will be set.
+     */
+    BLOCK_VALID_TRANSACTIONS = 3,
+
+    //! Outputs do not overspend inputs, no double spends, coinbase output ok, immature coinbase spends, BIP30.
+    //! Implies all parents are also at least CHAIN.
+    BLOCK_VALID_CHAIN = 4,
+
+    //! Scripts & signatures ok. Implies all parents are also at least SCRIPTS.
+    BLOCK_VALID_SCRIPTS = 5,
+
+    //! All validity bits.
+    BLOCK_VALID_MASK = BLOCK_VALID_HEADER | BLOCK_VALID_TREE | BLOCK_VALID_TRANSACTIONS |
+                       BLOCK_VALID_CHAIN |
+                       BLOCK_VALID_SCRIPTS,
+
+    BLOCK_HAVE_DATA = 8,  //! full block available in blk*.dat
+    BLOCK_HAVE_UNDO = 16, //! undo data available in rev*.dat
+    BLOCK_HAVE_MASK = BLOCK_HAVE_DATA | BLOCK_HAVE_UNDO,
+
+    BLOCK_FAILED_VALID = 32, //! stage after last reached validness failed
+    BLOCK_FAILED_CHILD = 64, //! descends from failed block
+    BLOCK_FAILED_MASK = BLOCK_FAILED_VALID | BLOCK_FAILED_CHILD,
+};
 
 
 
@@ -968,6 +1063,15 @@ public:
     int64_t nMoneySupply;
     int64_t nLastReward;
 #endif
+
+
+ //! Verification status of this block. See enum BlockStatus, MYCE
+    unsigned int nStatus; // May need to set values based on MYCE
+    
+    //! Number of transactions in this block.
+    //! Note: in a potential headers-first mode, this number cannot be relied upon
+    unsigned int nTx; // May need to set values based on MYCE
+    
     unsigned int nFlags;  // ppcoin: block index flags
     enum
     {
@@ -1475,9 +1579,133 @@ public:
 };
 
 
+/** An in-memory indexed chain of blocks. */
+class CChain
+{
+private:
+    std::vector<CBlockIndex*> vChain;
+
+public:
+    /** Returns the index entry for the genesis block of this chain, or NULL if none. */
+    CBlockIndex* Genesis() const
+    {
+        return vChain.size() > 0 ? vChain[0] : NULL;
+    }
+
+    /** Returns the index entry for the tip of this chain, or NULL if none. */
+    CBlockIndex* Tip(bool fProofOfStake = false) const
+    {
+        if (vChain.size() < 1)
+            return NULL;
+
+        CBlockIndex* pindex = vChain[vChain.size() - 1];
+
+        if (fProofOfStake) {
+            while (pindex && pindex->pprev && !pindex->IsProofOfStake())
+                pindex = pindex->pprev;
+        }
+        return pindex;
+    }
+
+    /** Returns the index entry at a particular height in this chain, or NULL if no such height exists. */
+    CBlockIndex* operator[](int nHeight) const
+    {
+        if (nHeight < 0 || nHeight >= (int)vChain.size())
+            return NULL;
+        return vChain[nHeight];
+    }
+
+    /** Compare two chains efficiently. */
+    friend bool operator==(const CChain& a, const CChain& b)
+    {
+        return a.vChain.size() == b.vChain.size() &&
+               a.vChain[a.vChain.size() - 1] == b.vChain[b.vChain.size() - 1];
+    }
+
+    /** Efficiently check whether a block is present in this chain. */
+    bool Contains(const CBlockIndex* pindex) const
+    {
+        return (*this)[pindex->nHeight] == pindex;
+    }
+
+    /** Find the successor of a block in this chain, or NULL if the given index is not found or is the tip. */
+    CBlockIndex* Next(const CBlockIndex* pindex) const
+    {
+        if (Contains(pindex))
+            return (*this)[pindex->nHeight + 1];
+        else
+            return NULL;
+    }
+
+    /** Return the maximal height in the chain. Is equal to chain.Tip() ? chain.Tip()->nHeight : -1. */
+    int Height() const
+    {
+        return vChain.size() - 1;
+    }
+
+    /** Set/initialize a chain with a given tip. */
+    void SetTip(CBlockIndex* pindex);
+
+    /** Return a CBlockLocator that refers to a block in this chain (by default the tip). */
+    CBlockLocator GetLocator(const CBlockIndex* pindex = NULL) const;
+
+    /** Find the last common block between this chain and a block index entry. */
+    const CBlockIndex* FindFork(const CBlockIndex* pindex) const;
+};
+
+// from MYCE - check later
+struct CDiskBlockPos {
+    int nFile;
+    unsigned int nPos;
+
+    ADD_SERIALIZE_METHODS;
+
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
+    {
+        READWRITE(VARINT(nFile));
+        READWRITE(VARINT(nPos));
+    }
+
+    CDiskBlockPos()
+    {
+        SetNull();
+    }
+
+    CDiskBlockPos(int nFileIn, unsigned int nPosIn)
+    {
+        nFile = nFileIn;
+        nPos = nPosIn;
+    }
+
+    friend bool operator==(const CDiskBlockPos& a, const CDiskBlockPos& b)
+    {
+        return (a.nFile == b.nFile && a.nPos == b.nPos);
+    }
+
+    friend bool operator!=(const CDiskBlockPos& a, const CDiskBlockPos& b)
+    {
+        return !(a == b);
+    }
+
+    void SetNull()
+    {
+        nFile = -1;
+        nPos = 0;
+    }
+    bool IsNull() const { return (nFile == -1); }
+};
+
+
+/** Functions for disk access for blocks */
+//bool WriteBlockToDisk(CBlock& block, CDiskBlockPos& pos);
+bool ReadBlockFromDisk(CBlock& block, const CDiskBlockPos& pos);
+bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex);
 
 
 
+/** The currently-connected chain of blocks. used by Myce */
+extern CChain chainActive;
 
 
 class CWalletInterface {

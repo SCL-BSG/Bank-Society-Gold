@@ -368,7 +368,7 @@ set<uint256> CWallet::GetConflicts(const uint256& txid) const
 {
     set<uint256> result;
     AssertLockHeld(cs_wallet);
-
+LogPrintf("RGP GetConflicts start \n");
     std::map<uint256, CWalletTx>::const_iterator it = mapWallet.find(txid);
     if (it == mapWallet.end())
         return result;
@@ -392,7 +392,7 @@ void CWallet::SyncMetaData(pair<TxSpends::iterator, TxSpends::iterator> range)
     // We want all the wallet transactions in range to have the same metadata as
     // the oldest (smallest nOrderPos).
     // So: find smallest nOrderPos:
-
+LogPrintf("RGP SyncMetaData start \n");
     int nMinOrderPos = std::numeric_limits<int>::max();
     const CWalletTx* copyFrom = NULL;
     for (TxSpends::iterator it = range.first; it != range.second; ++it)
@@ -427,6 +427,7 @@ void CWallet::SyncMetaData(pair<TxSpends::iterator, TxSpends::iterator> range)
 // spends it:
 bool CWallet::IsSpent(const uint256& hash, unsigned int n) const
 {
+LogPrintf("RGP IsSpent start \n");
     const COutPoint outpoint(hash, n);
     pair<TxSpends::const_iterator, TxSpends::const_iterator> range;
     range = mapTxSpends.equal_range(outpoint);
@@ -453,6 +454,7 @@ void CWallet::AddToSpends(const COutPoint& outpoint, const uint256& wtxid)
 
 void CWallet::AddToSpends(const uint256& wtxid)
 {
+LogPrintf("RGP AddToSpends start \n");
     assert(mapWallet.count(wtxid));
     CWalletTx& thisTx = mapWallet[wtxid];
     if (thisTx.IsCoinBase()) // Coinbases don't spend anything!
@@ -597,6 +599,7 @@ int64_t CWallet::IncOrderPosNext(CWalletDB *pwalletdb)
 
 void CWallet::MarkDirty()
 {
+LogPrintf("RGP MarkDirty start \n");
     {
         LOCK(cs_wallet);
         BOOST_FOREACH(PAIRTYPE(const uint256, CWalletTx)& item, mapWallet)
@@ -606,6 +609,7 @@ void CWallet::MarkDirty()
 
 bool CWallet::AddToWallet(const CWalletTx& wtxIn, bool fFromLoadWallet)
 {
+LogPrintf("RGP AddToWallet start \n");
     uint256 hash = wtxIn.GetHash();
     if (fFromLoadWallet)
     {
@@ -731,6 +735,7 @@ bool CWallet::AddToWallet(const CWalletTx& wtxIn, bool fFromLoadWallet)
 // If fUpdate is true, existing transactions will be updated.
 bool CWallet::AddToWalletIfInvolvingMe(const CTransaction& tx, const CBlock* pblock, bool fUpdate)
 {
+//LogPrintf("RGP AddToWalletIfInvolvingMe start \n");
     uint256 hash = tx.GetHash();
     {
         LOCK(cs_wallet);
@@ -759,6 +764,7 @@ bool CWallet::AddToWalletIfInvolvingMe(const CTransaction& tx, const CBlock* pbl
 
 void CWallet::SyncTransaction(const CTransaction& tx, const CBlock* pblock, bool fConnect)
 {
+
     LOCK2(cs_main, cs_wallet);
     if (!AddToWalletIfInvolvingMe(tx, pblock, true))
         return; // Not one of ours
@@ -770,6 +776,8 @@ void CWallet::SyncTransaction(const CTransaction& tx, const CBlock* pblock, bool
     {
         if (mapWallet.count(txin.prevout.hash))
             mapWallet[txin.prevout.hash].MarkDirty();
+
+        MilliSleep( 1 ); /* RGP Optimise */
     }
 
     if (!fConnect)
@@ -782,7 +790,7 @@ void CWallet::SyncTransaction(const CTransaction& tx, const CBlock* pblock, bool
         }
         return;
     }
-
+//LogPrintf("RGP SyncTransaction  \n");
     AddToWalletIfInvolvingMe(tx, pblock, true);
 }
 
@@ -833,7 +841,7 @@ CAmount CWallet::GetDebit(const CTxIn &txin, const isminefilter& filter) const
 int CWallet::GetRealInputDarksendRounds(CTxIn in, int rounds) const
 {
     static std::map<uint256, CTransaction> mDenomWtxes;
-
+LogPrintf("RGP GetRealInputDarksendRounds start \n");
     if(rounds >= 16) return 15; // 16 rounds max
 
     uint256 hash = in.prevout.hash;
@@ -941,6 +949,7 @@ bool CWallet::IsDenominated(const CTxIn &txin) const
 
 bool CWallet::IsDenominatedAmount(int64_t nInputAmount) const
 {
+LogPrintf("RGP IsDenominatedAmount start \n");
     BOOST_FOREACH(int64_t d, darkSendDenominations)
         if(nInputAmount == d)
             return true;
@@ -1018,6 +1027,7 @@ int CWalletTx::GetRequestCount() const
 void CWalletTx::GetAmounts(list<pair<CTxDestination, int64_t> >& listReceived,
                            list<pair<CTxDestination, int64_t> >& listSent, CAmount& nFee, string& strSentAccount, const isminefilter& filter) const
 {
+LogPrintf("RGP GetAmounts start \n");
     LOCK(pwallet->cs_wallet);
     nFee = 0;
     listReceived.clear();
@@ -1076,7 +1086,7 @@ void CWalletTx::GetAmounts(list<pair<CTxDestination, int64_t> >& listReceived,
 void CWalletTx::GetAccountAmounts(const string& strAccount, CAmount& nReceived,
                                   CAmount& nSent, CAmount& nFee, const isminefilter& filter) const
 {
-
+LogPrintf("RGP GetAccountAmounts start \n");
     nReceived = nSent = nFee = 0;
 
     CAmount allFee;
@@ -1112,7 +1122,7 @@ void CWalletTx::GetAccountAmounts(const string& strAccount, CAmount& nReceived,
 void CWalletTx::AddSupportingTransactions(CTxDB& txdb)
 {
     vtxPrev.clear();
-
+LogPrintf("RGP AddSupportingTransactions start \n");
     const int COPY_DEPTH = 3;
     if (SetMerkleBranch() < COPY_DEPTH)
     {
@@ -1180,7 +1190,7 @@ bool CWalletTx::WriteToDisk()
 int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
 {
     int ret = 0;
-
+LogPrintf("RGP ScanForWalletTransactions start \n");
     CBlockIndex* pindex = pindexStart;
     {
         LOCK2(cs_main, cs_wallet);
@@ -1208,6 +1218,7 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
 
 void CWallet::ReacceptWalletTransactions()
 {
+LogPrintf("RGP ReacceptWalletTransactions start \n");
     CTxDB txdb("r");
     bool fRepeat = true;
     while (fRepeat)
@@ -1281,12 +1292,18 @@ void CWallet::ReacceptWalletTransactions()
 
 void CWalletTx::RelayWalletTransaction(CTxDB& txdb, std::string strCommand)
 {
+int64_t start_time;
+
+    start_time = GetTime();
+
     if (!(IsCoinBase() || IsCoinStake()))
     {
+LogPrintf("RGP RelayWalletTransaction debug 001 %d  \n", GetTime() - start_time );
         if (GetDepthInMainChain() == 0)
         {
             uint256 hash = GetHash();
-            if(strCommand == "txlreq"){
+            if(strCommand == "txlreq")
+            {
                 LogPrintf("Relaying txlreq %s\n", hash.ToString());
                 mapTxLockReq.insert(make_pair(hash, ((CTransaction)*this)));
                 CreateNewLock(((CTransaction)*this));
@@ -1298,7 +1315,13 @@ void CWalletTx::RelayWalletTransaction(CTxDB& txdb, std::string strCommand)
                 RelayTransaction((CTransaction)*this, hash);
             }
         }
+
+LogPrintf("RGP RelayWalletTransaction debug 001 %d  \n", GetTime() - start_time );        
+
     }
+
+    MilliSleep( 2 );
+
 }
 
 void CWalletTx::RelayWalletTransaction(std::string strCommand)
@@ -1321,10 +1344,14 @@ set<uint256> CWalletTx::GetConflicts() const
 
 void CWallet::ResendWalletTransactions(bool fForce)
 {
+uint64_t start_time;
+
+    start_time = GetTime();
+
     if (!fForce)
     {
         // Do this infrequently and randomly to avoid giving away
-        // that these are our transactions.
+        // that these are our transactions. RGP ???
         static int64_t nNextTime;
         if (GetTime() < nNextTime)
             return;
@@ -1340,7 +1367,11 @@ void CWallet::ResendWalletTransactions(bool fForce)
         nLastTime = GetTime();
     }
 
+    MilliSleep( 1 ); /* RGP Optimised */
+
     // Rebroadcast any of our txes that aren't in a block yet
+
+LogPrintf("RGP ResendWalletTransactions debug 001 %d \n", GetTime() - start_time );
 
     CTxDB txdb("r");
     {
@@ -1354,12 +1385,19 @@ void CWallet::ResendWalletTransactions(bool fForce)
             // it should have gotten in already by now.
             if (fForce || nTimeBestReceived - (int64_t)wtx.nTimeReceived > 5 * 60)
                 mapSorted.insert(make_pair(wtx.nTimeReceived, &wtx));
+
+            MilliSleep( 2 ); /* RGP Optimised */
+
         }
         BOOST_FOREACH(PAIRTYPE(const unsigned int, CWalletTx*)& item, mapSorted)
         {
             CWalletTx& wtx = *item.second;
             wtx.RelayWalletTransaction(txdb);
+
+            MilliSleep( 1 ); /* RGP Optimised */
         }
+
+LogPrintf("RGP ResendWalletTransactions debug 002 %d \n", GetTime() - start_time );
 
         MilliSleep( 5 );
     }
@@ -1398,6 +1436,8 @@ CAmount CWallet::GetStake() const
 {
     CAmount nTotal = 0;
     LOCK2(cs_main, cs_wallet);
+
+LogPrintf("RGP GetStake start \n");
     for (map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
     {
         const CWalletTx* pcoin = &(*it).second;
@@ -1409,6 +1449,7 @@ CAmount CWallet::GetStake() const
 
 CAmount CWallet::GetNewMint() const
 {
+LogPrintf("RGP GetNewMint start \n");
     CAmount nTotal = 0;
     LOCK2(cs_main, cs_wallet);
     for (map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
@@ -1423,7 +1464,7 @@ CAmount CWallet::GetNewMint() const
 CAmount CWallet::GetAnonymizableBalance() const
 {
     if(fLiteMode) return 0;
-
+LogPrintf("RGP GetAnonymizableBalance start \n");
     CAmount nTotal = 0;
     {
         LOCK2(cs_main, cs_wallet);
@@ -1442,7 +1483,7 @@ CAmount CWallet::GetAnonymizableBalance() const
 CAmount CWallet::GetAnonymizedBalance() const
 {
     if(fLiteMode) return 0;
-
+LogPrintf("RGP GetAnonymizedBalance start \n");
     CAmount nTotal = 0;
     {
         LOCK2(cs_main, cs_wallet);
@@ -1463,7 +1504,7 @@ CAmount CWallet::GetAnonymizedBalance() const
 double CWallet::GetAverageAnonymizedRounds() const
 {
     if(fLiteMode) return 0;
-
+LogPrintf("RGP GetAverageAnonymizedRounds start \n");
     double fTotal = 0;
     double fCount = 0;
 
@@ -1498,7 +1539,7 @@ double CWallet::GetAverageAnonymizedRounds() const
 CAmount CWallet::GetNormalizedAnonymizedBalance() const
 {
     if(fLiteMode) return 0;
-
+LogPrintf("RGP GetNormalizedAnonymizedBalance start \n");
     CAmount nTotal = 0;
 
     {
@@ -1528,7 +1569,7 @@ CAmount CWallet::GetNormalizedAnonymizedBalance() const
 CAmount CWallet::GetDenominatedBalance(bool unconfirmed) const
 {
     if(fLiteMode) return 0;
-
+LogPrintf("RGP GetDenominatedBalance start \n");
     CAmount nTotal = 0;
     {
         LOCK2(cs_main, cs_wallet);
@@ -1544,6 +1585,7 @@ CAmount CWallet::GetDenominatedBalance(bool unconfirmed) const
 }
 CAmount CWallet::GetUnconfirmedBalance() const
 {
+LogPrintf("RGP GetUnconfirmedBalance start \n");
     CAmount nTotal = 0;
     {
         LOCK2(cs_main, cs_wallet);
@@ -1559,6 +1601,7 @@ CAmount CWallet::GetUnconfirmedBalance() const
 
 CAmount CWallet::GetImmatureBalance() const
 {
+LogPrintf("RGP GetImmatureBalance start \n");
     CAmount nTotal = 0;
     {
         LOCK2(cs_main, cs_wallet);
@@ -1573,6 +1616,7 @@ CAmount CWallet::GetImmatureBalance() const
 
 CAmount CWallet::GetWatchOnlyBalance() const
 {
+LogPrintf("RGP GetWatchOnlyBalance start \n");
     CAmount nTotal = 0;
     {
         LOCK2(cs_main, cs_wallet);
@@ -1589,6 +1633,7 @@ CAmount CWallet::GetWatchOnlyBalance() const
 
 CAmount CWallet::GetWatchOnlyStake() const
 {
+LogPrintf("RGP GetWatchOnlyStake start \n");
     CAmount nTotal = 0;
     LOCK2(cs_main, cs_wallet);
     for (map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
@@ -1602,6 +1647,7 @@ CAmount CWallet::GetWatchOnlyStake() const
 
 CAmount CWallet::GetUnconfirmedWatchOnlyBalance() const
 {
+LogPrintf("RGP GetUnconfirmedWatchOnlyBalance start \n");
     CAmount nTotal = 0;
     {
         LOCK2(cs_main, cs_wallet);
@@ -1633,7 +1679,7 @@ CAmount CWallet::GetImmatureWatchOnlyBalance() const
 void CWallet::AvailableCoins(vector<COutput>& vCoins, bool fOnlyConfirmed, const CCoinControl *coinControl, AvailableCoinsType coin_type, bool useIX) const
 {
     vCoins.clear();
-
+LogPrintf("RGP AvailableCoins start \n");
     {
         LOCK2(cs_main, cs_wallet);
         for (map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
@@ -1687,54 +1733,99 @@ void CWallet::AvailableCoins(vector<COutput>& vCoins, bool fOnlyConfirmed, const
     }
 }
 
+
 void CWallet::AvailableCoinsMN(vector<COutput>& vCoins, bool fOnlyConfirmed, const CCoinControl *coinControl, AvailableCoinsType coin_type, bool useIX) const
 {
-    vCoins.clear();
 
-    {
-        LOCK2(cs_main, cs_wallet);
-        for (map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
+extern std::map<uint256, CBlockIndex*> mapBlockIndex;
+
+    vCoins.clear();
+    uint256 block_hash;
+
+LogPrintf("RGP AvailableCoinsMN start \n");
+
+        // RGP is this causing a block?
+        //LOCK2(cs_main, cs_wallet);
+
+        for (map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it )
         {
+
+
             const CWalletTx* pcoin = &(*it).second;
 
             if (!IsFinalTx(*pcoin))
+            {
+LogPrintf("RGP AvailableCoinsMN NOT IsFinalTx \n");
                 continue;
+            }
 
             if (fOnlyConfirmed && !pcoin->IsTrusted())
+             {
+LogPrintf("RGP AvailableCoinsMN NOT ONLY CONFIRMED and NOT TRUSTED \n");
                 continue;
+            }
 
             if (pcoin->IsCoinBase() && pcoin->GetBlocksToMaturity() > 0)
+             {
+LogPrintf("RGP AvailableCoinsMN CoinBase and Blocks to maturity is not ZERO \n");
                 continue;
+            }
+
 
             if(pcoin->IsCoinStake() && pcoin->GetBlocksToMaturity() > 0)
+             {
+LogPrintf("RGP AvailableCoinsMN Coin STAKE and Blocks to maturity is not ZERO \n");
                 continue;
+            }
+
 
             int nDepth = pcoin->GetDepthInMainChain();
-            if (nDepth <= 0) // SocietyG NOTE: coincontrol fix / ignore 0 confirm
+            if (nDepth <= 0) // SocietyG NOTE: // ignore 0 confirm
+            {
+LogPrintf("RGP AvailableCoinsMN no confirms \n");
                 continue;
+
+            }
 
             // do not use IX for inputs that have less then 6 blockchain confirmations
             if (useIX && nDepth < 10)
+            {
+LogPrintf("RGP AvailableCoinsMN less than 10 confirms \n");
                 continue;
+            }            
 
             for (unsigned int i = 0; i < pcoin->vout.size(); i++)
             {
                 bool found = false;
                 if(coin_type == ONLY_DENOMINATED)
                 {
+LogPrintf("RGP AvailableCoinsMN found, but only DENOM %d \n", pcoin->vout[i].nValue);
                     found = IsDenominatedAmount(pcoin->vout[i].nValue);
                 }
                 else if ( coin_type == ONLY_NOT10000IFMN)
                 {
+
+
+
                     found = !(fMasterNode && pcoin->vout[i].nValue == GetMNCollateral(pindexBest->nHeight)*COIN);
                 }
                 else if (coin_type == ONLY_NONDENOMINATED_NOT10000IFMN)
                 {
-                    if ( IsCollateralAmount(pcoin->vout[i].nValue)) continue; // do not use collateral amounts
-                         found = !IsDenominatedAmount(pcoin->vout[i].nValue);
+
+                    if ( IsCollateralAmount(pcoin->vout[i].nValue)) 
+                    {
+
+LogPrintf("RGP AvailableCoinsMN found, Collatoral Amount %d \n", pcoin->vout[i].nValue);
+                        continue; // do not use collateral amounts
+                    }
+                    
+                    found = !IsDenominatedAmount(pcoin->vout[i].nValue);
 
                     if ( found && fMasterNode)
+                    {
+LogPrintf("RGP AvailableCoinsMN found, HotMN Funds %d \n", pcoin->vout[i].nValue);
                          found = pcoin->vout[i].nValue != GetMNCollateral(pindexBest->nHeight)*COIN; // do not use Hot MN funds
+                    }
                 }
                 else
                 {
@@ -1748,15 +1839,28 @@ void CWallet::AvailableCoinsMN(vector<COutput>& vCoins, bool fOnlyConfirmed, con
                 if (!(pcoin->IsSpent(i)) && mine != ISMINE_NO &&
                     !IsLockedCoin((*it).first, i) && pcoin->vout[i].nValue > 0 &&
                     (!coinControl || !coinControl->HasSelected() || coinControl->IsSelected((*it).first, i)))
-                        vCoins.push_back(COutput(pcoin, i, nDepth, (mine & ISMINE_SPENDABLE) != ISMINE_NO));
+                {
+                    /* RGP, We found a masternode collatoral entry, push back to vCoins */
+
+                    vCoins.push_back(COutput(pcoin, i, nDepth, (mine & ISMINE_SPENDABLE) != ISMINE_NO));
+                }
+                MilliSleep(1);
             }
+
+            MilliSleep( 1 );
         }
-    }
+
+LogPrintf("RGP AvailableCoinsMN End of Loop \n");
+
+
+MilliSleep( 5 );
+
 }
 
 void CWallet::AvailableCoinsForStaking(vector<COutput>& vCoins, unsigned int nSpendTime) const
 {
     vCoins.clear();
+LogPrintf("RGP AvailableCoinsForStaking start \n");
 
     {
         LOCK2(cs_main, cs_wallet);
@@ -1812,7 +1916,7 @@ static void ApproximateBestSubset(vector<pair<int64_t, pair<const CWalletTx*,uns
                                   vector<char>& vfBest, int64_t& nBest, int iterations = 1000)
 {
     vector<char> vfIncluded;
-
+LogPrintf("RGP ApproximateBestSubset start \n");
     vfBest.assign(vValue.size(), true);
     nBest = nTotalLower;
 
@@ -1863,6 +1967,8 @@ bool less_then_denom (const COutput& out1, const COutput& out2)
     const CWalletTx *pcoin1 = out1.tx;
     const CWalletTx *pcoin2 = out2.tx;
 
+LogPrintf("RGP less_then_denom start \n");
+
     bool found1 = false;
     bool found2 = false;
     BOOST_FOREACH(int64_t d, darkSendDenominations) // loop through predefined denoms
@@ -1877,7 +1983,7 @@ bool CWallet::SelectCoinsMinConf(int64_t nTargetValue, unsigned int nSpendTime, 
 {
     setCoinsRet.clear();
     nValueRet = 0;
-
+LogPrintf("RGP SelectCoinsMinConf start \n");
     // List of values less than target
     pair<int64_t, pair<const CWalletTx*,unsigned int> > coinLowestLarger;
     coinLowestLarger.first = std::numeric_limits<int64_t>::max();
@@ -1996,7 +2102,7 @@ bool CWallet::SelectCoins(int64_t nTargetValue, unsigned int nSpendTime, set<pai
 {
     vector<COutput> vCoins;
     AvailableCoins(vCoins, true, coinControl, coin_type, useIX);
-
+LogPrintf("RGP SelectCoins start \n");
     // coin control -> return all selected outputs (we want all selected to go into the transaction for sure)
     if (coinControl && coinControl->HasSelected())
     {
@@ -2052,7 +2158,7 @@ bool CWallet::SelectCoinsForStaking(int64_t nTargetValue, unsigned int nSpendTim
 {
     vector<COutput> vCoins;
     AvailableCoinsForStaking(vCoins, nSpendTime);
-
+LogPrintf("RGP SelectCoinsForStaking start \n");
     setCoinsRet.clear();
     nValueRet = 0;
 
@@ -2103,7 +2209,7 @@ bool CWallet::SelectCoinsByDenominations(int nDenom, int64_t nValueMin, int64_t 
 {
     vCoinsRet.clear();
     nValueRet = 0;
-
+LogPrintf("RGP SelectCoinsByDenominations start \n");
     vCoinsRet2.clear();
     vector<COutput> vCoins;
     AvailableCoins(vCoins, true, NULL, ONLY_DENOMINATED);
@@ -2183,7 +2289,7 @@ bool CWallet::SelectCoinsByDenominations(int nDenom, int64_t nValueMin, int64_t 
 bool CWallet::SelectCoinsDark(CAmount nValueMin, CAmount nValueMax, std::vector<CTxIn>& setCoinsRet, CAmount& nValueRet, int nDarksendRoundsMin, int nDarksendRoundsMax) const
 {
     CCoinControl *coinControl=NULL;
-
+LogPrintf("RGP SelectCoinsDark start \n");
     setCoinsRet.clear();
     nValueRet = 0;
 
@@ -2227,7 +2333,7 @@ bool CWallet::SelectCoinsDark(CAmount nValueMin, CAmount nValueMax, std::vector<
 bool CWallet::SelectCoinsCollateral(std::vector<CTxIn>& setCoinsRet, int64_t& nValueRet) const
 {
     vector<COutput> vCoins;
-
+LogPrintf("RGP SelectCoinsCollateral start \n");
     //printf(" selecting coins for collateral\n");
     AvailableCoins(vCoins);
 
@@ -2255,6 +2361,7 @@ bool CWallet::SelectCoinsCollateral(std::vector<CTxIn>& setCoinsRet, int64_t& nV
 
 int CWallet::CountInputsWithAmount(int64_t nInputAmount)
 {
+LogPrintf("RGP CountInputsWithAmount start \n");
     int64_t nTotal = 0;
     {
         LOCK(cs_wallet);
@@ -2308,7 +2415,7 @@ bool CWallet::CreateCollateralTransaction(CTransaction& txCollateral, std::strin
         still a significant cost.
     */
     CAmount nFeeRet = 0.001*COIN;
-
+LogPrintf("RGP CreateCollateralTransaction start \n");
     txCollateral.vin.clear();
     txCollateral.vout.clear();
     txCollateral.nTime = GetAdjustedTime();
@@ -2375,7 +2482,7 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, int64_t> >& vecSend, 
                                 int64_t& nFeeRet, int32_t& nChangePos, std::string& strFailReason, const CCoinControl* coinControl,
                                 AvailableCoinsType coin_type, bool useIX)
 {
-
+LogPrintf("RGP CreateTransaction start \n");
     int64_t nValue = 0;
 
     BOOST_FOREACH (const PAIRTYPE(CScript, int64_t)& s, vecSend)
@@ -2589,7 +2696,7 @@ bool CWallet::CreateTransaction(CScript scriptPubKey, int64_t nValue, std::strin
 {
     vector< pair<CScript, int64_t> > vecSend;
     vecSend.push_back(make_pair(scriptPubKey, nValue));
-
+LogPrintf("RGP CreateTransaction start \n");
     if (sNarr.length() > 0)
     {
         std::vector<uint8_t> vNarr(sNarr.c_str(), sNarr.c_str() + sNarr.length());
@@ -3109,6 +3216,8 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
     if (fDebug)
         LogPrintf("FindStealthTransactions() tx: %s\n", tx.GetHash().GetHex().c_str());
 
+//LogPrintf("RGP FindStealthTransactions start \n");
+
     mapNarr.clear();
 
     LOCK(cs_wallet);
@@ -3136,7 +3245,10 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
 
         if (!txout.scriptPubKey.GetOp(itTxA, opCode, vchEphemPK)
             || opCode != OP_RETURN)
+        {
+            MilliSleep( 2 );
             continue;
+        }
         else
         if (!txout.scriptPubKey.GetOp(itTxA, opCode, vchEphemPK)
             || vchEphemPK.size() != 33)
@@ -3160,7 +3272,7 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
                     printf("Warning: FindStealthTransactions() tx: %s, Could not extract plaintext narration.\n", tx.GetHash().GetHex().c_str());
                 };
             }
-
+            MilliSleep( 2 );
             continue;
         }
 
@@ -3171,7 +3283,10 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
             nOutputId++;
 
             if (&txoutB == &txout)
+            {
+                MilliSleep( 1 );
                 continue;
+            }
 
             bool txnMatch = false; // only 1 txn will match an ephem pk
             //printf("txoutB scriptPubKey %s\n",  txoutB.scriptPubKey.ToString().c_str());
@@ -3181,7 +3296,10 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
                 continue;
 
             if (address.type() != typeid(CKeyID))
+            {
+                MilliSleep( 1 );
                 continue;
+            }
 
             CKeyID ckidMatch = boost::get<CKeyID>(address);
 
@@ -3191,15 +3309,20 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
             std::set<CStealthAddress>::iterator it;
             for (it = stealthAddresses.begin(); it != stealthAddresses.end(); ++it)
             {
+                MilliSleep( 2 );
                 if (it->scan_secret.size() != ec_secret_size)
+                {
+                    MilliSleep( 1 );
                     continue; // stealth address is not owned
+                }
 
                 //printf("it->Encodeded() %s\n",  it->Encoded().c_str());
                 memcpy(&sScan.e[0], &it->scan_secret[0], ec_secret_size);
 
                 if (StealthSecret(sScan, vchEphemPK, it->spend_pubkey, sShared, pkExtracted) != 0)
                 {
-                    printf("StealthSecret failed.\n");
+                    printf("StealthSecret failed.\n");                
+                    MilliSleep( 1 );
                     continue;
                 };
                 //printf("pkExtracted %"PRIszu": %s\n", pkExtracted.size(), HexStr(pkExtracted).c_str());
@@ -3207,11 +3330,17 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
                 CPubKey cpkE(pkExtracted);
 
                 if (!cpkE.IsValid())
+                {
+                    MilliSleep( 1 );
                     continue;
+                }
                 CKeyID ckidE = cpkE.GetID();
 
                 if (ckidMatch != ckidE)
+                {
+                    MilliSleep( 1 );
                     continue;
+                }
 
                 if (fDebug)
                     printf("Found stealth txn to address %s\n", it->Encoded().c_str());
@@ -3241,13 +3370,18 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
                 } else
                 {
                     if (it->spend_secret.size() != ec_secret_size)
+                    {
+                        MilliSleep( 1 );
                         continue;
+                    }
                     memcpy(&sSpend.e[0], &it->spend_secret[0], ec_secret_size);
 
 
                     if (StealthSharedToSecretSpend(sShared, sSpend, sSpendR) != 0)
                     {
                         printf("StealthSharedToSecretSpend() failed.\n");
+
+                        MilliSleep( 1 );
                         continue;
                     };
 
@@ -3255,6 +3389,7 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
                     if (SecretToPublicKey(sSpendR, pkTestSpendR) != 0)
                     {
                         printf("SecretToPublicKey() failed.\n");
+                        MilliSleep( 1 );
                         continue;
                     };
 
@@ -3269,6 +3404,8 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
                         //ckey.SetSecret(vchSecret, true);
                     } catch (std::exception& e) {
                         printf("ckey.SetSecret() threw: %s.\n", e.what());
+                        
+                        MilliSleep( 1 );
                         continue;
                     };
 
@@ -3276,12 +3413,15 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
                     if (!cpkT.IsValid())
                     {
                         printf("cpkT is invalid.\n");
+                    
+                        MilliSleep( 1 );
                         continue;
                     };
 
                     if (!ckey.IsValid())
                     {
                         printf("Reconstructed key is invalid.\n");
+                        MilliSleep( 1 );
                         continue;
                     };
 
@@ -3295,6 +3435,7 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
                     if (!AddKey(ckey))
                     {
                         printf("AddKey failed.\n");
+                        MilliSleep( 1 );
                         continue;
                     };
 
@@ -3314,6 +3455,7 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
                     if (!crypter.Decrypt(&vchENarr[0], vchENarr.size(), vchNarr))
                     {
                         printf("Decrypt narration failed.\n");
+                        MilliSleep( 1 );
                         continue;
                     };
                     std::string sNarr = std::string(vchNarr.begin(), vchNarr.end());
@@ -3322,22 +3464,27 @@ bool CWallet::FindStealthTransactions(const CTransaction& tx, mapValue_t& mapNar
                     mapNarr[cbuf] = sNarr;
                 };
 
+               
                 txnMatch = true;
                 break;
-            };
+            }
+
             if (txnMatch)
                 break;
-        };
-    };
+
+            MilliSleep( 2 );
+        }
+        MilliSleep( 2 );
+    }
 
     return true;
-};
+}
 
 uint64_t CWallet::GetStakeWeight() const
 {
     // Choose coins to use
     int64_t nBalance = GetBalance();
-
+LogPrintf("RGP GetStakeWeight start \n");
     if (nBalance <= nReserveBalance)
         return 0;
 
@@ -3369,7 +3516,7 @@ uint64_t CWallet::GetStakeWeight() const
             nWeight += pcoin.first->vout[pcoin.second].nValue;
         }
 
-        //MilliSleep( 5 );
+        MilliSleep( 1 );
 
     }
 
@@ -3382,6 +3529,8 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
     CBlockIndex* pindexPrev = pindexBest;
     CBigNum bnTargetPerCoinDay;
     bnTargetPerCoinDay.SetCompact(nBits);
+
+LogPrintf("RGP CreateCoinStake start \n");
 
     txNew.vin.clear();
     txNew.vout.clear();
@@ -3758,6 +3907,8 @@ bool CWallet::CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey, std:
     mapValue_t mapNarr;
     FindStealthTransactions(wtxNew, mapNarr);
 
+LogPrintf("RGP CommitTransaction start \n");
+
     if (!mapNarr.empty())
     {
         BOOST_FOREACH(const PAIRTYPE(string,string)& item, mapNarr)
@@ -3884,6 +4035,8 @@ string CWallet::SendMoneyToDestination(const CTxDestination& address, int64_t nV
 
 int64_t CWallet::GetTotalValue(std::vector<CTxIn> vCoins) {
     int64_t nTotalValue = 0;
+
+LogPrintf("RGP GetTotalValue start \n");
     CWalletTx wtx;
     BOOST_FOREACH(CTxIn i, vCoins){
         if (mapWallet.count(i.prevout.hash))
@@ -4281,7 +4434,7 @@ int64_t CWallet::GetOldestKeyPoolTime()
 std::map<CTxDestination, int64_t> CWallet::GetAddressBalances()
 {
     map<CTxDestination, int64_t> balances;
-
+LogPrintf("RGP GetAddressBalances start \n");
     {
         LOCK(cs_wallet);
         BOOST_FOREACH(PAIRTYPE(uint256, CWalletTx) walletEntry, mapWallet)
@@ -4323,6 +4476,8 @@ set< set<CTxDestination> > CWallet::GetAddressGroupings()
     AssertLockHeld(cs_wallet); // mapWallet
     set< set<CTxDestination> > groupings;
     set<CTxDestination> grouping;
+
+LogPrintf("RGP GetAddressGroupings start \n");
 
     BOOST_FOREACH(PAIRTYPE(uint256, CWalletTx) walletEntry, mapWallet)
     {
@@ -4420,6 +4575,8 @@ void CWallet::FixSpentCoins(int& nMismatchFound, int64_t& nBalanceInQuestion, bo
 {
     nMismatchFound = 0;
     nBalanceInQuestion = 0;
+
+LogPrintf("RGP FixSpentCoins start \n");
 
     LOCK(cs_wallet);
     vector<CWalletTx*> vCoins;
@@ -4545,15 +4702,29 @@ void CWallet::GetAllReserveKeys(set<CKeyID>& setAddress) const
 
 bool CWallet::UpdatedTransaction(const uint256 &hashTx)
 {
+
+    //LogPrintf("RGP UpdatedTransaction start with hash %s \n", hashTx.ToString() );
+
     {
+//LogPrintf("RGP UpdatedTransaction waiting for a lock \n");
+
         LOCK(cs_wallet);
+
+//LogPrintf("RGP UpdatedTransaction LOCK Success \n");
         // Only notify UI if this transaction is in this wallet
         map<uint256, CWalletTx>::const_iterator mi = mapWallet.find(hashTx);
-        if (mi != mapWallet.end()){
+
+        // RGP, transactions are not being processed on new Masternode
+        //      td::map<uint256, CWalletTx> mapWallet;
+
+        if (mi != mapWallet.end())
+        {
+            LogPrintf("RGP UpdatedTransaction ypdated transcation\n");
             NotifyTransactionChanged(this, hashTx, CT_UPDATED);
             return true;
         }
     }
+
     return false;
 }
 
@@ -4596,6 +4767,8 @@ void CWallet::ListLockedCoins(std::vector<COutPoint>& vOutpts)
 void CWallet::GetKeyBirthTimes(std::map<CKeyID, int64_t> &mapKeyBirth) const {
     AssertLockHeld(cs_wallet); // mapKeyMetadata
     mapKeyBirth.clear();
+
+LogPrintf("RGP GetKeyBirthTimes start \n");
 
     // get birth times for keys with metadata
     for (std::map<CKeyID, CKeyMetadata>::const_iterator it = mapKeyMetadata.begin(); it != mapKeyMetadata.end(); it++)
@@ -4644,3 +4817,5 @@ void CWallet::GetKeyBirthTimes(std::map<CKeyID, int64_t> &mapKeyBirth) const {
     for (std::map<CKeyID, CBlockIndex*>::const_iterator it = mapKeyFirstBlock.begin(); it != mapKeyFirstBlock.end(); it++)
         mapKeyBirth[it->first] = it->second->nTime - 7200; // block times can be 2h off
 }
+
+

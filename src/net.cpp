@@ -1,7 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2018 Profit Hunters Coin developers
-// Copyright (c) 2020 Bank SocietyG Coin developer [RGPickles]
+// Copyright (c) 2020 Bank Society Gold Coin developer [RGPickles]
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -105,7 +105,7 @@ uint64_t nLocalHostNonce = 0;
 static std::vector<SOCKET> vhListenSocket;
 CAddrMan addrman;
 std::string strSubVersion;
-int nMaxConnections = GetArg("-maxconnections", 125);
+int nMaxConnections = GetArg("maxconnections", 125);
 
 vector<CNode*> vNodes;
 CCriticalSection cs_vNodes;
@@ -295,75 +295,75 @@ int ALL_CHECK_TIMER = GetTime();
 void LoadFirewallSettings()
 {
     // *** Firewall Controls (General) ***
-    FIREWALL_ENABLED = GetBoolArg("-firewallenabled", FIREWALL_ENABLED);
-    FIREWALL_CLEAR_BLACKLIST = GetBoolArg("-firewallclearblacklist", FIREWALL_CLEAR_BLACKLIST);
-    FIREWALL_CLEAR_BANS = GetBoolArg("-firewallclearbanlist", FIREWALL_CLEAR_BANS);
+    FIREWALL_ENABLED = GetBoolArg("firewallenabled", FIREWALL_ENABLED);
+    FIREWALL_CLEAR_BLACKLIST = GetBoolArg("firewallclearblacklist", FIREWALL_CLEAR_BLACKLIST);
+    FIREWALL_CLEAR_BANS = GetBoolArg("firewallclearbanlist", FIREWALL_CLEAR_BANS);
 
     // *** Firewall Debug (Live Output) ***
-    FIREWALL_LIVE_DEBUG = GetBoolArg("-firewalldebug", FIREWALL_LIVE_DEBUG);
-    FIREWALL_LIVEDEBUG_EXAM = GetBoolArg("-firewalldebugexam", FIREWALL_LIVEDEBUG_EXAM);
-    FIREWALL_LIVEDEBUG_BANS = GetBoolArg("-firewalldebugbans", FIREWALL_LIVEDEBUG_BANS);
-    FIREWALL_LIVEDEBUG_BLACKLIST = GetBoolArg("-firewalldebugblacklist", FIREWALL_LIVEDEBUG_BLACKLIST);
-    FIREWALL_LIVEDEBUG_DISCONNECT = GetBoolArg("-firewalldebugdisconnect", FIREWALL_LIVEDEBUG_DISCONNECT);
-    FIREWALL_LIVEDEBUG_BANDWIDTHABUSE = GetBoolArg("-firewalldebugbandwidthabuse", FIREWALL_LIVEDEBUG_BANDWIDTHABUSE);
-    FIREWALL_LIVEDEBUG_NOFALSEPOSITIVE = GetBoolArg("-firewalldebugnofalsepositivebandwidthabuse", FIREWALL_LIVEDEBUG_NOFALSEPOSITIVE);
-    FIREWALL_LIVEDEBUG_INVALIDWALLET = GetBoolArg("-firewalldebuginvalidwallet", FIREWALL_LIVEDEBUG_INVALIDWALLET);
-    FIREWALL_LIVEDEBUG_FORKEDWALLET = GetBoolArg("-firewalldebugforkedwallet", FIREWALL_LIVEDEBUG_FORKEDWALLET);
-    FIREWALL_LIVEDEBUG_FLOODINGWALLET = GetBoolArg("-firewalldebugfloodingwallet", FIREWALL_LIVEDEBUG_FLOODINGWALLET);
+    FIREWALL_LIVE_DEBUG = GetBoolArg("firewalldebug", FIREWALL_LIVE_DEBUG);
+    FIREWALL_LIVEDEBUG_EXAM = GetBoolArg("firewalldebugexam", FIREWALL_LIVEDEBUG_EXAM);
+    FIREWALL_LIVEDEBUG_BANS = GetBoolArg("firewalldebugbans", FIREWALL_LIVEDEBUG_BANS);
+    FIREWALL_LIVEDEBUG_BLACKLIST = GetBoolArg("firewalldebugblacklist", FIREWALL_LIVEDEBUG_BLACKLIST);
+    FIREWALL_LIVEDEBUG_DISCONNECT = GetBoolArg("firewalldebugdisconnect", FIREWALL_LIVEDEBUG_DISCONNECT);
+    FIREWALL_LIVEDEBUG_BANDWIDTHABUSE = GetBoolArg("firewalldebugbandwidthabuse", FIREWALL_LIVEDEBUG_BANDWIDTHABUSE);
+    FIREWALL_LIVEDEBUG_NOFALSEPOSITIVE = GetBoolArg("firewalldebugnofalsepositivebandwidthabuse", FIREWALL_LIVEDEBUG_NOFALSEPOSITIVE);
+    FIREWALL_LIVEDEBUG_INVALIDWALLET = GetBoolArg("firewalldebuginvalidwallet", FIREWALL_LIVEDEBUG_INVALIDWALLET);
+    FIREWALL_LIVEDEBUG_FORKEDWALLET = GetBoolArg("firewalldebugforkedwallet", FIREWALL_LIVEDEBUG_FORKEDWALLET);
+    FIREWALL_LIVEDEBUG_FLOODINGWALLET = GetBoolArg("firewalldebugfloodingwallet", FIREWALL_LIVEDEBUG_FLOODINGWALLET);
 
     // *** Firewall Controls (Bandwidth Abuse) ***
-    FIREWALL_DETECT_BANDWIDTHABUSE = GetBoolArg("-firewalldetectbandwidthabuse", FIREWALL_DETECT_BANDWIDTHABUSE);
-    FIREWALL_BLACKLIST_BANDWIDTHABUSE = GetBoolArg("-firewallblacklistbandwidthabuse", FIREWALL_BLACKLIST_BANDWIDTHABUSE);
-    FIREWALL_BAN_BANDWIDTHABUSE = GetBoolArg("-firewallbanbandwidthabuse", FIREWALL_BAN_BANDWIDTHABUSE);
-    FIREWALL_NOFALSEPOSITIVE_BANDWIDTHABUSE = GetBoolArg("-firewallnofalsepositivebandwidthabuse", FIREWALL_NOFALSEPOSITIVE_BANDWIDTHABUSE);
+    FIREWALL_DETECT_BANDWIDTHABUSE = GetBoolArg("firewalldetectbandwidthabuse", FIREWALL_DETECT_BANDWIDTHABUSE);
+    FIREWALL_BLACKLIST_BANDWIDTHABUSE = GetBoolArg("firewallblacklistbandwidthabuse", FIREWALL_BLACKLIST_BANDWIDTHABUSE);
+    FIREWALL_BAN_BANDWIDTHABUSE = GetBoolArg("firewallbanbandwidthabuse", FIREWALL_BAN_BANDWIDTHABUSE);
+    FIREWALL_NOFALSEPOSITIVE_BANDWIDTHABUSE = GetBoolArg("firewallnofalsepositivebandwidthabuse", FIREWALL_NOFALSEPOSITIVE_BANDWIDTHABUSE);
 
     // *** Firewall Controls (Invalid Peer Wallets) ***
-    FIREWALL_DETECT_INVALIDWALLET = GetBoolArg("-firewalldetectinvalidwallet", FIREWALL_DETECT_INVALIDWALLET);
-    FIREWALL_BLACKLIST_INVALIDWALLET = GetBoolArg("-firewallblacklistinvalidwallet", FIREWALL_BLACKLIST_INVALIDWALLET);
-    FIREWALL_BAN_INVALIDWALLET = GetBoolArg("-firewallbaninvalidwallet", FIREWALL_BAN_INVALIDWALLET);
+    FIREWALL_DETECT_INVALIDWALLET = GetBoolArg("firewalldetectinvalidwallet", FIREWALL_DETECT_INVALIDWALLET);
+    FIREWALL_BLACKLIST_INVALIDWALLET = GetBoolArg("firewallblacklistinvalidwallet", FIREWALL_BLACKLIST_INVALIDWALLET);
+    FIREWALL_BAN_INVALIDWALLET = GetBoolArg("firewallbaninvalidwallet", FIREWALL_BAN_INVALIDWALLET);
 
     // *** Firewall Controls (Forked Peer Wallets) ***
-    FIREWALL_DETECT_FORKEDWALLET = GetBoolArg("-firewalldetectforkedwallet", FIREWALL_DETECT_FORKEDWALLET);
-    FIREWALL_BLACKLIST_FORKEDWALLET = GetBoolArg("-firewallblacklistforkedwallet", FIREWALL_BLACKLIST_FORKEDWALLET);
-    FIREWALL_BAN_FORKEDWALLET = GetBoolArg("-firewallbanforkedwallet", FIREWALL_BAN_FORKEDWALLET);
+    FIREWALL_DETECT_FORKEDWALLET = GetBoolArg("firewalldetectforkedwallet", FIREWALL_DETECT_FORKEDWALLET);
+    FIREWALL_BLACKLIST_FORKEDWALLET = GetBoolArg("firewallblacklistforkedwallet", FIREWALL_BLACKLIST_FORKEDWALLET);
+    FIREWALL_BAN_FORKEDWALLET = GetBoolArg("firewallbanforkedwallet", FIREWALL_BAN_FORKEDWALLET);
 
     // *** Firewall Controls (Flooding Peer Wallets) ***
-    FIREWALL_DETECT_FLOODINGWALLET = GetBoolArg("-firewalldetectfloodingwallet", FIREWALL_DETECT_FLOODINGWALLET);
-    FIREWALL_BLACKLIST_FLOODINGWALLET = GetBoolArg("-firewallblacklistfloodingwallet", FIREWALL_BLACKLIST_FLOODINGWALLET);
-    FIREWALL_BAN_FLOODINGWALLET = GetBoolArg("-firewallbanfloodingwallet", FIREWALL_BAN_FLOODINGWALLET);
+    FIREWALL_DETECT_FLOODINGWALLET = GetBoolArg("firewalldetectfloodingwallet", FIREWALL_DETECT_FLOODINGWALLET);
+    FIREWALL_BLACKLIST_FLOODINGWALLET = GetBoolArg("firewallblacklistfloodingwallet", FIREWALL_BLACKLIST_FLOODINGWALLET);
+    FIREWALL_BAN_FLOODINGWALLET = GetBoolArg("firewallbanfloodingwallet", FIREWALL_BAN_FLOODINGWALLET);
 
     // * Firewall Settings (Exam) *
-    FIREWALL_TRAFFIC_TOLERANCE = GetArg("-firewalltraffictolerance", FIREWALL_TRAFFIC_TOLERANCE);
-    FIREWALL_TRAFFIC_ZONE = GetArg("-firewalltrafficzone", FIREWALL_TRAFFIC_ZONE);
+    FIREWALL_TRAFFIC_TOLERANCE = GetArg("firewalltraffictolerance", FIREWALL_TRAFFIC_TOLERANCE);
+    FIREWALL_TRAFFIC_ZONE = GetArg("firewalltrafficzone", FIREWALL_TRAFFIC_ZONE);
 
     // * Firewall Settings (Bandwidth Abuse) *
-    FIREWALL_BANTIME_BANDWIDTHABUSE = GetArg("-firewallbantimebandwidthabuse", FIREWALL_BANTIME_BANDWIDTHABUSE);
-    FIREWALL_BANDWIDTHABUSE_MAXCHECK = GetArg("-firewallbandwidthabusemaxcheck", FIREWALL_BANDWIDTHABUSE_MAXCHECK);
-    FIREWALL_BANDWIDTHABUSE_MINATTACK = GetArg("-firewallbandwidthabuseminattack", FIREWALL_BANDWIDTHABUSE_MINATTACK);
-    FIREWALL_BANDWIDTHABUSE_MAXATTACK = GetArg("-firewallbandwidthabusemaxattack", FIREWALL_BANDWIDTHABUSE_MAXATTACK);
+    FIREWALL_BANTIME_BANDWIDTHABUSE = GetArg("firewallbantimebandwidthabuse", FIREWALL_BANTIME_BANDWIDTHABUSE);
+    FIREWALL_BANDWIDTHABUSE_MAXCHECK = GetArg("firewallbandwidthabusemaxcheck", FIREWALL_BANDWIDTHABUSE_MAXCHECK);
+    FIREWALL_BANDWIDTHABUSE_MINATTACK = GetArg("firewallbandwidthabuseminattack", FIREWALL_BANDWIDTHABUSE_MINATTACK);
+    FIREWALL_BANDWIDTHABUSE_MAXATTACK = GetArg("firewallbandwidthabusemaxattack", FIREWALL_BANDWIDTHABUSE_MAXATTACK);
 
     // * Firewall Settings (Invalid Wallet)
-    FIREWALL_MINIMUM_PROTOCOL = GetArg("-firewallinvalidwalletminprotocol", FIREWALL_MINIMUM_PROTOCOL);
-    FIREWALL_BANTIME_INVALIDWALLET = GetArg("-firewallbantimeinvalidwallet", FIREWALL_BANTIME_INVALIDWALLET);
-    FIREWALL_INVALIDWALLET_MAXCHECK = GetArg("-firewallinvalidwalletmaxcheck", FIREWALL_INVALIDWALLET_MAXCHECK);
+    FIREWALL_MINIMUM_PROTOCOL = GetArg("firewallinvalidwalletminprotocol", FIREWALL_MINIMUM_PROTOCOL);
+    FIREWALL_BANTIME_INVALIDWALLET = GetArg("firewallbantimeinvalidwallet", FIREWALL_BANTIME_INVALIDWALLET);
+    FIREWALL_INVALIDWALLET_MAXCHECK = GetArg("firewallinvalidwalletmaxcheck", FIREWALL_INVALIDWALLET_MAXCHECK);
 
     // * Firewall Settings (Forked Wallet)
-    FIREWALL_BANTIME_FORKEDWALLET = GetArg("-firewallbantimeforkedwallet", FIREWALL_BANTIME_FORKEDWALLET);
+    FIREWALL_BANTIME_FORKEDWALLET = GetArg("firewallbantimeforkedwallet", FIREWALL_BANTIME_FORKEDWALLET);
 
     // * Firewall Settings (Flooding Wallet)
-    FIREWALL_BANTIME_FLOODINGWALLET = GetArg("-firewallbantimefloodingwallet", FIREWALL_BANTIME_FLOODINGWALLET);
-    FIREWALL_FLOODINGWALLET_MINBYTES = GetArg("-firewallfloodingwalletminbytes", FIREWALL_FLOODINGWALLET_MINBYTES);
-    FIREWALL_FLOODINGWALLET_MAXBYTES = GetArg("-firewallfloodingwalletmaxbytes", FIREWALL_FLOODINGWALLET_MAXBYTES);
+    FIREWALL_BANTIME_FLOODINGWALLET = GetArg("firewallbantimefloodingwallet", FIREWALL_BANTIME_FLOODINGWALLET);
+    FIREWALL_FLOODINGWALLET_MINBYTES = GetArg("firewallfloodingwalletminbytes", FIREWALL_FLOODINGWALLET_MINBYTES);
+    FIREWALL_FLOODINGWALLET_MAXBYTES = GetArg("firewallfloodingwalletmaxbytes", FIREWALL_FLOODINGWALLET_MAXBYTES);
 
-    if (GetArg("-firewallfloodingwalletattackpattern", "-") != "-")
+    if (GetArg("firewallfloodingwalletattackpattern", "") != "")
     {
-        FIREWALL_FLOODPATTERNS[CountStringArray(FIREWALL_FLOODPATTERNS)] = GetArg("-firewallfloodingwalletattackpattern", "");
+        FIREWALL_FLOODPATTERNS[CountStringArray(FIREWALL_FLOODPATTERNS)] = GetArg("firewallfloodingwalletattackpattern", "");
     }
 
-    FIREWALL_FLOODINGWALLET_MINTRAFFICAVERAGE = GetArg("-firewallfloodingwalletmintrafficavg", FIREWALL_FLOODINGWALLET_MINTRAFFICAVERAGE);
-    FIREWALL_FLOODINGWALLET_MAXTRAFFICAVERAGE = GetArg("-firewallfloodingwalletmaxtrafficavg", FIREWALL_FLOODINGWALLET_MAXTRAFFICAVERAGE);
-    FIREWALL_FLOODINGWALLET_MINCHECK = GetArg("-firewallfloodingwalletmincheck", FIREWALL_FLOODINGWALLET_MINCHECK);
-    FIREWALL_FLOODINGWALLET_MAXCHECK = GetArg("-firewallfloodingwalletmaxcheck", FIREWALL_FLOODINGWALLET_MAXCHECK);
+    FIREWALL_FLOODINGWALLET_MINTRAFFICAVERAGE = GetArg("firewallfloodingwalletmintrafficavg", FIREWALL_FLOODINGWALLET_MINTRAFFICAVERAGE);
+    FIREWALL_FLOODINGWALLET_MAXTRAFFICAVERAGE = GetArg("firewallfloodingwalletmaxtrafficavg", FIREWALL_FLOODINGWALLET_MAXTRAFFICAVERAGE);
+    FIREWALL_FLOODINGWALLET_MINCHECK = GetArg("firewallfloodingwalletmincheck", FIREWALL_FLOODINGWALLET_MINCHECK);
+    FIREWALL_FLOODINGWALLET_MAXCHECK = GetArg("firewallfloodingwalletmaxcheck", FIREWALL_FLOODINGWALLET_MAXCHECK);
 
 return;
 }
@@ -377,7 +377,7 @@ bool ForceDisconnectNode(CNode *pnode, string FromFunction)
 
         // release outbound grant (if any)
         pnode->CloseSocketDisconnect();
-        LogPrint("net", "%s (%s) Panic Disconnect: %s\n", ModuleName.c_str(), FromFunction, pnode->addrName.c_str());
+        LogPrintf("net, %s (%s) Panic Disconnect: %s\n", ModuleName.c_str(), FromFunction, pnode->addrName.c_str());
 
        if ( FIREWALL_LIVE_DEBUG == true)
        {
@@ -1274,14 +1274,21 @@ void AddOneShot(string strDest)
 
 unsigned short GetListenPort()
 {
-    return (unsigned short)(GetArg("-port", Params().GetDefaultPort()));
+unsigned short myport;
+
+
+myport = (unsigned short)(GetArg("port", Params().GetDefaultPort()));
+
+    return (unsigned short)(GetArg("port", Params().GetDefaultPort()));
 }
 
 // find 'best' local address for a particular peer
 bool GetLocal(CService& addr, const CNetAddr *paddrPeer)
 {
     if (fNoListen)
+    {
         return false;
+    }
 
     int nBestScore = -1;
     int nBestReachability = -1;
@@ -1573,6 +1580,9 @@ CCriticalSection CNode::cs_totalBytesSent;
 CNode* FindNode(const CNetAddr& ip)
 {
     LOCK(cs_vNodes);
+
+//LogPrintf("RGP Net FindNode Debug IP %s \n", ip.ToString() );
+
     BOOST_FOREACH(CNode* pnode, vNodes)
         if ((CNetAddr)pnode->addr == ip)
             return (pnode);
@@ -1582,6 +1592,9 @@ CNode* FindNode(const CNetAddr& ip)
 CNode* FindNode(const CSubNet& subNet)
 {
     LOCK(cs_vNodes);
+
+//LogPrintf("RGP Net FindNode Debug subNet  \n" );
+
     BOOST_FOREACH(CNode* pnode, vNodes)
     if (subNet.Match((CNetAddr)pnode->addr))
         return (pnode);
@@ -1591,6 +1604,9 @@ CNode* FindNode(const CSubNet& subNet)
 CNode* FindNode(std::string addrName)
 {
     LOCK(cs_vNodes);
+
+//LogPrintf("RGP Net FindNode Debug addrName  \n" );
+
     BOOST_FOREACH(CNode* pnode, vNodes)
         if (pnode->addrName == addrName)
             return (pnode);
@@ -1600,17 +1616,28 @@ CNode* FindNode(std::string addrName)
 CNode* FindNode(const CService& addr)
 {
     LOCK(cs_vNodes);
+
+//LogPrintf("RGP Net FindNode Debug addr %s vnode size %d \n", addr.ToString(), vNodes.size() );
+
     for (CNode* pnode : vNodes)
     {
+//LogPrintf("RGP Net FindNode Debug pnodes in FindNode %s \n", pnode->addrName );
         //if (Params().NetworkID() == CBaseChainParams::REGTEST) {
             //if using regtest, just check the IP
         //    if ((CNetAddr)pnode->addr == (CNetAddr)addr)
         //        return (pnode);
         //} else {
-            if (pnode->addr == addr)
-                return (pnode);
+        if ( pnode->addr == addr)
+        {
+//LogPrintf("RGP Net FindNode Debug TEST ALL FOUND addr %s \n", pnode->addrName );
+             return (pnode);
+        }
        // }
     }
+
+    
+//LogPrintf("RGP Net FindNode Debug NONE FOUND  \n" );
+   
     return NULL;
 }
 
@@ -1630,17 +1657,26 @@ CNode* FindNode(const CService& addr)
 bool CheckNode(CAddress addrConnect)
 {
     // Look for an existing connection. If found then just add it to masternode list.
+
+LogPrintf("\n RGP Net FindNode Debug addrConnect %s \n", addrConnect.ToString().c_str() );
+
     CNode* pnode = FindNode((CService)addrConnect);
     if (pnode)
+    {
+LogPrintf("RGP Net CheckNode found! \n");
         return true;
+    }
+    else
+        LogPrintf("RGP Net CheckNode NOT found! \n");
 
     // Connect
     SOCKET hSocket;
     bool proxyConnectionFailed = false;
     LogPrintf("*** RGP Establish Timeout Value \n");
+
     if (ConnectSocket(addrConnect, hSocket, 5000 ))
     {
-        LogPrint("net", "connected masternode %s\n", addrConnect.ToString());
+        LogPrintf("net, connected masternode %s\n", addrConnect.ToString());
         closesocket(hSocket);
         
 /*        // Set to non-blocking
@@ -1657,20 +1693,20 @@ bool CheckNode(CAddress addrConnect)
         pnode->CloseSocketDisconnect();
 */
         return true;
-}
-    if ( fDebug )
+    }
+
+    //if ( fDebug )
     {
        LogPrintf("*** RGP Net CheckNode %s failed \n", addrConnect.ToString() );
-       CNode::Ban(pnode->addr, BanReasonManuallyAdded );
+       //CNode::Ban(pnode->addr, BanReasonManuallyAdded );
 
-       LogPrint("net", "connecting to masternode %s failed\n", addrConnect.ToString());
+       LogPrintf("net, connecting to masternode %s failed\n", addrConnect.ToString());
     }
     return false;
 }
 
 CNode* ConnectNode(CAddress addrConnect, const char* pszDest)
 {
-extern bool fDarkSendMaster;
 unsigned int connecting_port;
 
     //LogPrintf("*** RGP ConnectNode address %s port %s \n", addrConnect.ToStringIP(), addrConnect.ToStringPort());
@@ -1680,12 +1716,12 @@ unsigned int connecting_port;
 
     if ( connecting_port == 23980 || connecting_port == 23981 )
     {
-        //LogPrintf("*** RGP IP SUCCESS connection %d \n", addrConnect.GetPort());
+       // LogPrintf("*** RGP IP SUCCESS checking %d \n", addrConnect.GetPort());
     }
     else
     {
         //LogPrintf("*** RGP IP FAILED PORT incorrect [IGNORED] %d \n", addrConnect.GetPort());
-        //return NULL;
+        return NULL;
     }
 
     if (pszDest == NULL)
@@ -1702,10 +1738,11 @@ unsigned int connecting_port;
             /* ------------------------------------------------------
                -- RGP, Take care of Masternodes aka DarkSendMaster --
                ------------------------------------------------------ */
-            //if( fDarkSendMaster )
-            //{
-              //pnode->fDarkSendMaster = true;
-            //}
+           // if( fDarkSendMaster )
+           // {
+
+           //   pnode->fDarkSendMaster = true;
+           // }
 
             pnode->AddRef();
             return pnode;
@@ -1721,13 +1758,13 @@ unsigned int connecting_port;
     SOCKET hSocket;
     bool proxyConnectionFailed = false;
 
-    //LogPrintf("*** RGP IP to connect %s debug 1 \n", addrConnect.ToString() );
-    //LogPrintf("*** RGP pszDest is %s \n", pszDest );
+   // LogPrintf("*** RGP IP to connect %s debug 1 \n", addrConnect.ToString() );
+   // LogPrintf("*** RGP pszDest is %s \n", &pszDest );
 
     if (pszDest ? ConnectSocketByName(addrConnect, hSocket, pszDest, Params().GetDefaultPort()) : ConnectSocket(addrConnect, hSocket))
     {
 
-       // LogPrintf("*** RGP IP to connect %s debug 2 ", addrConnect.ToString() );
+     //LogPrintf("*** RGP IP to connect %s debug 2 ", addrConnect.ToString() );
 
     //if (pszDest ? ConnectSocketByName(addrConnect, hSocket, pszDest, Params().GetDefaultPort(), nConnectTimeout, &proxyConnectionFailed) :
     //              ConnectSocket(addrConnect, hSocket, nConnectTimeout, &proxyConnectionFailed))
@@ -1945,7 +1982,7 @@ void CNode::Ban(const CSubNet& subNet, const BanReason &banReason, int64_t banti
     banEntry.banReason = banReason;
     if (bantimeoffset <= 0)
     {
-        bantimeoffset = GetArg("-bantime", 60*60*24); // Default 24-hour ban
+        bantimeoffset = GetArg("bantime", 60*60*24); // Default 24-hour ban
         sinceUnixEpoch = false;
     }
     banEntry.nBanUntil = (sinceUnixEpoch ? 0 : GetTime() )+bantimeoffset;
@@ -2002,6 +2039,8 @@ void CNode::SweepBanned()
         }
         else
             ++it;
+
+        MilliSleep( 1 ); /* RGP optimise */
     }
 }
 
@@ -2081,6 +2120,9 @@ bool CNode::ReceiveMsgBytes(const char *pch, unsigned int nBytes)
 
         pch += handled;
         nBytes -= handled;
+
+        MilliSleep( 1 ); /* RGP optimise */
+
     }
 
     return true;
@@ -2209,7 +2251,8 @@ return;
             LogPrintf("Loading addresses from DNS seeds (could take a while)\n");
         }
 
-            BOOST_FOREACH(const CDNSSeedData &seed, vSeeds) {
+            BOOST_FOREACH(const CDNSSeedData &seed, vSeeds) 
+            {
                 if (HaveNameProxy()) {
                     AddOneShot(seed.host);
                 } else {
@@ -2226,10 +2269,15 @@ return;
                             vAdd.push_back(addr);
                             found++;
                             }
+                            MilliSleep( 1 ); /* RGP optimise */
+
                         }
                     }
                     addrman.Add(vAdd, CNetAddr(seed.name, true));
                 }
+
+                MilliSleep( 1 ); /* RGP optimise */
+
             }
 
             if ( fDebug ){
@@ -2256,6 +2304,8 @@ return;
                         setConnected.insert(pnode->addr.GetGroup());
                         nOutbound++;
                     }
+
+                    MilliSleep( 1 ); /* RGP optimise */
 
                 }
             }
@@ -2296,6 +2346,9 @@ return;
                 if (addrConnect.IsValid()){
                     OpenNetworkConnection(addrConnect, &grant);
                 }
+
+                MilliSleep( 1 ); /* RGP optimise */
+
             }
 
     }
@@ -2405,6 +2458,9 @@ MilliSleep(1);
             break;
 
         }
+
+        MilliSleep( 1 ); /* RGP optimise */
+
     }
 
     if (it == pnode->vSendMsg.end()) {
@@ -2453,6 +2509,8 @@ void ThreadSocketHandler()
                         pnode->Release();
                     vNodesDisconnected.push_back(pnode);
                 }
+
+                MilliSleep( 1 ); /* RGP optimise */
             }
         }
         {
@@ -2483,6 +2541,8 @@ void ThreadSocketHandler()
                         delete pnode;
                     }
                 }
+
+                MilliSleep( 1 ); /* RGP optimise */
             }
         }
         if(vNodes.size() != nPrevNodeCount) {
@@ -2552,6 +2612,8 @@ void ThreadSocketHandler()
                         FD_SET(pnode->hSocket, &fdsetRecv);
                 }
             }
+
+            MilliSleep( 1 ); /* RGP optimise */
         }
 
         int nSelect = select(have_fds ? hSocketMax + 1 : 0,
@@ -2787,6 +2849,8 @@ void ThreadSocketHandler()
                     pnode->CloseSocketDisconnect();
                 }
             }
+
+            MilliSleep( 1 ); /* RGP optimise */
         }
         {
             LOCK(cs_vNodes);
@@ -2797,7 +2861,14 @@ void ThreadSocketHandler()
     // Refresh nodes/peers every X minutes
     RefreshRecentConnections(2);
 
+        MilliSleep( 1 ); /* RGP optimise */
+    }
 
+    /* End of while, check if we are closing */
+    if ( fRequestShutdown )
+    {
+       printf("\n Bank Society Gold, Net Process ending...");
+       MilliSleep(10000);
     }
 
     // Refresh nodes/peers every X minutes
@@ -2927,7 +2998,7 @@ void ThreadDNSAddressSeed()
 {
     // goal: only query DNS seeds if address need is acute
     if ((addrman.size() > 0) &&
-        (!GetBoolArg("-forcednsseed", true))) {
+        (!GetBoolArg("forcednsseed", true))) {
         MilliSleep(11 * 1000);
 
         LOCK(cs_vNodes);
@@ -2944,7 +3015,8 @@ void ThreadDNSAddressSeed()
 
     LogPrintf("Loading addresses from DNS seeds (could take a while)\n");
 
-    BOOST_FOREACH(const CDNSSeedData &seed, vSeeds) {
+    BOOST_FOREACH(const CDNSSeedData &seed, vSeeds) 
+    {
         if (HaveNameProxy()) {
             AddOneShot(seed.host);
         } else {
@@ -2963,6 +3035,8 @@ void ThreadDNSAddressSeed()
             }
             addrman.Add(vAdd, CNetAddr(seed.name, true));
         }
+
+        MilliSleep( 1 ); /* RGP optimise */
     }
 
     LogPrintf("%d addresses found from DNS seeds\n", found);
@@ -3055,12 +3129,12 @@ void ThreadOpenConnections()
 {
     extern volatile bool fRequestShutdown;
     // Connect to specific addresses
-    if (mapArgs.count("-connect") && mapMultiArgs["-connect"].size() > 0)
+    if (mapArgs.count("connect") && mapMultiArgs["connect"].size() > 0)
     {
         for (int64_t nLoop = 0;; nLoop++)
         {
             ProcessOneShot();
-            BOOST_FOREACH(string strAddr, mapMultiArgs["-connect"])
+            BOOST_FOREACH(string strAddr, mapMultiArgs["connect"])
             {
                 CAddress addr;
                 OpenNetworkConnection(addr, NULL, strAddr.c_str());
@@ -3105,11 +3179,13 @@ void ThreadOpenConnections()
         set<vector<unsigned char> > setConnected;
         {
             LOCK(cs_vNodes);
-            BOOST_FOREACH(CNode* pnode, vNodes) {
+            BOOST_FOREACH(CNode* pnode, vNodes) 
+            {
                 if (!pnode->fInbound) {
                     setConnected.insert(pnode->addr.GetGroup());
                     nOutbound++;
                 }
+                MilliSleep( 2 );
             }
         }
 
@@ -3145,10 +3221,15 @@ void ThreadOpenConnections()
 
             addrConnect = addr;
             break;
+
+            MilliSleep( 5 ); /* RGP optimise */
         }
 
         if (addrConnect.IsValid())
             OpenNetworkConnection(addrConnect, &grant);
+
+        MilliSleep( 5 ); /* RGP optimise */
+
     }
 }
 
@@ -3199,20 +3280,29 @@ void ThreadOpenAddedConnections()
                         setservAddNodeAddresses.insert(serv);
                 }
             }
+
+            MilliSleep( 1 ); /* RGP optimise */
         }
         // Attempt to connect to each IP for each addnode entry until at least one is successful per addnode entry
         // (keeping in mind that addnode entries can have many IPs if fNameLookup)
         {
             LOCK(cs_vNodes);
             BOOST_FOREACH(CNode* pnode, vNodes)
+            {
                 for (list<vector<CService> >::iterator it = lservAddressesToAdd.begin(); it != lservAddressesToAdd.end(); it++)
+                {
                     BOOST_FOREACH(CService& addrNode, *(it))
+                    {
                         if (pnode->addr == addrNode)
                         {
                             it = lservAddressesToAdd.erase(it);
                             it--;
                             break;
                         }
+                    }
+                }
+                MilliSleep( 1 ); /* RGP optimise */
+            }
         }
         BOOST_FOREACH(vector<CService>& vserv, lservAddressesToAdd)
         {
@@ -3330,9 +3420,7 @@ void static StartSync(const vector<CNode*> &vNodes)
             }
         }
 
-
-
-        MilliSleep(1);
+        MilliSleep( 1 ); /* RGP optimise */
     }
 
 
@@ -3351,25 +3439,35 @@ void static StartSync(const vector<CNode*> &vNodes)
 void ThreadMessageHandler()
 {
 extern volatile bool fRequestShutdown;
+int64_t Time_to_Last_block;
+int64_t start_time;
 
     SetThreadPriority(THREAD_PRIORITY_BELOW_NORMAL);
+LogPrintf("RGP NET ThreadMessageHandler start \n" );
 
     while ( !fRequestShutdown )
     {
+        start_time = GetTime();
+
         bool fHaveSyncNode = false;
 
         vector<CNode*> vNodesCopy;
         {
             LOCK(cs_vNodes);
             vNodesCopy = vNodes;
-            BOOST_FOREACH(CNode* pnode, vNodesCopy) {
+            BOOST_FOREACH(CNode* pnode, vNodesCopy) 
+            {
                 pnode->AddRef();
                 if (pnode == pnodeSync)
                     fHaveSyncNode = true;
+
+                MilliSleep(2); /* RGP Optimisation */
+                
             }
         }
 
         MilliSleep(5); /* RGP Optimisation */
+
 
         if (!fHaveSyncNode){
             StartSync(vNodesCopy);
@@ -3387,14 +3485,38 @@ extern volatile bool fRequestShutdown;
         {
             if (pnode->fDisconnect)
             {
+
                 MilliSleep(5); /* RGP Optimisation */
                 continue;
             }
             // Receive messages
 
+            MilliSleep( 1 ); /* RGP Optimize */
+
+            /* -- RGP, Check if the incoming message queue is empty -- */
             if ( pnode->vRecvMsg.empty() )
             {
-                /* do nothing */
+
+                // The only occasion that this could happen in when the Daemon
+                // is at the top of the chain or there is a network issue
+
+                Time_to_Last_block = GetTime() - pindexBest->GetBlockTime();
+                // LogPrintf("RGP NET ThreadMessageHandler Last block was %d \n", Time_to_Last_block );
+                if ( Time_to_Last_block < 4000 )
+                {
+                    // RGP, we are close to synch or are synched
+                    MilliSleep( 100 );
+                }
+                else
+                {
+                    // This is the scenario where there is no messages, as the nodes 
+                    // have stopped sending messages.
+                    
+                    PushGetBlocks(pnode, pindexBest, pindexBest->GetBlockHash() );
+                    MilliSleep(200);
+                    StartSync(vNodesCopy);
+                    /* do nothing */
+                }
             }
             else
             {
@@ -3404,7 +3526,7 @@ extern volatile bool fRequestShutdown;
                     if (!g_signals.ProcessMessages(pnode))
                     {
                         pnode->CloseSocketDisconnect();
-                        MilliSleep(5); /* RGP Optimisation */
+                        MilliSleep(10); /* RGP Optimisation */
                     }
 
                     // Disconnect node/peer if send/recv data becomes idle
@@ -3417,7 +3539,7 @@ extern volatile bool fRequestShutdown;
                             if (GetTime() - pnode->nLastSend > 90 )
                             { /* 60 was < 30 */
                                pnode->CloseSocketDisconnect();
-                               MilliSleep(5); /* RGP Optimisation */
+                               MilliSleep(10); /* RGP Optimisation */
                             }
                         }
                     }
@@ -3428,8 +3550,15 @@ extern volatile bool fRequestShutdown;
                         {
                             fSleep = false;
                         }
+                        MilliSleep(5); /* RGP Optimisation */
                     }
                 }
+                else
+                {
+                    MilliSleep(5); /* RGP Optimisation */
+                    LogPrintf("RGP ThreadMessageHandler lockRecv FAILED \n");
+                }
+
             }
             //boost::this_thread::interruption_point();
 
@@ -3442,20 +3571,33 @@ extern volatile bool fRequestShutdown;
                 //if (lockSend)
                 //{
                     g_signals.SendMessages(pnode, pnode == pnodeTrickle);
-                    MilliSleep(5); /* RGP Optimisation */
+                    MilliSleep(10); /* RGP Optimisation */
+
+
                 //}
                 //else
                 //{
-                    MilliSleep(20); /* RGP Optimisation */
+                //    MilliSleep(20); /* RGP Optimisation */
                 //}
             }
             //boost::this_thread::interruption_point();
+
+            MilliSleep( 30 );
         }
+        
+        if ( ( GetTime() - start_time ) > 5 )
+        {
+LogPrintf("RGP ThreadMessageHandler debug 004 %d \n", GetTime() - start_time );
+        }
+        MilliSleep( 200 );
 
         {
             LOCK(cs_vNodes);
             BOOST_FOREACH(CNode* pnode, vNodesCopy)
+            {
                 pnode->Release();
+                MilliSleep(2); /* RGP Optimisation */
+            }
         }
 
         if (fSleep)
@@ -3559,8 +3701,15 @@ bool BindListenPort(const CService &addrBind, string& strError)
     if (::bind(hListenSocket, (struct sockaddr*)&sockaddr, len) == SOCKET_ERROR)
     {
         int nErr = WSAGetLastError();
+
+        LogPrintf("RGP Debug BIND error %d \n", nErr );
+LogPrintf("RGP DEBUG Net Bind %s  \n", addrBind.ToString() );
+
         if (nErr == WSAEADDRINUSE)
+        {
+LogPrintf("RGP DEBUG Net Bind %s WSAEADDRINUSE \n", addrBind.ToString() );
             strError = strprintf(_("Unable to bind to %s on this computer. SocietyG is probably already running."), addrBind.ToString());
+        }
         else
             strError = strprintf(_("Unable to bind to %s on this computer (bind returned error %d, %s)"), addrBind.ToString(), nErr, strerror(nErr));
         LogPrintf("%s\n", strError);
@@ -3663,14 +3812,14 @@ void StartNode(boost::thread_group& threadGroup)
     // Start threads
     //
 
-    if (!GetBoolArg("-dnsseed", true))
+    if (!GetBoolArg("dnsseed", true))
         LogPrintf("DNS seeding disabled\n");
     else
         threadGroup.create_thread(boost::bind(&TraceThread<void (*)()>, "dnsseed", &ThreadDNSAddressSeed));
 
 #ifdef USE_UPNP
     // Map ports with UPnP
-    MapPort(GetBoolArg("-upnp", USE_UPNP));
+    MapPort(GetBoolArg("upnp", USE_UPNP));
 #endif
     
     // Send and receive from sockets, accept connections

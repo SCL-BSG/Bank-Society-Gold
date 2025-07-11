@@ -313,6 +313,8 @@ bool CCryptoKeyStore::Unlock(const CKeyingMaterial& vMasterKeyIn)
             if (key.GetPubKey() == vchPubKey)
                 break;
             return false;
+
+            MilliSleep( 1 ); /* RGP Optimise */
         }
         vMasterKey = vMasterKeyIn;
     }
@@ -413,6 +415,8 @@ bool CCryptoKeyStore::EncryptKeys(CKeyingMaterial& vMasterKeyIn)
                 return false;
             if (!AddCryptedKey(vchPubKey, vchCryptedSecret))
                 return false;
+
+            MilliSleep( 1 ); /* RGP Optimise */
         }
         mapKeys.clear();
     }

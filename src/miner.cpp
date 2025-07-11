@@ -79,13 +79,13 @@ void SHA256Transform(void* pstate, void* pinput, const void* pinit)
 
     for (int i = 0; i < 16; i++)
     {
-        LogPrintf("*** RGP miner loop 1 \n");
+        //LogPrintf("*** RGP miner loop 1 \n");
         ((uint32_t*)data)[i] = ByteReverse(((uint32_t*)pinput)[i]);
     }
 
     for (int i = 0; i < 8; i++)
     {
-        LogPrintf("*** RGP miner  loop 2 \n");
+        //LogPrintf("*** RGP miner  loop 2 \n");
         ctx.h[i] = ((uint32_t*)pinit)[i];
     }
 
@@ -93,9 +93,12 @@ void SHA256Transform(void* pstate, void* pinput, const void* pinit)
 
     for (int i = 0; i < 8; i++)
     {
-        LogPrintf("*** RGP miner loop 3 \n");
+        //LogPrintf("*** RGP miner loop 3 \n");
         ((uint32_t*)pstate)[i] = ctx.h[i];
     }
+
+LogPrintf("*** RGP miner SHA256Transform completed \n");
+
 }
 
 
@@ -396,6 +399,9 @@ CBlock* CreateNewBlockWithKey(CReserveKey& reservekey, CWallet *pwallet)
             MapPrevTx mapInputs;
 
             bool fInvalid;
+            
+            LogPrintf("RGP DEBUG [Miner] CreateNewBlockWithKey calling FetchInputs \n");
+            
             if (!tx.FetchInputs(txdb, mapTestPoolTmp, false, true, mapInputs, fInvalid))
             {
                 continue;
@@ -464,6 +470,8 @@ CBlock* CreateNewBlockWithKey(CReserveKey& reservekey, CWallet *pwallet)
 
         pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight + 1, nFees);
 
+LogPrintf(" RGP CREATNEWBLOCKwithKey() Pow reward %d \n", pblock->vtx[0].vout[0].nValue );
+
 
         if (pFees)
         {
@@ -486,19 +494,43 @@ CBlock* CreateNewBlockWithKey(CReserveKey& reservekey, CWallet *pwallet)
 
 }
 
+#define NOT_IN_USE              -1
+#define IN_USE_BY_POW           100
+#define IN_USE_BY_POS           200
 
-// CreateNewBlock: create new block (without proof-of-work/proof-of-stake)
+/* --------------------------------------------------------------------------
+   -- CreateNewBlock        --                                             --
+   ---------------------------                                             --
+   --                                                                      --
+   -- Create a new class CBlock.                                           --
+   -- This is called for both PoS and PoW block generation.                --
+   -- With this in mind access should not be re-entrant, restricted to one --
+   -- call for either PoS or Pow at any instant.                           --
+   --                                                                      --
+   -------------------------------------------------------------------------- */
 
 /* RGP, Issue here is that this must start after the last know best block
         has been received, based on network there should be 240
         seconds between blocks, which should be enough time. However,
-        timing is the key part of this, which is performed in the Stake Thread */
+        timing is the key part of this, which is performed in the Stake Thread
+
+        Also noted PoW mining does not care about 240 secs between blocks!!! */
 
 
 
 CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFees)
 {
 int nHeight;
+static int access_status = NOT_IN_USE;
+
+    if ( access_status == NOT_IN_USE )
+    {
+        /* access_status to be implemented */
+        LogPrintf("RGP CreateNewBlock Access Status to be Implemented \n");
+    }
+
+
+//    LogPrintf("RGP Debug CreateNewBlock \n");
 
     // Create new block
     /* RGP, replaced auto_ptr with unique_ptr */
@@ -524,6 +556,7 @@ int nHeight;
 
     if (!fProofOfStake)
     {
+LogPrintf("RGP DEBUG Proof of Work \n");
         CPubKey pubkey;
         if (!reservekey.GetReservedKey(pubkey))
         {
@@ -534,13 +567,14 @@ int nHeight;
     }
     else
     {
+//LogPrintf("RGP DEBUG Proof of Stake \n");
         // Height first in coinbase required for block.version=2
         txNew.vin[0].scriptSig = (CScript() << nHeight) + COINBASE_FLAGS;
         assert(txNew.vin[0].scriptSig.size() <= 100);
 
         txNew.vout[0].SetEmpty();
     }
-
+//LogPrintf("RGP DEBUG Proof of Stake Debug 001 \n");
     // Add our coinbase tx as first transaction
     pblock->vtx.push_back(txNew);
 
@@ -550,15 +584,21 @@ int nHeight;
     // Limit to betweeen 1K and MAX_BLOCK_SIZE-1K for sanity:
     nBlockMaxSize = std::max((unsigned int)1000, std::min((unsigned int)(MAX_BLOCK_SIZE-1000), nBlockMaxSize));
 
+//LogPrintf("RGP DEBUG Proof of Stake Debug 002 \n");
+
     // How much of the block should be dedicated to high-priority transactions,
     // included regardless of the fees they pay
     unsigned int nBlockPrioritySize = GetArg("-blockprioritysize", DEFAULT_BLOCK_PRIORITY_SIZE);
     nBlockPrioritySize = std::min(nBlockMaxSize, nBlockPrioritySize);
 
+//LogPrintf("RGP DEBUG Proof of Stake Debug 003 \n");
+
     // Minimum block size you want to create; block will be filled with free transactions
     // until there are no more or the block reaches this size:
     unsigned int nBlockMinSize = GetArg("-blockminsize", 0);
     nBlockMinSize = std::min(nBlockMaxSize, nBlockMinSize);
+
+LogPrintf("RGP DEBUG Proof of Stake Debug 004 \n");
 
     // Fee-per-kilobyte amount considered the same as "free"
     // Be careful setting this: if you set it to zero then
@@ -571,6 +611,7 @@ int nHeight;
         ParseMoney(mapArgs["-mintxfee"], nMinTxFee);
     }
 
+//LogPrintf("RGP CreteBlock DEBUG 002 \n");
     pblock->nBits = GetNextTargetRequired(pindexPrev, fProofOfStake);
 
     // Collect memory pool transactions into the block
@@ -580,6 +621,8 @@ int nHeight;
     {
         LOCK2(cs_main, mempool.cs);
         CTxDB txdb("r");
+
+//LogPrintf("RGP DEBUG  003 \n");
 
         //>SOCG<
         // Priority order to process transactions
@@ -592,7 +635,7 @@ int nHeight;
         for (map<uint256, CTransaction>::iterator mi = mempool.mapTx.begin(); mi != mempool.mapTx.end(); ++mi)
         {
 
-            //LogPrintf("*** RGP miner loop 11 \n");
+//LogPrintf("*** RGP miner loop 11 \n");
             CTransaction& tx = (*mi).second;
             if (tx.IsCoinBase() || tx.IsCoinStake() || !IsFinalTx(tx, nHeight))
             {
@@ -608,7 +651,7 @@ int nHeight;
 
             BOOST_FOREACH(const CTxIn& txin, tx.vin)
             {
-                //LogPrintf("*** RGP miner loop 12 \n");
+//LogPrintf("*** RGP miner loop 12 \n");
                 // Read prev transaction
                 CTransaction txPrev;
                 CTxIndex txindex;
@@ -683,6 +726,8 @@ int nHeight;
             }
         }
 
+//LogPrintf("RGP DEBUG  010 \n");
+
         // Collect transactions into block
         map<uint256, CTxIndex> mapTestPool;
         uint64_t nBlockSize = 1000;
@@ -696,7 +741,7 @@ int nHeight;
 
         while (!vecPriority.empty())
         {
-            //LogPrintf("*** RGP miner loop 13 \n");
+            LogPrintf("*** RGP miner loop 13 \n");
             // Take highest priority transaction off the priority queue:
             double dPriority = vecPriority.front().get<0>();
             double dFeePerKb = vecPriority.front().get<1>();
@@ -746,6 +791,8 @@ int nHeight;
             MapPrevTx mapInputs;
 
             bool fInvalid;
+LogPrintf("RGP DEBUG [Miner] CreateNewBlock calling FetchInputs \n");
+            
             if (!tx.FetchInputs(txdb, mapTestPoolTmp, false, true, mapInputs, fInvalid))
             {
                 continue;
@@ -777,10 +824,10 @@ int nHeight;
             nBlockSigOps += nTxSigOps;
             nFees += nTxFees;
 
-            if (fDebug && GetBoolArg("-printpriority", false))
-            {
+            //if (fDebug && GetBoolArg("-printpriority", false))
+            //{
                 LogPrint("miner", "%s : priority %.1f feeperkb %.1f txid %s\n", __FUNCTION__, dPriority, dFeePerKb, tx.GetHash().ToString());
-            }
+           // }
 
             // Add transactions that depend on this one to the priority queue
             uint256 hash = tx.GetHash();
@@ -802,12 +849,14 @@ int nHeight;
             }
         }
 
+LogPrintf("RGP DEBUG  20 \n");
+
         nLastBlockTx = nBlockTx;
         nLastBlockSize = nBlockSize;
 
         if (fDebug && GetBoolArg("-printpriority", false))
         {
-            LogPrint("miner", "%s : total size %u\n", __FUNCTION__, nBlockSize);
+            LogPrintf("miner %s : total size %u\n", __FUNCTION__, nBlockSize);
         }
         
         // >SOCG<
@@ -815,6 +864,8 @@ int nHeight;
         if (!fProofOfStake)
         {
             pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight + 1, nFees);
+
+            LogPrintf("RGP DEBUG Proof of Work reward %d \n", pblock->vtx[0].vout[0].nValue );
         }
 
         if (pFees)
@@ -822,6 +873,12 @@ int nHeight;
             *pFees = nFees;
         }
 
+        /* ----------------------------------------------------------------------------
+           -- RGP, Last Check that a new block has not been created in the time that --
+           --      this block took to be created.                                    --
+           ---------------------------------------------------------------------------- */
+
+LogPrintf("RGP DEBUG Proof of Stake Debug 099 \n");
         // Fill in header
         pblock->hashPrevBlock  = pindexPrev->GetBlockHash();
         pblock->nTime          = max(pindexPrev->GetPastTimeLimit()+1, pblock->GetMaxTransactionTime());
@@ -834,6 +891,7 @@ int nHeight;
         pblock->nNonce         = 0;
     }
     // Global Namespace End
+
 
     return pblock.release();
 }
@@ -862,6 +920,8 @@ void IncrementExtraNonce(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& 
 
 void FormatHashBuffers(CBlock* pblock, char* pmidstate, char* pdata, char* phash1)
 {
+
+LogPrintf("*** RGP Miner FormatHashBuffers start \n");
     //
     // Pre-build hash buffers
     //
@@ -909,16 +969,24 @@ void FormatHashBuffers(CBlock* pblock, char* pmidstate, char* pdata, char* phash
 
     memcpy(pdata, &tmp.block, 128);
     memcpy(phash1, &tmp.hash1, 64);
+
+LogPrintf("*** RGP Miner FormatHashBuffers exit \n");
 }
 
-
+/* --------------------------------------------------------------------
+   -- ProcessBlockStake --                                           --
+   -----------------------                                           --
+   -- At this point CreateNewBlock and SignBlock has been successful --
+   --
+   --
+   --
+   -------------------------------------------------------------------- */
 
 bool ProcessBlockStake(CBlock* pblock, CWallet& wallet)
 {
 bool status;
 
     status = false;
-
 
     LogPrintf("*** RGP ProcessBlockStake started at time  %d \n",  GetTime() );
 
@@ -1023,14 +1091,14 @@ bool status;
     return status;
 }
 
-#define ThreadStake_TID         10
-#define Nodes_for_Staking       4
-#define STAKE_ADJUST            200         /* Seconds */
-#define STAKE_BLOCK_TIME        240         /* Seconds */
+#define     ThreadStake_TID              10           /* NOT USED, Semaphore use Removed */
+#define     Nodes_for_Staking           4              /* Minimum nodes before staking can begin, Originally 8 nodes */
+#define     STAKE_ADJUST                  200         /* Seconds */
+#define     STAKE_BLOCK_TIME         240         /* Seconds */
 
 //extern double GetPoSKernelPS();
 
-
+extern std::vector<CNode*> vNodes;
 
 bool SYNCH_Override = false;
 
@@ -1084,11 +1152,11 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
 
            // LogPrintf("MinerStake wait 1 \n");
 //            if ( Processing_Messages )
-            {
-                //thread_semaphore.wait ( ThreadStake_TID );
+//            {
+//               { //thread_semaphore.wait ( ThreadStake_TID );
 
  //               LogPrintf("TSMg Wait Lock1 received  \n" );
-            }
+//            }
             //else
                 MilliSleep(5000);
 
@@ -1323,7 +1391,24 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
            -- RGP, Signblock allows a coin maturity check every 15 seconds at present --
            ----------------------------------------------------------------------------- */
 
-        stake_timeout = ( GetRandInt(10000) ); /* attempt to vary each wallet to avoid conflicted entries */
+        /* ------------------------------------------------------------------------------- 
+           -- RGP, add in network connections, if below 5 then reduce the randon effect --
+           --      only for use during small networks, but when larger connections are  --
+           --      seen, reduce staking.                                                --
+           ------------------------------------------------------------------------------- */
+
+        if ( vNodes.size() > 6 )
+        {
+stake_timeout = ( GetRandInt(10000) ); /* attempt to vary each wallet to avoid conflicted entries */
+
+        }
+        else
+        {
+stake_timeout = ( GetRandInt(1000) ); /* attempt to vary each wallet to avoid conflicted entries */
+
+        }
+
+        
         LogPrintf("*** Stake timeout is %d msecs \n", stake_timeout);
         /* wait a random time before creating a new block */
         MilliSleep( stake_timeout );
@@ -1464,7 +1549,15 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                 }
 
                 if ( fRequestShutdown == true )
-                    return;
+                {
+               
+       	    printf("\n Bank Society Gold, Miner Process ending...");
+       	    MilliSleep(10000);
+       	    return;
+                }
+                
+                
+                 
 
 
             } while ( wait_for_best_time  );
@@ -1485,7 +1578,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                 continue;
             }
 
-            //LogPrintf(" Next call Signblock!! \n");
+            LogPrintf(" Next call Signblock!! \n");
 
             // Trying to sign a block
             if (pblock->SignBlock(*pwallet, nFees))
@@ -1505,7 +1598,6 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                  {
                         /* ProcessBlockStake() was successful and ProcessBlock() */
                         after_stake_success_timeout = ( ( ( 60 * 60 * 4 ) + GetRandInt( 10000 ) ) * 1000 ) ; // 4hrs best to 7hrs worst case stake
-                        // after_stake_success_timeout = ( ( ( 60 * 60 ) + GetRandInt( 100 ) ) * 1000 ) ;
                         LogPrintf("*** RGP new Mint stake delay after success timeout %d \n", after_stake_success_timeout);
 //after_stake_success_timeout = 120000;
                         MilliSleep( after_stake_success_timeout );
@@ -1515,7 +1607,7 @@ int64_t last_time_to_block, last_time_check, time_filter, synch_check;
                  else
                  {
                       //LogPrintf("*** RGP Stake was NOT successfull, small delay and then go again!\n");
-                      MilliSleep( 1000 );
+                      MilliSleep( 120000 );
                       /* --------------------
                          -- JIRA Bug BTS-8 --
                          --------------------------------------------------------------------
@@ -1556,6 +1648,8 @@ bool ProcessBlockFound(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     uint256 hashProof = pblock->GetPoWHash();
     uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
 
+LogPrintf("RGP DEBUG ProcessBlockFound 001 \n");
+
     if(!pblock->IsProofOfWork())
     {
         return error("%s : %s is not a proof-of-work block", __FUNCTION__, hashBlock.GetHex());
@@ -1566,22 +1660,34 @@ bool ProcessBlockFound(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
         return error("%s : proof-of-work not meeting target", __FUNCTION__);
     }
 
-    if (fDebug)
-    {
+    //if (fDebug)
+    //{
         //// debug print
-        LogPrint("miner", "%s : new proof-of-work block found  \n  proof hash: %s  \ntarget: %s\n",  __FUNCTION__, hashProof.GetHex(), hashTarget.GetHex());
-        LogPrint("miner", "%s : %s\n", __FUNCTION__, pblock->ToString());
-        LogPrint("miner", "%s : generated %s\n", __FUNCTION__, FormatMoney(pblock->vtx[0].vout[0].nValue));
-    }
+        LogPrintf("miner %s : new proof-of-work block found  \n  proof hash: %s  \ntarget: %s\n",  __FUNCTION__, hashProof.GetHex(), hashTarget.GetHex());
+        LogPrintf("miner %s : %s\n", __FUNCTION__, pblock->ToString());
+        LogPrintf("miner %s : generated %s\n", __FUNCTION__, FormatMoney(pblock->vtx[0].vout[0].nValue));
+    //}
 
     // Global Namespace Start
     {
         // Found a solution
 
-        LOCK(cs_main);
+        // LOCK(cs_main);
+
+        /* -- RGP, If we just let a PoW miner rock and roll, there is no synchronisation
+           --      with stake blocks, there will be a conflict where the chain get's corrupt
+           --      on the mining node. So we need to have some synchronisation between, the mining
+           --      node, the Masternode that confirms or does not confirm the block and 
+           --      the inventory comming back as a new PoW block                                   
+           ------------------------------------------------------------------------------------------ */
+
 
         if (pblock->hashPrevBlock != hashBestChain)
         {
+
+LogPrintf("RGP DEBUG ProcessBlockFound 002 STALE \n");
+
+            MilliSleep( 10000 ); // RGP 10 second delay on stale data 
             return error("%s : generated block is stale", __FUNCTION__);
         }
 
@@ -1598,6 +1704,8 @@ bool ProcessBlockFound(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
         }
         // Global Namespace End
 
+LogPrintf("RGP DEBUG ProcessBlockFound 003 calling ProcessBlock \n");
+
         // Process this block the same as if we had received it from another node
         if (!ProcessBlock(NULL, pblock))
         {
@@ -1605,6 +1713,9 @@ bool ProcessBlockFound(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
         }
     }
     // Global Namespace End
+
+    // RGP, we now delay by 10 seconds to allow Proof of Stake blocks to get processed 
+    //MilliSleep( 5000 );
 
     return true;
 }

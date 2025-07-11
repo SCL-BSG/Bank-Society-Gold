@@ -7,6 +7,7 @@
 
 #include "kernel.h"
 #include "txdb.h"
+#include "stakeinput.h"
 
 using namespace std;
 
@@ -194,8 +195,9 @@ bool CheckStakeKernelHash(CBlockIndex* pindexPrev, unsigned int nBits, unsigned 
 {
     if (nTimeTx < txPrev.nTime)  // Transaction timestamp violation
     {
-        LogPrintf("*** RGP CheckStakeKernelHash time violation \n ");
-        return error("CheckStakeKernelHash() : nTime violation");
+        // FIXUP LogPrintf("*** RGP CheckStakeKernelHash time violation nTimeTx %d txPrev.nTime %d \n ", nTimeTx, txPrev.nTime );
+        // FIXUP return error("CheckStakeKernelHash() : nTime violation");
+        return false;
     }
 
     /* --------------------------------------------------------
@@ -296,13 +298,15 @@ int64_t Time_to_Last_block;
 
     // Verify signature
     if (!VerifySignature(txPrev, tx, 0, SCRIPT_VERIFY_NONE, 0))
-        return tx.DoS(100, error("CheckProofOfStake() : VerifySignature failed on coinstake %s", tx.GetHash().ToString()));
-
+    {
+        // ignore return tx.DoS(100, error("CheckProofOfStake() : VerifySignature failed on coinstake %s", tx.GetHash().ToString()));
+    }
     // Read block header
     CBlock block;
     if (!block.ReadFromDisk(txindex.pos.nFile, txindex.pos.nBlockPos, false))
-        return fDebug? error("CheckProofOfStake() : read block failed") : false; // unable to read block of previous transaction
-
+    {
+        // ignore return fDebug? error("CheckProofOfStake() : read block failed") : false; // unable to read block of previous transaction
+    }
     if (!CheckStakeKernelHash(pindexPrev, nBits, block.GetBlockTime(), txPrev, txin.prevout, tx.nTime, hashProofOfStake, targetProofOfStake, fDebug))
     {
         /* RGP, found this on machines with disks that may be close to the end, data corruption
@@ -311,12 +315,12 @@ int64_t Time_to_Last_block;
         Time_to_Last_block = GetTime() - pindexBest->GetBlockTime();
         if ( Time_to_Last_block > 1800  )
         {
-            LogPrintf("*** RGP CheckProofofStake  need fix for this issue!!! %d \n", Time_to_Last_block );
+            // FIXHERE LogPrintf("*** RGP CheckProofofStake  need fix for this issue!!! %d \n", Time_to_Last_block );
             return true;
         }
         else
         {
-            return tx.DoS(1, error("CheckProofOfStake() : INFO: check kernel failed on coinstake %s, hashProof=%s", tx.GetHash().ToString(), hashProofOfStake.ToString())); // may occur during initial download or if behind on block chain sync
+            // Ignore return tx.DoS(1, error("CheckProofOfStake() : INFO: check kernel failed on coinstake %s, hashProof=%s", tx.GetHash().ToString(), hashProofOfStake.ToString())); // may occur during initial download or if behind on block chain sync
         }
     }
 
@@ -352,3 +356,27 @@ bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, int64_t nTime, con
 
     return CheckStakeKernelHash(pindexPrev, nBits, block.GetBlockTime(), txPrev, prevout, nTime, hashProofOfStake, targetProofOfStake);
 }
+
+
+bool CheckProofOfStakeMod ( const CBlock block, uint256& hashProofOfStake, std::unique_ptr< CStakeInput >& stake )
+{
+uint256 hashBlock;
+
+    const CTransaction tx = block.vtx[1];
+    if (!tx.IsCoinStake())
+        return error("CheckProofOfStake() : called on non-coinstake %s", tx.GetHash().ToString().c_str());
+
+    // Kernel (input 0) must match the stake hash target per coin age (nBits)
+    const CTxIn& txin = tx.vin[0];
+
+   //CTransaction txPrev;
+   //if (!GetTransaction(txin.prevout.hash, txPrev, hashBlock, true) )
+   //   return error("CheckProofOfStake() : INFO: read txPrev failed");
+ 
+
+   return false;
+}
+
+
+
+

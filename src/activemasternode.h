@@ -1,7 +1,16 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The DarkCoin developers
+// Copyright (c) 2018-2024 The Bank Society Coin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+/* --------------------------------------------------------------------
+   -- Date : 11th December 2024                                      --
+   -- RGP, Add new function to locate the MN vin data and compare to --
+   -- Masternode hash entry for MN collatoral                        --
+   -- Function : GetMNVinFromTransaction                             --
+   -------------------------------------------------------------------- */
+
 #ifndef ACTIVEMASTERNODE_H
 #define ACTIVEMASTERNODE_H
 
@@ -57,6 +66,10 @@ public:
     vector<COutput> SelectCoinsMasternode();
     vector<COutput> SelectCoinsMasternodeForPubKey(std::string collateralAddress);
     bool GetVinFromOutput(COutput out, CTxIn& vin, CPubKey& pubkey, CKey& secretKey);
+
+    /* RGP For new MasterNode extraction of the block vtx transactions to get Collatoral */
+    bool Extract_MN_Collatoral( CTxIn& vin, CPubKey& pubkey, CKey& secretKey );
+
 
     // enable hot wallet mode (run a masternode with no funds)
     bool EnableHotColdMasterNode(CTxIn& vin, CService& addr);

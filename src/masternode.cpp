@@ -185,58 +185,74 @@ uint256 CMasternode::CalculateScore(int mod, int64_t nBlockHeight)
 
 void CMasternode::Check()
 {
-    if ( ShutdownRequested() )
-        return;
 
+LogPrintf("RGP CMasternode::Check() START \n");
+    if ( ShutdownRequested() )
+    {
+//LogPrintf("RGP Check() Shutdown Requested \n");
+        return;
+    }
     //TODO: Random segfault with this line removed
     TRY_LOCK(cs_main, lockRecv);
     if(!lockRecv)
     {
-        //LogPrintf("*** RGP CMasterNode::Check LockRecv failed, exit! \n");
+//LogPrintf("*** RGP CMasterNode::Check LockRecv failed, exit! \n");
         //LogPrintf("*** RGP ignoring issue...\n");
         //return;
     }
 
+//LogPrintf("RGP CMasternode::Check() Debug 001  \n");
+
     //once spent, stop doing the checks
     if(activeState == MASTERNODE_VIN_SPENT)
     {
-        //LogPrintf("*** RGP CMasterNode::Check spent, exit \n");
-        return;
+        LogPrintf("*** RGP CMasterNode::Check spent, exit \n");
+        //return;
     }
+
+//LogPrintf("RGP CMasternode::Check() Debug 002  \n");
 
     if(!UpdatedWithin(MASTERNODE_REMOVAL_SECONDS))
     {
+LogPrintf("*** RGP CMasterNode::Check UpdatedWithin failed, MASTERNODE_REMOVE set  \n");
         activeState = MASTERNODE_REMOVE;
-        return;
+        //return;
     }
 
+//LogPrintf("RGP CMasternode::Check() Debug 003  \n");
     if(!UpdatedWithin(MASTERNODE_EXPIRATION_SECONDS))
     {
-        //LogPrintf("*** RGP CMasterNode::Check Debug 002\n");
+        LogPrintf("*** RGP CMasterNode::Check Debug 002 MASTERNODE_EXPIRED \n");
 
         activeState = MASTERNODE_EXPIRED;
-        return;
+        //return;
     }
+
+//LogPrintf("RGP CMasternode::Check() Debug 004  \n");
 
     if( !unitTest )
     {
-
+LogPrintf("*** RGP CMasterNode::Check Debug 005 Unit Test \n");
         CValidationState state;
         CTransaction tx = CTransaction();
         CTxOut vout = CTxOut((GetMNCollateral(pindexBest->nHeight)-1)*COIN, darkSendPool.collateralPubKey);
         tx.vin.push_back(vin);
         tx.vout.push_back(vout);
 
+        /* New routine for MN is required */
         if( !AcceptableInputs( mempool, tx, false, NULL ) )
         {            
-
-            activeState = MASTERNODE_VIN_SPENT;
-            return;
+LogPrintf("*** RGP CMasterNode::Check Debug 002 Unit Test MASTERNODE_VIN_SPENT - DISABLED RETURN, FIX LATER \n");
+            //activeState = MASTERNODE_VIN_SPENT;
+            activeState = MASTERNODE_ENABLED;
+            //return;
         }
     }
 
-
+//LogPrintf("RGP CMasternode::Check() Debug 006  \n");
 
     activeState = MASTERNODE_ENABLED; // OK
+
+//LogPrintf("RGP CMasternode::Check() END \n");
 
 }

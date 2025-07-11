@@ -4,6 +4,8 @@
 
 #include "addrman.h"
 #include "hash.h"
+#include "serialize.h"
+#include "streams.h"
 
 using namespace std;
 
@@ -141,6 +143,7 @@ int CAddrMan::SelectTried(int nKBucket)
            nOldest = nTemp;
            nOldestPos = nPos;
         }
+        MilliSleep( 1 ); /* RGP Optimise */
     }
 
     return nOldestPos;
@@ -169,6 +172,7 @@ int CAddrMan::ShrinkNew(int nUBucket)
             vNew.erase(it);
             return 0;
         }
+        MilliSleep( 1 ); /* RGP Optimise */
     }
 
     // otherwise, select four randomly, and pick the oldest of those to replace
@@ -184,6 +188,8 @@ int CAddrMan::ShrinkNew(int nUBucket)
                 nOldest = *it;
         }
         nI++;
+
+        MilliSleep( 1 ); /* RGP Optimise */
     }
     assert(mapInfo.count(nOldest) == 1);
     CAddrInfo &info = mapInfo[nOldest];
@@ -209,6 +215,8 @@ void CAddrMan::MakeTried(CAddrInfo& info, int nId, int nOrigin)
     {
         if ((*it).erase(nId))
             info.nRefCount--;
+
+        MilliSleep( 1 ); /* RGP Optimise */
     }
     nNew--;
 
@@ -295,6 +303,8 @@ void CAddrMan::Good_(const CService &addr, int64_t nTime)
             nUBucket = nB;
             break;
         }
+
+        MilliSleep( 1 ); /* RGP Optimise */
     }
 
     // if no bucket is found, something bad happened;
@@ -408,6 +418,9 @@ CAddress CAddrMan::Select_(int nUnkBias)
             if (GetRandInt(1<<30) < fChanceFactor*info.GetChance()*(1<<30))
                 return info;
             fChanceFactor *= 1.2;
+
+            MilliSleep( 1 ); /* RGP Optimise */
+
         }
     } else {
         // use a new node
@@ -426,6 +439,8 @@ CAddress CAddrMan::Select_(int nUnkBias)
             if (GetRandInt(1<<30) < fChanceFactor*info.GetChance()*(1<<30))
                 return info;
             fChanceFactor *= 1.2;
+
+            MilliSleep( 1 ); /* RGP Optimise */
         }
     }
 }
@@ -457,6 +472,9 @@ int CAddrMan::Check_()
         if (info.nRandomPos<0 || info.nRandomPos>=vRandom.size() || vRandom[info.nRandomPos] != n) return -14;
         if (info.nLastTry < 0) return -6;
         if (info.nLastSuccess < 0) return -8;
+
+        MilliSleep( 1 ); /* RGP Optimise */
+
     }
 
     if (setTried.size() != nTried) return -9;
@@ -470,6 +488,8 @@ int CAddrMan::Check_()
             if (!setTried.count(*it)) return -11;
             setTried.erase(*it);
         }
+
+        MilliSleep( 1 ); /* RGP Optimise */
     }
 
     for (int n=0; n<vvNew.size(); n++)
@@ -480,7 +500,10 @@ int CAddrMan::Check_()
             if (!mapNew.count(*it)) return -12;
             if (--mapNew[*it] == 0)
                 mapNew.erase(*it);
+
+            MilliSleep( 1 ); /* RGP Optimise */
         }
+        MilliSleep( 1 ); /* RGP Optimise */
     }
 
     if (setTried.size()) return -13;
@@ -503,6 +526,8 @@ void CAddrMan::GetAddr_(std::vector<CAddress> &vAddr)
         SwapRandom(n, nRndPos);
         assert(mapInfo.count(vRandom[n]) == 1);
         vAddr.push_back(mapInfo[vRandom[n]]);
+
+        MilliSleep( 1 ); /* RGP Optimise */
     }
 }
 

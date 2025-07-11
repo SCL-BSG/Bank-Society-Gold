@@ -3,20 +3,22 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 
-#BOOST_LIB_PATH:= /home/bpickles/BankSocietyCoin-Linux/boost_1_57_0/libs
-
 #----------------------------------------------------------
 #-- RGP, Require defines after move to Ubuntu 18 from 16 --
 #--      1.1.1g
 #----------------------------------------------------------
-OPENSSL_INCLUDE_PATH = ../../coin_depends/openssl-1.1.1g/include
-OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1g/crypto/bn
-OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1g/crypto/ec
-OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1g/crypto/evp
-OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1g/crypto/hmac
+OPENSSL_INCLUDE_PATH = ../../coin_depends/openssl-1.1.1f/include
+OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1f/crypto/bn
+OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1f/crypto/ec
+OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1f/crypto/evp
+OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1f/crypto/hmac
 
-BOOST_LIB_PATH:= /home/bpickles/BankSocietyCoin-Linux/boost_1_57_0/libs
+BOOST_LIB_PATH = ../../coin_depends/boost_1_82_0/libs
+# /usr/local/lib/libboost_chrono.so.1.82.0
 OPENSSL_LIB_PATH=../../coin_depends/openssl-1.1.1g/
+
+UNIVALUE_LIB_PATH=/usr/local/lib/libunivalue
+LIBEVENT_LIB_PATH=/usr/local/lib/libevent
 
 #----------------------------------------------------------
 #-- RGP, Require defines after move to Ubuntu 18 from 16 --
@@ -28,30 +30,10 @@ OPENSSL_LIB_PATH=../../coin_depends/openssl-1.1.1g/
 #OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1/crypto/evp
 #OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.1/crypto/hmac
 
-#BOOST_LIB_PATH:= /home/bpickles/BankSocietyCoin-Linux/boost_1_57_0/libs
-#OPENSSL_LIB_PATH=../../coin_depends/openssl-1.1.1/
+BOOST_INCLUDE_PATH = ../../coin_depends/boost_1_82_0/
+UNIVALUE_INCLUDE_PATH = /home/robert/Bank-Society-Gold-main/src/univalue/include
 
-#----------------------------------------------------------
-#-- RGP, Require defines after move to Ubuntu 18 from 16 --
-#--      1.1.1g
-#----------------------------------------------------------
-#OPENSSL_INCLUDE_PATH = ../../coin_depends/openssl-1.0.1l/include
-#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.0.1l/crypto/bn
-#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.0.1l/crypto/ec
-#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.0.1l/crypto/evp
-#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.0.1l/crypto/hmac
-
-#OPENSSL_INCLUDE_PATH = ../../coin_depends/openssl-1.1.0/include
-#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.0/crypto/bn
-#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.0/crypto/ec
-#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.0/crypto/evp
-#OPENSSL_INCLUDE_PATH += ../../coin_depends/openssl-1.1.0/crypto/hmac
-
-
-//BOOST_LIB_PATH:= /home/bpickles/BankSocietyCoin-Linux/boost_1_57_0/libs
-//OPENSSL_LIB_PATH=../../coin_depends/openssl-1.0.1l/
-//OPENSSL_LIB_PATH=../../coin_depends/openssl-1.1.0/
-
+SECP256K1_INCLUDE_PATH = /home/robert/Bank-Society-Gold-main/src/secp256k1/include
 
 //UNIVALUE_INCLUDE_PATH = /home/bpickles/BSC_G/src/univalue/include
 
@@ -63,9 +45,9 @@ USE_LOWMEM:=0
 LINK:=$(CXX)
 ARCH:=$(system lscpu | head -n 1 | awk '{print $2}')
 
-DEFS=-DBOOST_SPIRIT_THREADSAFE
-DEFS += $(addprefix -I,$(CURDIR) $(CURDIR)/obj $(BOOST_INCLUDE_PATH) $(BDB_INCLUDE_PATH) $(OPENSSL_INCLUDE_PATH)) $(UNIVALUE_INCLUDE_PATH)
-LIBS = $(addprefix -L,$(BOOST_LIB_PATH) $(BDB_LIB_PATH) $(OPENSSL_LIB_PATH))
+DEFS= -DBOOST_SPIRIT_THREADSAFE -DBOOST_NO_CXX11_SCOPED_ENUMS -lboost_system -lboost_filesystem
+DEFS += $(addprefix -I,$(CURDIR) $(CURDIR)/obj $(addprefix -I,$(BOOST_INCLUDE_PATH)) $(BDB_INCLUDE_PATH) $(OPENSSL_INCLUDE_PATH)) $(addprefix -I,$(SECP256K1_INCLUDE_PATH)) $(addprefix -I,$(UNIVALUE_INCLUDE_PATH))
+LIBS = $(addprefix -L,$(BOOST_LIB_PATH) $(BDB_LIB_PATH) $(OPENSSL_LIB_PATH)) $(addprefix -L,$(LIBEVENT_LIB_PATH)) -L /usr/local/lib/libboost_chrono.so.1.82.0  
 
 LMODE = dynamic
 LMODE2 = dynamic
@@ -79,17 +61,29 @@ endif
 LIBS += \
  -Wl,-B$(LMODE)
 
-# for boost 1.37, add -mt to the boost libraries
+# -------------------------------------------------------------------------------
+# -- RGP, Added boost_timer and boost_chrono to the list of required libraries --
+# -------------------------------------------------------------------------------
+# -- resolved : undefined reference to `boost::chrono::steady_clock::now()'    --
+# -------------------------------------------------------------------------------
+
 LIBS += \
  -Wl,-B$(LMODE) \
    -l boost_system$(BOOST_LIB_SUFFIX) \
    -l boost_filesystem$(BOOST_LIB_SUFFIX) \
    -l boost_program_options$(BOOST_LIB_SUFFIX) \
    -l boost_thread$(BOOST_LIB_SUFFIX) \
+   -l boost_timer$(BOOST_LIB_SUFFIX) \
+   -l boost_chrono$(BOOST_LIB_SUFFIX) \
    -l db_cxx$(BDB_LIB_SUFFIX) \
    -l ssl \
    -l gmp \
-   -l crypto
+   -l rt \
+   -l crypto \
+   -l univalue \
+   -l event \
+   -l event_pthreads 
+
 
 ifndef USE_UPNP
 	override USE_UPNP = -
@@ -148,15 +142,17 @@ LIBS+= \
 DEBUGFLAGS=-g
 
 
-ifeq (${ARCH}, i686)
-    EXT_OPTIONS=-msse2
-endif
+
+CC=gcc
+CXX=g++
 
 
 # CXXFLAGS can be specified on the make command line, so we use xCXXFLAGS that only
 # adds some defaults in front. Unfortunately, CXXFLAGS=... $(CXXFLAGS) does not work.
 xCXXFLAGS= -O2 -std=c++11 $(EXT_OPTIONS) -pthread -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wunused-function -Wunused-variable -fpermissive -Wconversion-null\
     $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS)
+#xCXXFLAGS= -O2 -std=c++1y $(EXT_OPTIONS) -pthread -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wunused-function -Wunused-variable -fpermissive -Wconversion-null\
+#    $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS)
 
 # LDFLAGS can be specified on the make command line, so we use xLDFLAGS that only
 # adds some defaults in front. Unfortunately, LDFLAGS=... $(LDFLAGS) does not work.
@@ -182,6 +178,7 @@ OBJS= \
     obj/main.o \
     obj/net.o \
     obj/protocol.o \
+    obj/rest.o \
     obj/rpcclient.o \
     obj/rpcprotocol.o \
     obj/rpcserver.o \
@@ -217,7 +214,11 @@ OBJS= \
     obj/crypto/sha1.o \
     obj/crypto/sha256.o \
     obj/crypto/sha512.o \
-    obj/smessage.o
+    obj/smessage.o \
+    obj/httpserver.o \
+    obj/httprpc.o \
+    obj/bsg-cli.o \
+    obj/torcontrol.o
 
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET

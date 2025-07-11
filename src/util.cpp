@@ -8,6 +8,7 @@
 #include <openssl/crypto.h>
 
 #include "chainparams.h"
+#include "chainparamsbase.h"
 #include "sync.h"
 #include "ui_interface.h"
 #include "uint256.h"
@@ -44,6 +45,8 @@ namespace boost {
 #include <openssl/rand.h>
 #include <openssl/err.h>
 #include <stdarg.h>
+
+#include "main.h"
 
 #ifdef WIN32
 #ifdef _MSC_VER
@@ -104,6 +107,17 @@ string strMiscWarning;
 bool fNoListen = false;
 bool fLogTimestamps = false;
 volatile bool fReopenDebugLog = false;
+
+const char * const BITCOIN_CONF_FILENAME = "societyGd.conf";
+const char * const BITCOIN_PID_FILENAME = "societyGd.pid";
+
+const std::string CBaseChainParams::MAIN = "main";
+const std::string CBaseChainParams::TESTNET = "test";
+const std::string CBaseChainParams::DEVNET = "devnet";
+const std::string CBaseChainParams::REGTEST = "regtest";
+
+ArgsManager gArgs;
+
 
 // Init OpenSSL library multithreading support
 static CCriticalSection** ppmutexOpenSSL;
@@ -269,7 +283,7 @@ bool LogAcceptCategory(const char* category)
         static boost::thread_specific_ptr<set<string> > ptrCategory;
         if (ptrCategory.get() == NULL)
         {
-            const vector<string>& categories = mapMultiArgs["-debug"];
+            const vector<string>& categories = mapMultiArgs["debug"];
             ptrCategory.reset(new set<string>(categories.begin(), categories.end()));
             // thread_specific_ptr automatically deletes the set when the thread ends.
         }
@@ -483,7 +497,7 @@ vector<unsigned char> ParseHex(const string& str)
 static void InterpretNegativeSetting(string name, map<string, string>& mapSettingsRet)
 {
     // interpret -nofoo as -foo=0 (and -nofoo=0 as -foo=1) as long as -foo not set
-    if (name.find("-no") == 0)
+    if (name.find("no") == 0)
     {
         std::string positive("-");
         positive.append(name.begin()+3, name.end());
@@ -503,6 +517,14 @@ void ParseParameters(int argc, const char* const argv[])
     {
         std::string str(argv[i]);
         std::string strValue;
+
+        /* RGP, quick fix of this code for Masternodes */
+        if ( strValue == "masternodeprivatekey" )
+        {
+           LogPrintf("\n\n RGP util.cpp found masternodeprivatekey %s %s \n \n", strValue,  str );
+           //strMasterNodePrivKey = str(argv[2]);
+        }
+
         size_t is_index = str.find('=');
         if (is_index != std::string::npos)
         {
@@ -514,36 +536,40 @@ void ParseParameters(int argc, const char* const argv[])
         if (boost::algorithm::starts_with(str, "/"))
             str = "-" + str.substr(1);
 #endif
-        if (str[0] != '-')
-            break;
+ //       if (str[0] != '-')
+ //           break;
 
         mapArgs[str] = strValue;
         mapMultiArgs[str].push_back(strValue);
     }
 
     // New 0.6 features:
-    BOOST_FOREACH(const PAIRTYPE(string,string)& entry, mapArgs)
-    {
-        string name = entry.first;
+//    BOOST_FOREACH(const PAIRTYPE(string,string)& entry, mapArgs)
+//    {
+//        string name = entry.first;
 
         //  interpret --foo as -foo (as long as both are not set)
-        if (name.find("--") == 0)
-        {
-            std::string singleDash(name.begin()+1, name.end());
-            if (mapArgs.count(singleDash) == 0)
-                mapArgs[singleDash] = entry.second;
-            name = singleDash;
-        }
+//        if (name.find("--") == 0)
+//        {
+//            std::string singleDash(name.begin()+1, name.end());
+//            if (mapArgs.count(singleDash) == 0)
+//                mapArgs[singleDash] = entry.second;
+//            name = singleDash;
+//        }
 
         // interpret -nofoo as -foo=0 (and -nofoo=0 as -foo=1) as long as -foo not set
-        InterpretNegativeSetting(name, mapArgs);
-    }
+//        InterpretNegativeSetting(name, mapArgs);
+//    }
 }
 
 std::string GetArg(const std::string& strArg, const std::string& strDefault)
 {
+
     if (mapArgs.count(strArg))
+    {
         return mapArgs[strArg];
+    }
+
     return strDefault;
 }
 
@@ -556,12 +582,33 @@ int64_t GetArg(const std::string& strArg, int64_t nDefault)
 
 bool GetBoolArg(const std::string& strArg, bool fDefault)
 {
+
+//LogPrintf("RGP Debug strArg Debug 001  %s \n",  strArg.c_str() );
+
+//map<string, string>::iterator it = mapArgs.begin();
+
+//while ( it != mapArgs.end() )
+//{
+//    LogPrintf(" MapArgs %s %S \n", it->first, it->second );
+//    it++;
+//
+//}
+
+
+
     if (mapArgs.count(strArg))
     {
+
         if (mapArgs[strArg].empty())
             return true;
+
+        //LogPrintf("RGP Debug strArg Debug 003  %s  ato1 %d \n",  strArg, atoi(mapArgs[strArg]) );
         return (atoi(mapArgs[strArg]) != 0);
+//LogPrintf("RGP Debug strArg Debug 004  %s \n",  strArg );
     }
+
+    //LogPrintf("RGP Debug strArg Debug 005  %s  %d \n",  strArg.c_str(), mapArgs.count(strArg) );
+
     return fDefault;
 }
 
@@ -1110,6 +1157,79 @@ boost::filesystem::path GetDefaultDataDir()
 #endif
 }
 
+/**
+ * Interpret a string argument as a boolean.
+ *
+ * The definition of atoi() requires that non-numeric string values like "foo",
+ * return 0. This means that if a user unintentionally supplies a non-integer
+ * argument here, the return value is always false. This means that -foo=false
+ * does what the user probably expects, but -foo=true is well defined but does
+ * not do what they probably expected.
+ *
+ * The return value of atoi() is undefined when given input not representable as
+ * an int. On most systems this means string value between "-2147483648" and
+ * "2147483647" are well defined (this method will return true). Setting
+ * -txindex=2147483648 on most systems, however, is probably undefined.
+ *
+ * For a more extensive discussion of this topic (and a wide range of opinions
+ * on the Right Way to change this code), see PR12713.
+ */
+static bool InterpretBool(const std::string& strValue)
+{
+    if (strValue.empty())
+        return true;
+    return (atoi(strValue) != 0);
+}
+
+
+
+/**
+ * Interpret -nofoo as if the user supplied -foo=0.
+ *
+ * This method also tracks when the -no form was supplied, and if so,
+ * checks whether there was a double-negative (-nofoo=0 -> -foo=1).
+ *
+ * If there was not a double negative, it removes the "no" from the key,
+ * and returns true, indicating the caller should clear the args vector
+ * to indicate a negated option.
+ *
+ * If there was a double negative, it removes "no" from the key, sets the
+ * value to "1" and returns false.
+ *
+ * If there was no "no", it leaves key and value untouched and returns
+ * false.
+ *
+ * Where an option was negated can be later checked using the
+ * IsArgNegated() method. One use case for this is to have a way to disable
+ * options that are not normally boolean (e.g. using -nodebuglogfile to request
+ * that debug log output is not sent to any file at all).
+ */
+static bool InterpretNegatedOption(std::string& key, std::string& val)
+{
+    assert(key[0] == '-');
+
+    size_t option_index = key.find('.');
+    if (option_index == std::string::npos) {
+        option_index = 1;
+    } else {
+        ++option_index;
+    }
+    if (key.substr(option_index, 2) == "no") {
+        bool bool_val = InterpretBool(val);
+        key.erase(option_index, 2);
+        if (!bool_val ) {
+            // Double negatives like -nofoo=0 are supported (but discouraged)
+            LogPrintf("Warning: parsed potentially confusing double-negative %s=%s\n", key, val);
+            val = "1";
+        } else {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
 static boost::filesystem::path pathCached[CChainParams::MAX_NETWORK_TYPES+1];
 static CCriticalSection csPathCached;
 
@@ -1129,8 +1249,8 @@ const boost::filesystem::path &GetDataDir(bool fNetSpecific)
     if (!path.empty())
         return path;
 
-    if (mapArgs.count("-datadir")) {
-        path = fs::system_complete(mapArgs["-datadir"]);
+    if (mapArgs.count("datadir")) {
+        path = fs::system_complete(mapArgs["datadir"]);
         if (!fs::is_directory(path)) {
             path = "";
             return path;
@@ -1154,21 +1274,222 @@ void ClearDatadirCache()
 
 boost::filesystem::path GetConfigFile()
 {
-    boost::filesystem::path pathConfigFile(GetArg("-conf", "societyG.conf"));
+    boost::filesystem::path pathConfigFile(GetArg("conf", "societyG.conf"));
+    if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir(false) / pathConfigFile;
+    return pathConfigFile;
+}
+
+/* -------------------------------------------------------------------------
+   -- RGP, added new file for Masternode configurations, this file will   --
+   --      hold a masternode IP, transaction id and associeted blockhash. --
+   --      As the 'old' code in wallets in not deteecting mempool as      --
+   --      always blank. 
+   --      static map < uint256, CTransaction > Active_Transaction_List;  --
+   --      will be filled with txid and blockhash for fast access to      --
+   --      Masternode key data.                                           --
+   ------------------------------------------------------------------------- */
+
+boost::filesystem::path Get_MN_ConfigFile()
+{
+    boost::filesystem::path pathConfigFile(GetArg("conf", "mn_config.conf"));
     if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir(false) / pathConfigFile;
     return pathConfigFile;
 }
 
 boost::filesystem::path GetMasternodeConfigFile()
 {
-    boost::filesystem::path pathConfigFile(GetArg("-mnconf", "masternode.conf"));
+    boost::filesystem::path pathConfigFile(GetArg("mnconf", "masternode.conf"));
     if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir() / pathConfigFile;
     return pathConfigFile;
 }
 
+void ArgsManager::ReadConfigStream(std::istream& stream)
+{
+    LOCK(cs_args);
+
+    std::set<std::string> setOptions;
+    setOptions.insert("*");
+
+    for (boost::program_options::detail::config_file_iterator it(stream, setOptions), end; it != end; ++it)
+    {
+        std::string strKey = std::string("-") + it->string_key;
+        std::string strValue = it->value[0];
+        if (InterpretNegatedOption(strKey, strValue)) {
+            m_config_args[strKey].clear();
+        } else {
+            m_config_args[strKey].push_back(strValue);
+        }
+    }
+}
+
+void ArgsManager::ReadConfigFile(const std::string& confPath)
+{
+    {
+        LOCK(cs_args);
+        m_config_args.clear();
+    }
+
+    //boost::filesystem::path GetConfigFile();
+
+    //fs::ifstream stream(GetConfigFile(confPath));
+
+    //if (stream.good()) {
+    //    ReadConfigStream(stream);
+    //} else {
+        // Create an empty raptoreum.conf if it does not excist
+    //    FILE* configFile = fopen(GetConfigFile(confPath).string().c_str(), "a");
+    //    if (configFile != nullptr)
+    //        fclose(configFile);
+    //    return; // Nothing to read, so just return
+    //}
+
+    // If datadir is changed in .conf file:
+    //ClearDatadirCache();
+    //if (!fs::is_directory(GetDataDir(false))) {
+    //    throw std::runtime_error(strprintf("specified data directory \"%s\" does not exist.", gArgs.GetArg("datadir", "").c_str()));
+    //}
+}
+
+/* --
+   -- RGP read from Bitcoind.cpp */
+
+/* -------------------------------------------------------------------------
+   -- RGP, added new file for Masternode configurations, this file will   --
+   --      hold a masternode IP, transaction id and associeted blockhash. --
+   --      As the 'old' code in wallets in not deteecting mempool as      --
+   --      always blank. 
+   --      static map < uint256, CTransaction > Active_Transaction_List;  --
+   --      will be filled with txid and blockhash for fast access to      --
+   --      Masternode key data.                                           --
+   ------------------------------------------------------------------------- */
+
+bool getblockbynumber(int block_to_read, CBlock block )
+{
+ 
+    int nHeight = block_to_read;
+
+
+
+    if (nHeight < 0 || nHeight > pindexBest->nHeight)
+        return false;
+//        throw runtime_error("getblockbynumber Block number out of range.");
+
+    //CBlock block;
+    CBlockIndex* pblockindex = mapBlockIndex[hashBestChain];
+    while (pblockindex->nHeight > nHeight)
+        pblockindex = pblockindex->pprev;
+
+    uint256 hash = *pblockindex->phashBlock;
+
+LogPrintf("RGP getblockbynumber height %d hash_found %s best %d \n", nHeight, hash.ToString(), pindexBest->nHeight );
+
+    pblockindex = mapBlockIndex[hash];
+    block.ReadFromDisk(pblockindex, true);
+
+    return true;
+}
+
+
+
+
+#include <stdlib.h>
+
+
+extern map<uint256, CBlockIndex*> mapBlockIndex;
+
+void Read_MN_Config()
+{
+
+LogPrintf("RGP Read_MN_Config START \n" );
+
+std::string str_HEIGHT;
+uint256 hashBlock;
+CTransaction tx;
+int block_height;
+CBlock block_by_height;
+
+    boost::filesystem::ifstream streamConfig(Get_MN_ConfigFile());
+    if (!streamConfig.good()){
+        // Create empty societyG.conf if it does not exist
+        FILE* configFile = fopen( Get_MN_ConfigFile().string().c_str(), "a" );
+        if (configFile != NULL)
+            fclose(configFile);
+        return; // Nothing to read, so just return
+    }
+
+    set<string> setOptions;
+    setOptions.insert("*");
+
+    /* Reads in a line at a time */
+    for (boost::program_options::detail::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it)
+    {
+        string strKey = it->string_key;
+        string strValue = it->value[0];
+
+        LogPrintf("RGP Debug Read_MN_Config key %s %s \n", &strKey[0], &strValue[0] );
+
+        /* RGP each line has either IP, BLOCK or TXID */
+        if ( strKey == "HEIGHT" )
+        {
+            str_HEIGHT = strValue;
+
+LogPrintf("RGP Read_MN_Config Debug 001 %s \n", str_HEIGHT );
+
+            block_height = std::atoi ( &str_HEIGHT[0] );
+            
+            LogPrintf("RGP Read_MN_Config block height %d \n", block_height );
+
+//            if ( getblockbynumber( block_height, block_by_height ) != false )
+            {
+
+                int nHeight = block_height;
+                if (nHeight < 0 || nHeight > pindexBest->nHeight)
+                    return false;
+                //        throw runtime_error("getblockbynumber Block number out of range.");
+
+                CBlock block;
+                CBlockIndex* pblockindex = mapBlockIndex[hashBestChain];
+                while (pblockindex->nHeight > nHeight)
+                    pblockindex = pblockindex->pprev;
+
+                uint256 hash = *pblockindex->phashBlock;
+
+LogPrintf("RGP getblockbynumber height %d hash_found %s best %d \n", nHeight, hash.ToString(), pindexBest->nHeight );
+
+                pblockindex = mapBlockIndex[hash];
+                block.ReadFromDisk(pblockindex, true);
+
+
+                hashBlock = block.GetHash();
+                
+                /* the last transaction has the MN information */
+                tx = block.vtx[ 2 ] ;
+
+                if ( Active_Transaction_List.count ( hashBlock ) == 0  )                    
+                    Active_Transaction_List.insert(std::make_pair( hashBlock, tx ));
+
+                continue;
+
+            }
+
+       }        
+
+    }
+
+LogPrintf("RGP Read_MN_Config END \n" );
+
+    // If datadir is changed in .conf file:
+    ClearDatadirCache();
+}
+
+
+/* --
+   -- RGP read from Bitcoind.cpp */
 void ReadConfigFile(map<string, string>& mapSettingsRet,
                     map<string, vector<string> >& mapMultiSettingsRet)
 {
+LogPrintf("RGP ReadConfigFile START \n" );
+
     boost::filesystem::ifstream streamConfig(GetConfigFile());
     if (!streamConfig.good()){
         // Create empty societyG.conf if it does not exist
@@ -1183,8 +1504,12 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 
     for (boost::program_options::detail::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it)
     {
-        // Don't overwrite existing settings so command line settings override bitcoin.conf
+        // Don't overwrite existing settings so command line settings override societyG.conf
+        // Note : RGP "-" is added here.
         string strKey = string("-") + it->string_key;
+        string strValue = it->value[0];
+
+        //printf("RGP Debug ReadConfigFile key %s %s \n", &strKey[0], &strValue[0] );
         if (mapSettingsRet.count(strKey) == 0)
         {
             mapSettingsRet[strKey] = it->value[0];
@@ -1192,6 +1517,8 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
             InterpretNegativeSetting(strKey, mapSettingsRet);
         }
         mapMultiSettingsRet[strKey].push_back(it->value[0]);
+
+ 
     }
     // If datadir is changed in .conf file:
     ClearDatadirCache();
@@ -1199,7 +1526,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 
 boost::filesystem::path GetPidFile()
 {
-    boost::filesystem::path pathPidFile(GetArg("-pid", "societyGd.pid"));
+    boost::filesystem::path pathPidFile(GetArg("pid", "societyGd.pid"));
     if (!pathPidFile.is_complete()) pathPidFile = GetDataDir() / pathPidFile;
     return pathPidFile;
 }
@@ -1318,7 +1645,9 @@ int64_t GetTimeOffset()
 
 int64_t GetAdjustedTime()
 {
+
     return GetTime() + GetTimeOffset();
+
 }
 
 void AddTimeData(const CNetAddr& ip, int64_t nTime)
@@ -1478,3 +1807,398 @@ std::string DateTimeStrFormat(const char* pszFormat, int64_t nTime)
     ss << boost::posix_time::from_time_t(nTime);
     return ss.str();
 }
+
+
+
+/** Internal helper functions for ArgsManager */
+class ArgsManagerHelper {
+public:
+    typedef std::map<std::string, std::vector<std::string>> MapArgs;
+
+    /** Determine whether to use config settings in the default section,
+     *  See also comments around ArgsManager::ArgsManager() below. */
+    static inline bool UseDefaultSection(const ArgsManager& am, const std::string& arg)
+    {
+        return (am.m_network == CBaseChainParams::MAIN || am.m_network_only_args.count(arg) == 0);
+    }
+
+    /** Convert regular argument into the network-specific setting */
+    static inline std::string NetworkArg(const ArgsManager& am, const std::string& arg)
+    {
+        assert(arg.length() > 1 && arg[0] == '-');
+        return "-" + am.m_network + "." + arg.substr(1);
+    }
+
+    /** Find arguments in a map and add them to a vector */
+    static inline void AddArgs(std::vector<std::string>& res, const MapArgs& map_args, const std::string& arg)
+    {
+        auto it = map_args.find(arg);
+        if (it != map_args.end()) {
+            res.insert(res.end(), it->second.begin(), it->second.end());
+        }
+    }
+
+    /** Return true/false if an argument is set in a map, and also
+     *  return the first (or last) of the possibly multiple values it has
+     */
+    static inline std::pair<bool,std::string> GetArgHelper(const MapArgs& map_args, const std::string& arg, bool getLast = false)
+    {
+        auto it = map_args.find(arg);
+
+        if (it == map_args.end() || it->second.empty()) {
+            return std::make_pair(false, std::string());
+        }
+
+        if (getLast) {
+            return std::make_pair(true, it->second.back());
+        } else {
+            return std::make_pair(true, it->second.front());
+        }
+    }
+
+    /* Get the string value of an argument, returning a pair of a boolean
+     * indicating the argument was found, and the value for the argument
+     * if it was found (or the empty string if not found).
+     */
+    static inline std::pair<bool,std::string> GetArg(const ArgsManager &am, const std::string& arg)
+    {
+        LOCK(am.cs_args);
+        std::pair<bool,std::string> found_result(false, std::string());
+
+        // We pass "true" to GetArgHelper in order to return the last
+        // argument value seen from the command line (so "raptoreumd -foo=bar
+        // -foo=baz" gives GetArg(am,"foo")=={true,"baz"}
+        found_result = GetArgHelper(am.m_override_args, arg, true);
+        if (found_result.first) {
+            return found_result;
+        }
+
+        // But in contrast we return the first argument seen in a config file,
+        // so "foo=bar \n foo=baz" in the config file gives
+        // GetArg(am,"foo")={true,"bar"}
+        if (!am.m_network.empty()) {
+            found_result = GetArgHelper(am.m_config_args, NetworkArg(am, arg));
+            if (found_result.first) {
+                return found_result;
+            }
+        }
+
+        if (UseDefaultSection(am, arg)) {
+            found_result = GetArgHelper(am.m_config_args, arg);
+            if (found_result.first) {
+                return found_result;
+            }
+        }
+
+        return found_result;
+    }
+
+    /* Special test for -testnet and -regtest args, because we
+     * don't want to be confused by craziness like "[regtest] testnet=1"
+     */
+    static inline bool GetNetBoolArg(const ArgsManager &am, const std::string& net_arg, bool interpret_bool)
+    {
+        std::pair<bool,std::string> found_result(false,std::string());
+        found_result = GetArgHelper(am.m_override_args, net_arg, true);
+        if (!found_result.first) {
+            found_result = GetArgHelper(am.m_config_args, net_arg, true);
+            if (!found_result.first) {
+                return false; // not set
+            }
+        }
+        return !interpret_bool || InterpretBool(found_result.second); // is set, so evaluate
+    }
+};
+
+
+
+
+
+ArgsManager::ArgsManager() :
+    /* These options would cause cross-contamination if values for
+     * mainnet were used while running on regtest/testnet (or vice-versa).
+     * Setting them as section_only_args ensures that sharing a config file
+     * between mainnet and regtest/testnet won't cause problems due to these
+     * parameters by accident. */
+    m_network_only_args{
+      "addnode", "connect",
+      "port", "bind",
+      "rpcport", "rpcbind",
+      "wallet",
+    }
+{
+    // nothing to do
+}
+
+void ArgsManager::WarnForSectionOnlyArgs()
+{
+    // if there's no section selected, don't worry
+    if (m_network.empty()) return;
+
+    // if it's okay to use the default section for this network, don't worry
+    if (m_network == CBaseChainParams::MAIN) return;
+
+    for (const auto& arg : m_network_only_args) {
+        std::pair<bool, std::string> found_result;
+
+        // if this option is overridden it's fine
+        found_result = ArgsManagerHelper::GetArgHelper(m_override_args, arg);
+        if (found_result.first) continue;
+
+        // if there's a network-specific value for this option, it's fine
+        found_result = ArgsManagerHelper::GetArgHelper(m_config_args, ArgsManagerHelper::NetworkArg(*this, arg));
+        if (found_result.first) continue;
+
+        // if there isn't a default value for this option, it's fine
+        found_result = ArgsManagerHelper::GetArgHelper(m_config_args, arg);
+        if (!found_result.first) continue;
+
+        // otherwise, issue a warning
+        LogPrintf("Warning: Config setting for %s only applied on %s network when in [%s] section.\n", arg, m_network, m_network);
+    }
+}
+
+void ArgsManager::SelectConfigNetwork(const std::string& network)
+{
+    m_network = network;
+}
+
+void ArgsManager::ParseParameters(int argc, const char* const argv[])
+{
+    LOCK(cs_args);
+    m_override_args.clear();
+
+    for (int i = 1; i < argc; i++) {
+        std::string key(argv[i]);
+        std::string val;
+        size_t is_index = key.find('=');
+        if (is_index != std::string::npos) {
+            val = key.substr(is_index + 1);
+            key.erase(is_index);
+        }
+#ifdef WIN32
+        std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+        if (key[0] == '/')
+            key[0] = '-';
+#endif
+
+        if (key[0] != '-')
+            break;
+
+        // Transform --foo to -foo
+        if (key.length() > 1 && key[1] == '-')
+            key.erase(0, 1);
+
+        // Check for -nofoo
+        if (InterpretNegatedOption(key, val)) {
+            m_override_args[key].clear();
+        } else {
+            m_override_args[key].push_back(val);
+        }
+    }
+}
+
+std::vector<std::string> ArgsManager::GetArgs(const std::string& strArg) const
+{
+    std::vector<std::string> result = {};
+    if (IsArgNegated(strArg)) return result; // special case
+
+    LOCK(cs_args);
+
+    ArgsManagerHelper::AddArgs(result, m_override_args, strArg);
+    if (!m_network.empty()) {
+        ArgsManagerHelper::AddArgs(result, m_config_args, ArgsManagerHelper::NetworkArg(*this, strArg));
+    }
+
+    if (ArgsManagerHelper::UseDefaultSection(*this, strArg)) {
+        ArgsManagerHelper::AddArgs(result, m_config_args, strArg);
+    }
+
+    return result;
+}
+
+bool ArgsManager::IsArgSet(const std::string& strArg) const
+{
+    if (IsArgNegated(strArg)) return true; // special case
+    return ArgsManagerHelper::GetArg(*this, strArg).first;
+}
+
+bool ArgsManager::IsArgNegated(const std::string& strArg) const
+{
+    LOCK(cs_args);
+
+    const auto& ov = m_override_args.find(strArg);
+    if (ov != m_override_args.end()) return ov->second.empty();
+
+    if (!m_network.empty()) {
+        const auto& cfs = m_config_args.find(ArgsManagerHelper::NetworkArg(*this, strArg));
+        if (cfs != m_config_args.end()) return cfs->second.empty();
+    }
+
+    const auto& cf = m_config_args.find(strArg);
+    if (cf != m_config_args.end()) return cf->second.empty();
+
+    return false;
+}
+
+std::string ArgsManager::GetArg(const std::string& strArg, const std::string& strDefault) const
+{
+    if (IsArgNegated(strArg)) return "0";
+    std::pair<bool,std::string> found_res = ArgsManagerHelper::GetArg(*this, strArg);
+    if (found_res.first) return found_res.second;
+    return strDefault;
+}
+
+int64_t ArgsManager::GetArg(const std::string& strArg, int64_t nDefault) const
+{
+    if (IsArgNegated(strArg)) return 0;
+    std::pair<bool,std::string> found_res = ArgsManagerHelper::GetArg(*this, strArg);
+    if (found_res.first) return atoi64(found_res.second);
+    return nDefault;
+}
+
+bool ArgsManager::GetBoolArg(const std::string& strArg, bool fDefault) const
+{
+LogPrintf("RGP GetBoolArg debug 1 %s \n, strArg");
+    if (IsArgNegated(strArg)) 
+       return false;
+LogPrintf("RGP GetBoolArg debug 2 \n");
+    std::pair<bool,std::string> found_res = ArgsManagerHelper::GetArg(*this, strArg);
+LogPrintf("RGP GetBoolArg debug 3 %s \n, strArg");
+    if (found_res.first) 
+       return InterpretBool(found_res.second);
+    return fDefault;
+}
+
+bool ArgsManager::SoftSetArg(const std::string& strArg, const std::string& strValue)
+{
+    LOCK(cs_args);
+    if (IsArgSet(strArg)) return false;
+    ForceSetArg(strArg, strValue);
+    return true;
+}
+
+bool ArgsManager::SoftSetBoolArg(const std::string& strArg, bool fValue)
+{
+    if (fValue)
+        return SoftSetArg(strArg, std::string("1"));
+    else
+        return SoftSetArg(strArg, std::string("0"));
+}
+
+void ArgsManager::ForceSetArg(const std::string& strArg, const std::string& strValue)
+{
+    LOCK(cs_args);
+    m_override_args[strArg] = {strValue};
+}
+
+void ArgsManager::AddArg(const std::string& name, const std::string& help, const bool debug_only, const OptionsCategory& cat)
+{
+    std::pair<OptionsCategory, std::string> key(cat, name);
+    assert(m_available_args.count(key) == 0);
+    m_available_args.emplace(key, std::pair<std::string, bool>(help, debug_only));
+}
+
+static const int screenWidth = 79;
+static const int optIndent = 2;
+static const int msgIndent = 7;
+
+
+std::string HelpMessageGroup(const std::string &message) {
+    return std::string(message) + std::string("\n\n");
+}
+
+std::string HelpMessageOpt(const std::string &option, const std::string &message) {
+    return std::string(optIndent,' ') + std::string(option) +
+           std::string("\n") + std::string(msgIndent,' ') +
+           FormatParagraph(message, screenWidth - msgIndent, msgIndent) +
+           std::string("\n\n");
+}
+
+
+std::string ArgsManager::GetHelpMessage()
+{
+    const bool show_debug = gArgs.GetBoolArg("help-debug", false);
+
+    std::string usage = HelpMessageGroup("Options:");
+
+    OptionsCategory last_cat = OptionsCategory::OPTIONS;
+    for (auto& arg : m_available_args) {
+        if (arg.first.first != last_cat) {
+            last_cat = arg.first.first;
+            if (last_cat == OptionsCategory::CONNECTION)
+                usage += HelpMessageGroup("Connection options:");
+            else if (last_cat == OptionsCategory::INDEXING)
+                usage += HelpMessageGroup("Indexing options:");
+            else if (last_cat == OptionsCategory::SMARTNODE)
+                usage += HelpMessageGroup("Smartnode options:");
+            else if (last_cat == OptionsCategory::STATSD)
+                usage += HelpMessageGroup("Statsd options:");
+            else if (last_cat == OptionsCategory::ZMQ)
+                usage += HelpMessageGroup("ZeroMQ notification options:");
+            else if (last_cat == OptionsCategory::DEBUG_TEST)
+                usage += HelpMessageGroup("Debugging/Testing options:");
+            else if (last_cat == OptionsCategory::NODE_RELAY)
+                usage += HelpMessageGroup("Node relay options:");
+            else if (last_cat == OptionsCategory::BLOCK_CREATION)
+                usage += HelpMessageGroup("Block creation options:");
+            else if (last_cat == OptionsCategory::RPC)
+                usage += HelpMessageGroup("RPC server options:");
+            else if (last_cat == OptionsCategory::WALLET)
+                usage += HelpMessageGroup("Wallet options:");
+            else if (last_cat == OptionsCategory::WALLET)
+                usage += HelpMessageGroup("Wallet fee options:");
+            else if (last_cat == OptionsCategory::WALLET)
+                usage += HelpMessageGroup("HD wallet options:");
+            else if (last_cat == OptionsCategory::WALLET)
+                usage += HelpMessageGroup("KeePass options:");
+            else if (last_cat == OptionsCategory::WALLET)
+                usage += HelpMessageGroup("CoinJoin options:");
+            else if (last_cat == OptionsCategory::WALLET_DEBUG_TEST && show_debug)
+                usage += HelpMessageGroup("Wallet debugging/testing options:");
+            else if (last_cat == OptionsCategory::CHAINPARAMS)
+                usage += HelpMessageGroup("Chain selection options:");
+            else if (last_cat == OptionsCategory::GUI)
+                usage += HelpMessageGroup("UI Options:");
+            else if (last_cat == OptionsCategory::COMMANDS)
+                usage += HelpMessageGroup("Commands:");
+            else if (last_cat == OptionsCategory::REGISTER_COMMANDS)
+                usage += HelpMessageGroup("Register Commands:");
+        }
+        if (show_debug || !arg.second.second) {
+            usage += HelpMessageOpt(arg.first.second, arg.second.first);
+        }
+    }
+    return usage;
+}
+
+void ArgsManager::ForceRemoveArg(const std::string& strArg)
+{
+    LOCK(cs_args);
+
+    const auto& ov = m_override_args.find(strArg);
+    if (ov != m_override_args.end()) {
+        m_override_args.erase(ov);
+    }
+
+    if (!m_network.empty()) {
+        const auto& cfs = m_config_args.find(ArgsManagerHelper::NetworkArg(*this, strArg));
+        if (cfs != m_config_args.end()) {
+            m_config_args.erase(cfs);
+        }
+    }
+
+    const auto& cf = m_config_args.find(strArg);
+    if (cf != m_config_args.end()) {
+        m_config_args.erase(cf);
+    }
+}
+
+
+
+
+
+
+
+
+

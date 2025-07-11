@@ -1371,6 +1371,7 @@ bool SecureMsgReceiveData(CNode* pfrom, std::string strCommand, CDataStream& vRe
         {
             LogPrint("smessage", "Peer sent more bucket headers than possible %u, %u.\n", nInvBuckets, (SMSG_RETENTION / SMSG_BUCKET_LEN));
             Misbehaving(pfrom->GetId(), 1);
+            MilliSleep(5); /* RGP Optimise */
             return false;
         };
 
@@ -1378,6 +1379,7 @@ bool SecureMsgReceiveData(CNode* pfrom, std::string strCommand, CDataStream& vRe
         {
             LogPrint("smessage", "Remote node did not send enough data.\n");
             Misbehaving(pfrom->GetId(), 1);
+            MilliSleep(5); /* RGP Optimise */
             return false;
         };
 
@@ -1453,7 +1455,13 @@ bool SecureMsgReceiveData(CNode* pfrom, std::string strCommand, CDataStream& vRe
 
                     nShowBuckets++;
                 };
+                
+                MilliSleep(1); /* RGP Optimise */
+                
             } // LOCK(cs_smsg);
+            
+            MilliSleep(1); /* RGP Optimise */
+            
         };
 
         // TODO: should include hash?
@@ -1530,6 +1538,8 @@ bool SecureMsgReceiveData(CNode* pfrom, std::string strCommand, CDataStream& vRe
                 };
             }
             pfrom->PushMessage("smsgHave", vchDataOut);
+            
+            MilliSleep(1); /* RGP Optimise */
         };
 
 
@@ -1606,6 +1616,9 @@ bool SecureMsgReceiveData(CNode* pfrom, std::string strCommand, CDataStream& vRe
                 };
 
                 p += 16;
+                
+                MilliSleep(5); /* RGP Optimise */
+                
             };
         }
 
@@ -1695,6 +1708,9 @@ bool SecureMsgReceiveData(CNode* pfrom, std::string strCommand, CDataStream& vRe
                     };
                 };
                 p += 16;
+                
+                MilliSleep(1); /* RGP Optimise */
+                
             };
         } // LOCK(cs_smsg);
 
@@ -1805,6 +1821,9 @@ bool SecureMsgReceiveData(CNode* pfrom, std::string strCommand, CDataStream& vRe
 
         if (fDebugSmsg)
             LogPrint("smessage", "Peer %d is ignoring this node until %d, ignore peer too.\n", pfrom->id, time);
+            
+        MilliSleep(5); /* RGP Optimise */
+        
     } else
     {
         // Unknown message
@@ -1879,7 +1898,10 @@ bool SecureMsgSendData(CNode* pto, bool fSendTrickle)
 
                 if (bkt.timeChanged < pto->smsgData.lastMatched     // peer has this bucket
                     || nMessages < 1)                               // this bucket is empty
+                {
+                    MilliSleep(1); /* RGP Optimise */
                     continue;
+                }
 
 
                 uint32_t hash = bkt.hash;
@@ -1887,6 +1909,7 @@ bool SecureMsgSendData(CNode* pto, bool fSendTrickle)
                 try { vchData.resize(vchData.size() + 16); } catch (std::exception& e)
                 {
                     LogPrint("smessage", "vchData.resize %u threw: %s.\n", vchData.size() + 16, e.what());
+                    MilliSleep(1); /* RGP Optimise */
                     continue;
                 };
                 memcpy(p, &it->first, 8);
@@ -1897,7 +1920,10 @@ bool SecureMsgSendData(CNode* pto, bool fSendTrickle)
                 nBucketsShown++;
                 //if (fDebug)
                 //    LogPrint("smessage", "Sending bucket %d, size %d \n", it->first, it->second.size());
-            };
+                
+                MilliSleep(1); /* RGP Optimise */
+                
+            }
 
             if (vchData.size() > 4)
             {
@@ -1906,9 +1932,11 @@ bool SecureMsgSendData(CNode* pto, bool fSendTrickle)
                     LogPrint("smessage", "Sending %d bucket headers.\n", nBucketsShown);
 
                 pto->PushMessage("smsgInv", vchData);
-            };
-        };
+            }
+        }
     } // cs_smsg
+
+    MilliSleep(5); /* RGP Optimise */
 
     pto->smsgData.lastSeen = GetTime();
 
@@ -1950,6 +1978,8 @@ static int SecureMsgInsertAddress(CKeyID& hashKey, CPubKey& pubKey, SecMsgDB& ad
         return 1;
     };
 
+    MilliSleep(5); /* RGP Optimise */
+
     return 0;
 };
 
@@ -1965,14 +1995,15 @@ int SecureMsgInsertAddress(CKeyID& hashKey, CPubKey& pubKey)
 
         rv = SecureMsgInsertAddress(hashKey, pubKey, addrpkdb);
     }
+    
+    MilliSleep(5); /* RGP Optimise */
+    
     return rv;
 };
 
 
 static bool ScanBlock(CBlock& block, CTxDB& txdb, SecMsgDB& addrpkdb,
     uint32_t& nTransactions, uint32_t& nElements, uint32_t& nPubkeys, uint32_t& nDuplicates)
-
-
 {
     AssertLockHeld(cs_smsgDB);
 
@@ -2013,6 +2044,7 @@ static bool ScanBlock(CBlock& block, CTxDB& txdb, SecMsgDB& addrpkdb,
                     }
                     break;
                 };
+                MilliSleep(1); /* Optimize RGP */
             };
             nElements++;
         } else
@@ -2053,8 +2085,12 @@ static bool ScanBlock(CBlock& block, CTxDB& txdb, SecMsgDB& addrpkdb,
                     };
 
                     //LogPrint("smessage", "opcode %d, %s, value %s.\n", opcode, GetOpName(opcode), ValueString(vch).c_str());
+                    
+                    MilliSleep(1); /* Optimize RGP */
                 };
                 nElements++;
+                
+                MilliSleep(1); /* Optimize RGP */
             };
         };
         nTransactions++;
@@ -2063,6 +2099,8 @@ static bool ScanBlock(CBlock& block, CTxDB& txdb, SecMsgDB& addrpkdb,
         {
             LogPrint("smessage", "Scanning transaction no. %u.\n", nTransactions);
         };
+        
+        MilliSleep(1); /* Optimize RGP */
     };
     return true;
 };
@@ -2070,6 +2108,11 @@ static bool ScanBlock(CBlock& block, CTxDB& txdb, SecMsgDB& addrpkdb,
 
 bool SecureMsgScanBlock(CBlock& block)
 {
+uint32_t nTransactions  = 0;
+uint32_t nElements      = 0;
+uint32_t nPubkeys       = 0;
+uint32_t nDuplicates    = 0;
+
     // - scan block for public key addresses
 
     if (!smsgOptions.fScanIncoming)
@@ -2078,10 +2121,7 @@ bool SecureMsgScanBlock(CBlock& block)
     if (fDebugSmsg)
         LogPrint("smessage", "SecureMsgScanBlock().\n");
 
-    uint32_t nTransactions  = 0;
-    uint32_t nElements      = 0;
-    uint32_t nPubkeys       = 0;
-    uint32_t nDuplicates    = 0;
+    
 
     {
         LOCK(cs_smsgDB);
@@ -2095,7 +2135,11 @@ bool SecureMsgScanBlock(CBlock& block)
         ScanBlock(block, txdb, addrpkdb,
             nTransactions, nElements, nPubkeys, nDuplicates);
 
+        MilliSleep(5); /* RGP Opitimise */
+
         addrpkdb.TxnCommit();
+        
+        
     } // cs_smsgDB
 
     if (fDebugSmsg)
@@ -2142,6 +2186,8 @@ bool ScanChainForPublicKeys(CBlockIndex* pindexStart)
                 nTransactions, nInputs, nPubkeys, nDuplicates);
 
             pindex = pindex->pnext;
+            
+            MilliSleep(1); /* Optimise */
         };
 
         addrpkdb.TxnCommit();
@@ -2310,6 +2356,8 @@ bool SecureMsgScanBuckets()
                 };
 
                 nMessages ++;
+                
+                MilliSleep(1); /* Optimise */
             };
 
             fclose(fp);
@@ -2322,7 +2370,13 @@ bool SecureMsgScanBuckets()
                 LogPrint("smessage", "Error removing wl file %s - %s\n", fileName.c_str(), ex.what());
                 return 1;
             };
+            
+            MilliSleep(1); /* Optimise */
+            
         } // cs_smsg
+        
+        MilliSleep(1); /* Optimise */
+        
     };
 
     LogPrint("smessage", "Processed %u files, scanned %u messages, received %u messages.\n", nFiles, nMessages, nFoundMessages);
@@ -2455,6 +2509,8 @@ int SecureMsgWalletUnlocked()
                 };
 
                 nMessages ++;
+                
+                MilliSleep(1); /* Optimise */
             };
 
             fclose(fp);
@@ -2467,7 +2523,12 @@ int SecureMsgWalletUnlocked()
                 LogPrint("smessage", "Error removing wl file %s - %s\n", fileName.c_str(), ex.what());
                 return 1;
             };
+            
+            MilliSleep(1); /* Optimise */
+            
         } // cs_smsg
+        
+        MilliSleep(1); /* Optimise */
     };
 
     LogPrint("smessage", "Processed %u files, scanned %u messages, received %u messages.\n", nFiles, nMessages, nFoundMessages);
@@ -2501,6 +2562,8 @@ int SecureMsgWalletKeyChanged(std::string sAddress, std::string sLabel, ChangeTy
                         continue;
                     smsgAddresses.erase(it);
                     break;
+                    
+                    MilliSleep(1); /* Optimise */
                 };
                 break;
             default:
@@ -2580,6 +2643,8 @@ int SecureMsgScanMessage(uint8_t *pHeader, uint8_t *pPayload, uint32_t nPayload,
                 break;
             };
         }
+        
+        MilliSleep(1); /* Optimise */
     };
 
     if (fOwnMessage)
@@ -2626,7 +2691,11 @@ int SecureMsgScanMessage(uint8_t *pHeader, uint8_t *pPayload, uint32_t nPayload,
                     LogPrint("smessage", "SecureMsg saved to inbox, received with %s.\n", addressTo.c_str());
                 };
             };
+            
+            MilliSleep(1); /* Optimise */
         } // cs_smsgDB
+        
+        MilliSleep(1); /* Optimise */
     };
 
     return 0;
@@ -2922,6 +2991,8 @@ int SecureMsgReceive(CNode* pfrom, std::vector<uint8_t>& vchData)
         } // cs_smsg
 
         n += SMSG_HDR_LEN + psmsg->nPayload;
+        
+        MilliSleep(1); /* Optimise */
     };
 
     {
@@ -2938,7 +3009,10 @@ int SecureMsgReceive(CNode* pfrom, std::vector<uint8_t>& vchData)
         itb->second.nLockCount  = 0; // this node has received data from peer, release lock
         itb->second.nLockPeerId = 0;
         itb->second.hashBucket();
+        
+        MilliSleep(1); /* Optimise */
     } // cs_smsg
+    
     return 0;
 };
 
@@ -3256,8 +3330,11 @@ int SecureMsgSetHash(uint8_t *pHeader, uint8_t *pPayload, uint32_t nPayload)
         //memcpy(&psmsg->timestamp, &now, 8);
         memcpy(&psmsg->nonse[0], &nonse, 4);
 
-        for (int i = 0; i < 32; i+=4)
+         for (int i = 0; i < 32; i+=4)
+         {
             memcpy(civ+i, &nonse, 4);
+            MilliSleep(1); /* Optimise */
+	 }
 
         uint32_t nBytes;
         if (!HMAC_Init_ex(ctx, &civ[0], 32, EVP_sha256(), NULL)
@@ -3721,6 +3798,8 @@ int SecureMsgSend(std::string &addressFrom, std::string &addressTo, std::string 
         if (!coinAddrOutbox.SetString(addressOutbox)) // test valid
             continue;
         break;
+        
+        MilliSleep(1); /* Optimise */
     };
 
     if (addressOutbox == "None")

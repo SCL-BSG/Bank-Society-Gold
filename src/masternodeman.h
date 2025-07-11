@@ -26,6 +26,19 @@ class CMasternodeMan;
 
 extern CMasternodeMan mnodeman;
 
+// map to hold all MNs
+extern std::vector<CMasternode> vMasternodes;
+    // who's asked for the masternode list and the last time
+extern std::map<CNetAddr, int64_t> mAskedUsForMasternodeList;
+    // who we asked for the masternode list and the last time
+extern  std::map<CNetAddr, int64_t> mWeAskedForMasternodeList;
+    // which masternodes we've asked for
+extern   std::map<COutPoint, int64_t> mWeAskedForMasternodeListEntry;
+
+
+extern map < unsigned int, CMasternode > Masternode_Information;
+extern map < uint256, CTransaction > MN_CTransaction_Map; 
+
 extern void Misbehaving(NodeId nodeid, int howmuch);
 
 void DumpMasternodes();
@@ -59,17 +72,20 @@ private:
     mutable CCriticalSection cs;
 
     // map to hold all MNs
-    std::vector<CMasternode> vMasternodes;
+    //std::vector<CMasternode> vMasternodes;
     // who's asked for the masternode list and the last time
-    std::map<CNetAddr, int64_t> mAskedUsForMasternodeList;
+    //std::map<CNetAddr, int64_t> mAskedUsForMasternodeList;
     // who we asked for the masternode list and the last time
-    std::map<CNetAddr, int64_t> mWeAskedForMasternodeList;
+    //std::map<CNetAddr, int64_t> mWeAskedForMasternodeList;
     // which masternodes we've asked for
-    std::map<COutPoint, int64_t> mWeAskedForMasternodeListEntry;
+    //std::map<COutPoint, int64_t> mWeAskedForMasternodeListEntry;
 
 public:
     // keep track of dsq count to prevent masternodes from gaming darksend queue
     int64_t nDsqCount;
+
+    
+
 
     IMPLEMENT_SERIALIZE
     (
@@ -132,8 +148,12 @@ public:
 
     std::vector<CMasternode> GetFullMasternodeVector()
     {
+        LogPrintf("RGP GetFullMasternodeVector checking \n");
+
 
         Check();
+
+LogPrintf("RGP GetFullMasternodeVector returning %d \n", vMasternodes.size() );
 
         return vMasternodes;
     }

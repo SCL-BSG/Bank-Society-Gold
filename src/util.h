@@ -34,6 +34,7 @@
 #include <openssl/rand.h>
 #include <openssl/bn.h>
 
+#include "sync.h"
 #include <stdint.h>
 
 
@@ -78,6 +79,11 @@ typedef int64_t CAmount;
 
 // This is needed because the foreach macro can't get over the comma in pair<t1, t2>
 #define PAIRTYPE(t1, t2)    std::pair<t1, t2>
+
+
+extern const char * const BITCOIN_CONF_FILENAME;
+extern const char * const BITCOIN_PID_FILENAME;
+
 
 // Align by increasing pointer, must have extra space at end of buffer
 template <size_t nBytes, typename T>
@@ -244,7 +250,12 @@ boost::filesystem::path GetPidFile();
 #ifndef WIN32
 void CreatePidFile(const boost::filesystem::path &path, pid_t pid);
 #endif
+
 void ReadConfigFile(std::map<std::string, std::string>& mapSettingsRet, std::map<std::string, std::vector<std::string> >& mapMultiSettingsRet);
+
+void Read_MN_Config();
+
+
 #ifdef WIN32
 boost::filesystem::path GetSpecialFolderPath(int nFolder, bool fCreate = true);
 #endif
@@ -343,30 +354,30 @@ inline std::string leftTrim(std::string src, char chr)
     return src;
 }
 
-template<typename T>
-std::string HexStr(const T itbegin, const T itend, bool fSpaces=false)
-{
-    std::string rv;
-    static const char hexmap[16] = { '0', '1', '2', '3', '4', '5', '6', '7',
-                                     '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-    rv.reserve((itend-itbegin)*3);
-    for(T it = itbegin; it < itend; ++it)
-    {
-        unsigned char val = (unsigned char)(*it);
-        if(fSpaces && it != itbegin)
-            rv.push_back(' ');
-        rv.push_back(hexmap[val>>4]);
-        rv.push_back(hexmap[val&15]);
-    }
+//template<typename T>
+//std::string HexStr(const T itbegin, const T itend, bool fSpaces=false)
+//{
+//    std::string rv;
+//    static const char hexmap[16] = { '0', '1', '2', '3', '4', '5', '6', '7',
+//                                     '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+//    rv.reserve((itend-itbegin)*3);
+//    for(T it = itbegin; it < itend; ++it)
+//    {
+//        unsigned char val = (unsigned char)(*it);
+//        if(fSpaces && it != itbegin)
+//            rv.push_back(' ');
+//        rv.push_back(hexmap[val>>4]);
+//        rv.push_back(hexmap[val&15]);
+//    }
 
-    return rv;
-}
+//    return rv;
+//}
 
-template<typename T>
-inline std::string HexStr(const T& vch, bool fSpaces=false)
-{
-    return HexStr(vch.begin(), vch.end(), fSpaces);
-}
+//template<typename T>
+//inline std::string HexStr(const T& vch, bool fSpaces=false)
+//{
+//    return HexStr(vch.begin(), vch.end(), fSpaces);
+//}
 
 inline int64_t GetPerformanceCounter()
 {
@@ -463,8 +474,163 @@ bool SoftSetArg(const std::string& strArg, const std::string& strValue);
  */
 bool SoftSetBoolArg(const std::string& strArg, bool fValue);
 
+enum class OptionsCategory
+{
+    OPTIONS,
+    CONNECTION,
+    INDEXING,
+    SMARTNODE,
+    STATSD,
+    WALLET,
+    WALLET_FEE,
+    WALLET_HD,
+    WALLET_KEEPASS,
+    WALLET_COINJOIN,
+    WALLET_DEBUG_TEST,
+    ZMQ,
+    DEBUG_TEST,
+    CHAINPARAMS,
+    NODE_RELAY,
+    BLOCK_CREATION,
+    RPC,
+    GUI,
+    COMMANDS,
+    REGISTER_COMMANDS
+};
 
+class ArgsManager
+{
+protected:
+    friend class ArgsManagerHelper;
 
+    mutable CCriticalSection cs_args;
+    std::map<std::string, std::vector<std::string>> m_override_args;
+    std::map<std::string, std::vector<std::string>> m_config_args;
+    std::string m_network;
+    std::set<std::string> m_network_only_args;
+    std::map<std::pair<OptionsCategory, std::string>, std::pair<std::string, bool>> m_available_args;
+
+    void ReadConfigStream(std::istream& stream);
+
+public:
+    ArgsManager();
+
+    /**
+     * Select the network in use
+     */
+    void SelectConfigNetwork(const std::string& network);
+
+    void ParseParameters(int argc, const char*const argv[]);
+    void ReadConfigFile(const std::string& confPath);
+
+    /**
+     * Log warnings for options in m_section_only_args when
+     * they are specified in the default section but not overridden
+     * on the command line or in a network-specific section in the
+     * config file.
+     */
+    void WarnForSectionOnlyArgs();
+
+    /**
+     * Return a vector of strings of the given argument
+     *
+     * @param strArg Argument to get (e.g. "-foo")
+     * @return command-line arguments
+     */
+    std::vector<std::string> GetArgs(const std::string& strArg) const;
+
+    /**
+     * Return true if the given argument has been manually set
+     *
+     * @param strArg Argument to get (e.g. "-foo")
+     * @return true if the argument has been set
+     */
+    bool IsArgSet(const std::string& strArg) const;
+
+    /**
+     * Return true if the argument was originally passed as a negated option,
+     * i.e. -nofoo.
+     *
+     * @param strArg Argument to get (e.g. "-foo")
+     * @return true if the argument was passed negated
+     */
+    bool IsArgNegated(const std::string& strArg) const;
+
+    /**
+     * Return string argument or default value
+     *
+     * @param strArg Argument to get (e.g. "-foo")
+     * @param strDefault (e.g. "1")
+     * @return command-line argument or default value
+     */
+    std::string GetArg(const std::string& strArg, const std::string& strDefault) const;
+
+    /**
+     * Return integer argument or default value
+     *
+     * @param strArg Argument to get (e.g. "-foo")
+     * @param nDefault (e.g. 1)
+     * @return command-line argument (0 if invalid number) or default value
+     */
+    int64_t GetArg(const std::string& strArg, int64_t nDefault) const;
+
+    /**
+     * Return boolean argument or default value
+     *
+     * @param strArg Argument to get (e.g. "-foo")
+     * @param fDefault (true or false)
+     * @return command-line argument or default value
+     */
+    bool GetBoolArg(const std::string& strArg, bool fDefault) const;
+
+    /**
+     * Set an argument if it doesn't already have a value
+     *
+     * @param strArg Argument to set (e.g. "-foo")
+     * @param strValue Value (e.g. "1")
+     * @return true if argument gets set, false if it already had a value
+     */
+    bool SoftSetArg(const std::string& strArg, const std::string& strValue);
+
+    /**
+     * Set a boolean argument if it doesn't already have a value
+     *
+     * @param strArg Argument to set (e.g. "-foo")
+     * @param fValue Value (e.g. false)
+     * @return true if argument gets set, false if it already had a value
+     */
+    bool SoftSetBoolArg(const std::string& strArg, bool fValue);
+
+    // Forces an arg setting. Called by SoftSetArg() if the arg hasn't already
+    // been set. Also called directly in testing.
+    void ForceSetArg(const std::string& strArg, const std::string& strValue);
+    void ForceRemoveArg(const std::string& strArg);
+
+    /**
+     * Looks for -regtest, -testnet and returns the appropriate BIP70 chain name.
+     * @return CBaseChainParams::MAIN by default; raises runtime error if an invalid combination is given.
+     */
+    std::string GetChainName() const;
+
+    /**
+     * Looks for -devnet and returns either "devnet-<name>" or simply "devnet" if no name was specified.
+     * This function should never be called for non-devnets.
+     * @return either "devnet-<name>" or "devnet"; raises runtime error if no -devent was specified.
+     */
+    std::string GetDevNetName() const;
+
+    /**
+     * Add argument
+     */
+    void AddArg(const std::string& name, const std::string& help, const bool debug_only, const OptionsCategory& cat);
+
+    /**
+     * Get the help string
+     */
+    std::string GetHelpMessage();
+};
+
+extern ArgsManager gArgs;
 
 /**
  * MWC RNG of George Marsaglia
@@ -496,15 +662,15 @@ void seed_insecure_rand(bool fDeterministic=false);
  * Takes time proportional to length
  * of first argument.
  */
-template <typename T>
-bool TimingResistantEqual(const T& a, const T& b)
-{
-    if (b.size() == 0) return a.size() == 0;
-    size_t accumulator = a.size() ^ b.size();
-    for (size_t i = 0; i < a.size(); i++)
-        accumulator |= a[i] ^ b[i%b.size()];
-    return accumulator == 0;
-}
+//template <typename T>
+//bool TimingResistantEqual(const T& a, const T& b)
+//{
+//    if (b.size() == 0) return a.size() == 0;
+//    size_t accumulator = a.size() ^ b.size();
+//    for (size_t i = 0; i < a.size(); i++)
+//        accumulator |= a[i] ^ b[i%b.size()];
+//    return accumulator == 0;
+//}
 
 /** Median filter over a stream of values.
  * Returns the median of the last N numbers
@@ -626,6 +792,32 @@ template <typename Callable> void LoopForever(const char* name,  Callable func, 
         PrintException(NULL, name);
     }
 }
+
+/**
+ * .. and a wrapper that just calls func once
+ */
+//template <typename Callable> void TraceThread(const std::string name,  Callable func)
+//{
+//    std::string s = "raptoreum-" + name;
+//    RenameThread(s.c_str());
+//    try
+//    {
+//        LogPrintf("%s thread start\n", name);
+//        func();
+//        LogPrintf("%s thread exit\n", name);
+//    }
+//    catch (const boost::thread_interrupted&)
+//    {
+//        LogPrintf("%s thread interrupt\n", name);
+//        throw;
+//    }
+//    catch (...) {
+//        PrintExceptionContinue(std::current_exception(), name.c_str());
+//        throw;
+//    }
+//}
+
+
 // .. and a wrapper that just calls func once
 template <typename Callable> void TraceThread(const char* name,  Callable func)
 {
@@ -645,6 +837,7 @@ extern volatile bool fRequestShutdown;
         fRequestShutdown = true;
         //throw;
     }
+    
     catch (std::exception& e) {
         PrintException(&e, name);
     }
